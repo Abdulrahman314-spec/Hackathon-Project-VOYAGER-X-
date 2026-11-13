@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10143b"><meta name="apple-mobile-web-app-title" content="Astro Commander"><meta name="application-name" content="Astro Commander">
+<link rel="icon" type="image/svg+xml" href="assets/astro-commander-mark.svg"><link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<title>Astro Commander</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--ink:#080b22;--panel:#121739;--line:#2c3675;--tx:#e9edff;--mut:#9aa5d8;--amb:#ffb347;--teal:#4de3c1;--rose:#ff6b8b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-user-select:none!important;user-select:none!important;-webkit-tap-highlight-color:transparent}
+::selection{background:transparent;color:inherit}::-moz-selection{background:transparent;color:inherit}
+html,body{height:100%;margin:0;background:var(--ink);color:var(--tx);font-family:Cairo,system-ui,sans-serif;overflow:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:0}
+.scr{position:fixed;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;overflow:auto;text-align:center}
+.scr.on{display:flex}
+h1{font:400 clamp(20px,5.2vw,48px)/1.3 'Press Start 2P',monospace;color:var(--amb);text-shadow:4px 4px 0 #b3362f,8px 8px 0 #1b1f55;margin:0;direction:ltr}
+h2{font-size:clamp(18px,3vw,26px);margin:0;font-weight:900}
+.sub{color:var(--mut);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:980px}
+.card{background:var(--panel);border:0;color:var(--tx);font-family:inherit;padding:10px;cursor:pointer;box-shadow:0 0 0 2px var(--line),4px 4px 0 2px #000;display:flex;flex-direction:column;align-items:center;gap:6px;width:138px;transition:transform .12s}
+.card:hover{transform:translateY(-3px)}
+.card.sel{box-shadow:0 0 0 3px var(--amb),4px 4px 0 3px #000;background:#1b2150}
+.card canvas{image-rendering:pixelated}
+.card b{font-size:15px}.card small{color:var(--mut);font-size:12px;line-height:1.4}
+.btn{font:900 17px Cairo,sans-serif;background:var(--amb);color:#1b1230;border:0;padding:12px 30px;cursor:pointer;box-shadow:0 0 0 2px #000,4px 4px 0 2px #b3362f}
+.btn:active{transform:translate(2px,2px)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:var(--panel);color:var(--tx);box-shadow:0 0 0 2px var(--line),4px 4px 0 2px #000}
+input{font:700 18px Cairo,sans-serif;background:#0b0f2c;color:var(--tx);border:0;padding:10px 14px;width:240px;text-align:center;box-shadow:0 0 0 2px var(--line);outline:0}
+input:focus,.btn:focus-visible,.card:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+#gm{position:fixed;inset:0;z-index:1;display:none;background:#000}#gm.on{display:block}
+#hud{position:fixed;inset:0;z-index:5;pointer-events:none;display:none}#hud.on{display:block}
+#hud>*{pointer-events:auto}
+.tag{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:10px;background:#0a0e2acc;padding:8px 12px;box-shadow:0 0 0 2px var(--line);font-weight:700;display:flex;gap:10px;align-items:center}
+.tag span{color:var(--mut);font-weight:400}
+#chips{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:10px;display:flex;gap:6px}
+.chip{background:#0a0e2acc;padding:6px 8px;font-size:12px;box-shadow:0 0 0 2px var(--line);color:var(--mut)}
+.chip.ok{color:#0b2a22;background:var(--teal);box-shadow:0 0 0 2px #0b2a22}
+#mc{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 200px));background:#0a0e2aee;padding:10px 14px;box-shadow:0 0 0 2px var(--teal),4px 4px 0 2px #000;display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.6}
+#mc i{font-style:normal;color:var(--teal);font-weight:900;white-space:nowrap}
+#mc button,#mcShow{background:none;border:0;color:var(--mut);cursor:pointer;font:inherit;font-size:12px}
+#mcShow{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#0a0e2aee;color:var(--teal);padding:8px 14px;box-shadow:0 0 0 2px var(--teal);display:none}
+#dp{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:12px;display:grid;grid-template:repeat(3,44px)/repeat(3,44px);gap:3px;direction:ltr}
+#dp button{background:#0a0e2acc;border:0;color:var(--tx);font-size:18px;box-shadow:0 0 0 2px var(--line);touch-action:none}
+#act{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));right:12px;display:none}
+#skip{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));right:12px;display:none}
+#cd{position:absolute;top:40%;left:0;right:0;text-align:center;font:400 clamp(40px,10vw,90px) 'Press Start 2P',monospace;color:var(--amb);text-shadow:5px 5px 0 #b3362f;display:none}
+#ph{position:absolute;top:calc(60px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-weight:900;color:var(--teal);text-shadow:2px 2px 0 #000;display:none}
+#pn{position:fixed;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,92vw);background:var(--panel);box-shadow:0 0 0 3px var(--amb),6px 6px 0 3px #000;padding:18px;text-align:center;display:none;flex-direction:column;gap:10px}
+#pn.on{display:flex}#pn h3{margin:0;font-size:22px}
+.bar{height:12px;background:#0b0f2c;box-shadow:0 0 0 2px var(--line)}.bar i{display:block;height:100%;width:0;background:var(--teal)}
+.big{font:900 28px Cairo;color:var(--amb)}
+.rw{display:grid;grid-template-columns:90px 1fr 44px;gap:8px;align-items:center;font-size:13px;text-align:right}
+.rw .bar{height:10px}.rw .bar i{background:var(--rose)}
+#end{background:#050718e6;z-index:7}
+@media(max-width:640px){#mc{width:calc(100% - 24px);bottom:calc(66px + env(safe-area-inset-bottom,0px))}#dp{bottom:calc(14px + env(safe-area-inset-bottom,0px))}.chip{font-size:10px;padding:4px 6px}.card{width:112px}}
+@media(prefers-reduced-motion:reduce){.card{transition:none}}
+html,body{height:100dvh}
+.scr{justify-content:flex-start}.scr>:first-child{margin-top:auto}.scr>:last-child{margin-bottom:auto}
+.scr,#hud,#dp{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#fs{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:10px;z-index:20;background:#0a0e2acc;color:var(--tx);border:0;font:700 13px Cairo,sans-serif;padding:6px 12px;cursor:pointer;box-shadow:0 0 0 2px var(--line)}
+#toast{position:fixed;z-index:30;left:50%;bottom:90px;transform:translateX(-50%);background:var(--panel);box-shadow:0 0 0 2px var(--amb);padding:10px 16px;max-width:90vw;display:none;font-size:14px}
+#rot{display:none;position:fixed;z-index:25;top:calc(48px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:var(--amb);color:#1b1230;font-weight:800;font-size:13px;padding:6px 12px;pointer-events:none}
+@media(orientation:portrait) and (max-width:700px){#hud.on~#rot{display:block}}
+.chip{display:flex;gap:4px;align-items:center}.chip canvas{width:16px;height:16px;image-rendering:pixelated}
+@media(max-width:640px){#chips{top:calc(52px + env(safe-area-inset-top,0px));flex-wrap:wrap;max-width:60%}}
+input{-webkit-user-select:none!important;user-select:none!important}
+.gauge{position:relative;height:28px;background:#0b0f2c;box-shadow:0 0 0 2px var(--line);margin:8px 0}.gauge i{position:absolute;top:0;bottom:0;background:#2aa86b88;box-shadow:inset 0 0 0 2px #2aa86b}.gauge b{position:absolute;top:-5px;bottom:-5px;width:6px;margin-left:-3px;background:var(--amb)}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.tl{height:44px;border:0;padding:0;overflow:hidden;cursor:pointer;background:#6b4a30;box-shadow:inset -3px -3px 0 #0006,inset 3px 3px 0 #fff3;touch-action:manipulation;font:700 10px Cairo;color:var(--tx)}.tl.o{background:#1d2150!important;box-shadow:none;color:var(--teal)}.tl.f{background:#1d2150!important;box-shadow:0 0 0 2px var(--amb);color:var(--amb)}
+.arena{position:relative;height:200px;background:#0b0f2c;box-shadow:0 0 0 2px var(--line);overflow:hidden;touch-action:none}
+.bb{position:absolute;left:0;top:0;width:64px;height:64px;border-radius:50%;border:0;font:700 12px Cairo;color:#fff;cursor:pointer;touch-action:none}.bb.g{background:#1f9d6b;box-shadow:0 0 0 3px #4de3c1}.bb.r{background:#8a3a4a;box-shadow:0 0 0 3px #ff6b8b}
+.shake{animation:sh .25s}@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#pn{max-height:92dvh;overflow:auto;-webkit-overflow-scrolling:touch}#pn .btn{touch-action:manipulation}
+#gm{touch-action:none}
+#dp{display:block;width:132px;height:132px;grid-template:none;border-radius:50%;background:#0a0e2a99;box-shadow:0 0 0 2px var(--line);touch-action:none}
+#nub{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--amb);opacity:.85;pointer-events:none}
+@media (hover:hover) and (pointer:fine){#dp{display:none!important}}
+@media(max-height:500px){#mc{width:calc(100% - 340px);font-size:12px;padding:6px 10px;bottom:calc(8px + env(safe-area-inset-bottom,0px))}.card{width:104px}#dp{width:112px;height:112px}}
+.spc{position:relative;height:26px;background:#05070f;box-shadow:0 0 0 2px var(--line);margin:6px 0}.spc i{position:absolute;top:0;bottom:0;width:3px;background:#4de3c1}
+.tgt{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:#b58cff;box-shadow:0 0 0 3px #fff}.xh{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;box-shadow:0 0 0 2px var(--teal);pointer-events:none}
+#s0{direction:ltr;justify-content:flex-start;gap:8px}
+.logo{margin:3vh 0 0;text-align:center;font:400 clamp(24px,7.4vw,74px)/1.12 'Press Start 2P',monospace;transform:rotate(-3deg)}
+.logo-mark{display:block;width:clamp(64px,14vw,116px);height:clamp(64px,14vw,116px);margin:0 auto 8px;image-rendering:pixelated;filter:drop-shadow(0 8px 0 #090c2a)}
+.logo span{display:block}
+.logo .a{color:#fff;text-shadow:3px 0 #1c1c7a,-3px 0 #1c1c7a,0 3px #1c1c7a,0 -3px #1c1c7a,3px 3px #1c1c7a,-3px -3px #1c1c7a,3px -3px #1c1c7a,-3px 3px #1c1c7a,0 8px #0d0d40}
+.logo .b{color:#5fe3ff;text-shadow:3px 0 #12306b,-3px 0 #12306b,0 3px #12306b,0 -3px #12306b,3px 3px #12306b,-3px -3px #12306b,3px -3px #12306b,-3px 3px #12306b,0 8px #08183a}
+.tag2{font:800 clamp(13px,2.4vw,22px) Cairo;color:#fff;text-shadow:2px 2px 0 #0b0b40;margin:0}.tag2 b{color:var(--amb)}
+.tbs{display:flex;flex-direction:column;gap:12px;align-self:flex-end;margin:auto 6vw auto 0}
+.tb{display:flex;align-items:center;gap:14px;width:min(300px,78vw);min-height:52px;padding:8px 18px;font:800 clamp(16px,3vw,22px) Cairo;color:#fff;border:0;cursor:pointer;text-align:left;border-radius:10px}
+.tb canvas{width:30px;height:30px;image-rendering:pixelated}
+.tb.p{background:#7b4fd6;box-shadow:inset 0 3px 0 #a98bff,inset 0 -4px 0 #4a2aa0,0 0 0 3px #1a1050}
+.tb.b{background:#2f7de0;box-shadow:inset 0 3px 0 #6aa8ff,inset 0 -4px 0 #1b4fa8,0 0 0 3px #0e1a50}
+.tb.g{background:#35b84a;box-shadow:inset 0 3px 0 #7be08a,inset 0 -4px 0 #1f7a2e,0 0 0 3px #0e3a1a}
+.tb:active{transform:translateY(2px)}.tb:focus-visible{outline:3px solid #fff;outline-offset:3px}.tb:disabled{opacity:.55;filter:saturate(.5);cursor:not-allowed}
+@media(max-width:700px){.tbs{align-self:center;margin:auto}}
+.sr{display:flex;justify-content:space-between;align-items:center;gap:12px;width:min(440px,92vw);background:var(--panel);padding:10px 14px;box-shadow:0 0 0 2px var(--line)}
+.seg{display:flex;gap:4px}.seg button{border:0;background:#0b0f2c;color:var(--mut);font:700 14px Cairo;padding:8px 12px;cursor:pointer;min-height:42px}.seg button.on{background:var(--amb);color:#1b1230}
+#mm{position:absolute;top:calc(52px + env(safe-area-inset-top,0px));right:10px;width:120px;height:80px;image-rendering:pixelated;box-shadow:0 0 0 2px var(--line);display:none}
+#btns{position:absolute;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+#act,#skip{position:static!important}#rad,#jmp{display:none;min-height:46px;padding:10px 18px}
+@media(pointer:coarse){.btn,.card{min-height:48px}#btns .btn{min-height:52px}}
+#mca{width:48px;height:48px;image-rendering:pixelated;flex:none}#mct{min-height:42px}#mcb{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}#mcb button{background:#161c4a;color:var(--tx);padding:5px 9px;font-size:12px;min-height:30px;cursor:pointer}
+#cmp{position:absolute;top:calc(138px + env(safe-area-inset-top,0px));right:10px;width:120px;text-align:center;font-size:12px;background:#0a0e2acc;padding:4px;box-shadow:0 0 0 2px var(--line);display:none}#ca{display:inline-block;color:var(--amb);font-size:18px}
+#rov{display:none;min-height:46px;padding:10px 18px}
+@media(max-height:500px){#mca{display:none}#cmp{top:calc(138px + env(safe-area-inset-top,0px))}}
+#cut{position:fixed;inset:0;z-index:40;pointer-events:none;display:none;--c:#ff5a3a}
+#cut.on{display:block;animation:cutv .8s forwards}@keyframes cutv{from{box-shadow:inset 0 0 0 var(--c)}to{box-shadow:inset 0 0 22vw var(--c)}}
+#cut i{position:absolute;left:0;right:0;height:0;background:#000;transition:height .5s}#cut .bt{top:0}#cut .bb{bottom:0}#cut.on i{height:15vh}
+#cutc{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;padding:0 16px}
+#cuti{font-size:clamp(40px,10vw,90px);animation:pop .6s}#cutt{margin:6px 0;font:900 clamp(22px,5.5vw,50px) Cairo,sans-serif;color:var(--c);text-shadow:3px 3px 0 #000;animation:pop .6s}#cuts{margin:0;font-weight:700;font-size:clamp(14px,2.6vw,22px);color:#fff;text-shadow:2px 2px 0 #000}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+#evb{position:fixed;top:calc(52px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:12;background:#8a1d2e;color:#fff;font-weight:900;padding:6px 14px;box-shadow:0 0 0 2px #ff6b8b;display:none;animation:bl 1s infinite}@keyframes bl{50%{background:#c0283f}}
+#pn.ev{box-shadow:0 0 0 3px #ff6b8b,6px 6px 0 3px #000}
+@media(prefers-reduced-motion:reduce){#cut.on{animation:none}#evb{animation:none}}
+
+/* ---------- NASA mission layer: additive, preserves the original game ---------- */
+#missionBtn{background:#0a0e2acc;color:var(--teal);border:0;font:700 12px Cairo;padding:6px 9px;cursor:pointer;box-shadow:0 0 0 2px var(--line)}
+#missionPanel{font-size:14px;line-height:1.65;text-align:right}#missionPanel h3{margin:0;color:var(--amb)}
+.mstat{display:grid;grid-template-columns:76px 1fr 38px;gap:7px;align-items:center;margin:5px 0}.mstat .bar{height:10px}.mstat i{display:block;height:100%;background:var(--teal);width:0}.mstat:nth-of-type(3) i{background:#7eb8ff}.mstat:nth-of-type(4) i{background:var(--amb)}
+.mevent{border:1px solid var(--line);background:#0b0f2c;padding:9px;margin:8px 0;text-align:right}.mnote{font-size:12px;color:var(--mut);line-height:1.5}.mchoices{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}.mchoices button{flex:1 1 120px;min-height:54px;padding:7px;background:#161c4a;color:var(--tx);border:0;box-shadow:0 0 0 2px var(--line);cursor:pointer;font:700 12px Cairo}.mchoices button:hover{box-shadow:0 0 0 2px var(--teal)}
+.msource{font-size:11px;color:var(--mut);border-top:1px solid var(--line);padding-top:7px;margin-top:8px}.live{color:var(--teal)}.stored{color:var(--amb)}
+
+#langBtn{position:fixed;top:calc(50px + env(safe-area-inset-top,0px));left:10px;z-index:21;background:#0a0e2acc;color:var(--tx);border:0;font:700 12px Cairo;padding:6px 10px;cursor:pointer;box-shadow:0 0 0 2px var(--line)}
+#spaceAlert{position:fixed;top:calc(0px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:35;display:none;width:min(760px,94vw);background:#9f1d2d;color:#fff;border:2px solid #ff6b8b;box-shadow:0 0 18px #ff385577;padding:8px 14px;text-align:center;font-weight:900;animation:alertpulse 1s infinite}
+#spaceAlert.on{display:block}@keyframes alertpulse{50%{background:#d3263f}}
+.mtimer{font-size:18px;color:var(--amb);font-weight:900;margin:8px 0}.mcritical{color:#ff6b8b;font-weight:900}.missionRtl{text-align:right}.missionLtr{text-align:left;direction:ltr}
+
+/* Responsive mission panel and HUD safety rules */
+#missionPanel{width:100%;min-width:0;overflow-wrap:anywhere}#missionPanel .mchoices{width:100%}#missionPanel .mchoices button{min-width:0;word-break:normal}#pn{width:min(560px,calc(100vw - 24px));padding:clamp(12px,2vw,20px)}
+@media (max-width:900px){#mc{width:min(560px,calc(100% - 180px))}#tg{max-width:42vw;font-size:13px}.tag{padding:6px 8px}.mchoices button{font-size:13px}}
+@media (max-width:640px){#pn{max-height:88dvh}#missionPanel{font-size:13px}.mchoices{gap:8px}.mchoices button{flex:1 1 46%;min-height:58px;padding:8px 5px}.mevent{margin:7px 0;padding:8px}.mstat{grid-template-columns:62px 1fr 32px;font-size:12px}.mnote{font-size:11px}#spaceAlert{font-size:12px;padding:6px 8px}#langBtn{top:calc(48px + env(safe-area-inset-top,0px));left:8px}.tag{right:8px;top:calc(44px + env(safe-area-inset-top,0px));max-width:55vw}.tag span{display:block}.scr{padding:12px}.row{max-width:100%;gap:8px}.btn{padding:10px 16px;font-size:15px}.tb{width:min(320px,90vw)}}
+@media (max-width:380px){#missionPanel .mchoices button{flex-basis:100%}.mstat{grid-template-columns:55px 1fr 28px}.mstat .bar{height:9px}#chips{max-width:72%}.chip{max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+@media (min-width:1200px){#pn{width:600px}#missionPanel{font-size:15px}.mchoices button{min-height:62px}.tag{font-size:15px}}
+@media (orientation:landscape) and (max-height:560px){#pn{max-height:84dvh;padding:10px}#missionPanel h3{font-size:18px}.mchoices button{min-height:44px}.mnote{font-size:11px}#mc{bottom:8px}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<button id="fs">ملء الشاشة</button><button id="langBtn" type="button">English</button><div id="spaceAlert" role="alert"></div><div id="toast"></div><div id="cut"><i class="bt"></i><i class="bb"></i><div id="cutc"><div id="cuti"></div><h2 id="cutt"></h2><p id="cuts"></p></div></div><div id="evb"></div>
+<div id="gm"></div>
+
+<section class="scr on" id="s0">
+  <h1 class="logo"><img class="logo-mark" src="assets/astro-commander-mark.svg" alt=""><span class="a">ASTRO</span><span class="b">COMMANDER</span></h1>
+  <p class="tag2">Explore • Learn • <b>Discover</b></p>
+  <div class="tbs"><button class="tb p" id="continueGame"><canvas id="i1" width="24" height="24"></canvas>Continue Game</button><button class="tb b" id="newGame"><canvas id="i2" width="24" height="24"></canvas>New Game</button><button class="tb g" id="bset"><canvas id="i3" width="24" height="24"></canvas>Settings</button><button class="tb b" id="bq">Quit</button></div>
+</section>
+<section class="scr" id="set"><h2>Settings</h2><div id="setb" style="display:flex;flex-direction:column;gap:8px"></div><button class="btn" id="setx">رجوع</button></section>
+<section class="scr" id="quit"><h2>See you soon, Commander!</h2><p class="sub">شكرًا إنك لعبت Astro Commander. الفضاء مستنيك.</p><button class="btn" id="qb">رجوع</button></section>
+<section class="scr" id="s1">
+  <h1>ASTRO<br>COMMANDER</h1>
+  <p class="sub">اختار رائد الفضاء بتاعك وسمّيه</p>
+  <input id="nm" maxlength="12" placeholder="اسم الرائد" aria-label="اسم الرائد">
+  <div class="row" id="chs"></div>
+  <div class="row"><button class="btn ghost" data-go="0">رجوع</button><button class="btn" id="n1">التالي</button></div>
+</section>
+
+<section class="scr" id="s2">
+  <h2>إنت واقف على الأرض. رايح القمر ولا المريخ؟</h2>
+  <p class="sub" id="who"></p>
+  <canvas id="earth" width="96" height="96" style="image-rendering:pixelated;width:110px"></canvas>
+  <div class="row" id="pls"></div>
+  <div class="row"><button class="btn ghost" data-go="1">رجوع</button><button class="btn" id="n2" disabled>اختار الصاروخ</button></div>
+</section>
+
+<section class="scr" id="s3">
+  <h2>جهّز الصاروخ</h2>
+  <p class="sub" id="trip"></p>
+  <div class="row" id="rks"></div>
+  <div class="row"><button class="btn ghost" data-go="2">رجوع</button><button class="btn" id="launch">إطلاق</button></div>
+</section>
+
+<section class="scr" id="end">
+  <h1 style="font-size:clamp(16px,4vw,32px)">MISSION<br>COMPLETE</h1>
+  <h2 id="endt"></h2>
+  <p class="sub" id="endp"></p>
+  <button class="btn" id="again">رحلة جديدة</button>
+</section>
+
+<div id="hud">
+  <div class="tag" id="tg"></div>
+  <div id="chips"></div>
+  <div id="cd"></div><div id="ph"></div>
+  <div id="mc"><canvas id="mca" width="24" height="24"></canvas><div style="flex:1"><i>مركز التحكم</i><div id="mct"></div><div id="mcb"><button data-q="where">وين أروح؟</button><button data-q="hint">تلميح</button><button data-q="fact">حقيقة</button><button id="mcx">إخفاء</button></div></div></div>
+  <button id="mcShow">مركز التحكم</button>
+  <div id="dp"><i id="nub"></i></div>
+  <canvas id="mm" width="120" height="80"></canvas><div id="cmp"><span id="ca">➤</span> <span id="ct"></span></div>
+  <div id="btns"><button class="btn ghost" id="rov">مسبار</button><button class="btn ghost" id="rad">مسح</button><button class="btn ghost" id="jmp">قفزة</button><button class="btn" id="act"></button><button class="btn ghost" id="skip">تخطي</button></div>
+</div>
+<div id="rot">لف الموبايل أفقي لتجربة أحسن</div>
+<div id="pn"></div>
+
+<script src="assets/phaser.min.js">
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const CFG={snd:1,mus:1,q:matchMedia('(pointer:coarse)').matches?1:2,mc:1,mm:1};try{Object.assign(CFG,JSON.parse(localStorage.getItem('ac_cfg')||'{}'))}catch(_){}
+let ALLDONE=0,XP=0,LAB={},ACH={},USED=[],HINT='',GS=null,PROG={};try{PROG=JSON.parse(localStorage.getItem('ac_prog')||'{}')}catch(_){}
+const SAVE_KEY='ac_gameSave';let SAVED_GAME=null,RESTORE_GAME=null;try{SAVED_GAME=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(_){}
+function saveGameProgress(screenOverride){let screen=screenOverride;if(!screen){if(GS)screen='play';else if(G)screen='launch';else screen=document.querySelector('.scr.on')?.id||''}if(!['s1','s2','s3','launch','play','end'].includes(screen))return;const snap={version:1,savedAt:Date.now(),screen,S:{...S},ALLDONE,XP,LAB:{...LAB},ACH:{...ACH},USED:[...USED],HINT,done:{...done},PROG:{...PROG},SM:{...SM},mcHide,scene:null,nasa:null};if(GS&&GS.P)snap.scene={player:[GS.px,GS.py],P:GS.P,sam:GS.sam.map(o=>({x:o.x,y:o.y,got:!!o.got})),sgs:GS.sgs.map(o=>({x:o.x,y:o.y,done:!!o.done})),sgn:GS.sgn,rvc:GS.rvc,rad:GS.rad,wr:GS.wr?{x:GS.wr.x,y:GS.wr.y,done:!!GS.wr.done}:null};try{if(typeof ACNASA!=='undefined'&&ACNASA.saveState)snap.nasa=ACNASA.saveState()}catch(_){}try{localStorage.setItem(SAVE_KEY,JSON.stringify(snap));SAVED_GAME=snap;syncMenu()}catch(_){}}
+function syncMenu(){const b=$('continueGame');if(!b)return;const available=!!SAVED_GAME;b.disabled=!available;b.title=available?'':'No saved game yet';const en=(localStorage.getItem('ac_lang')||'ar')==='en';b.setAttribute('aria-label',en?'Continue your saved game':'كمّل لعبتك المحفوظة')}
+function resetNewGame(){S={name:'',ch:0,pl:'mars',rk:0};ALLDONE=0;XP=0;LAB={};ACH={};USED=[];HINT='';done={};PROG={};SM.n=0;SM.photo=0;RESTORE_GAME=null;try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem('ac_prog')}catch(_){}SAVED_GAME=null;syncMenu()}
+function beginNewGame(){if(SAVED_GAME){const en=(localStorage.getItem('ac_lang')||'ar')==='en',message=en?'This will delete your saved game and progress. Start a completely new game?':'ده هيمسح لعبتك وتقدّمك المحفوظ. تبدأ لعبة جديدة؟';if(!window.confirm(message))return}resetNewGame();go(1);saveGameProgress('s1')}
+function continueGame(){const snap=SAVED_GAME;if(!snap)return;S=Object.assign({name:'',ch:0,pl:'mars',rk:0},snap.S||{});ALLDONE=snap.ALLDONE||0;XP=snap.XP||0;LAB=snap.LAB||{};ACH=snap.ACH||{};USED=snap.USED||[];HINT=snap.HINT||'';done=snap.done||{};PROG=snap.PROG||PROG;Object.assign(SM,snap.SM||{n:0,photo:0});mcHide=!!snap.mcHide;const scr=snap.screen||'s1';if(scr==='play'||scr==='launch'){RESTORE_GAME=snap;startGame(true);return}if(scr==='end'){const en=(localStorage.getItem('ac_lang')||'ar')==='en';$('endt').textContent=en?'Great job, '+S.name+'! You explored '+(PL[S.pl]?.n||'space'):'برافو يا '+S.name+'! خلصت استكشاف '+(PL[S.pl]?.n||'الفضاء');$('endp').textContent=en?'Score '+XP+' · '+Object.keys(done).length+' labs · '+SM.n+'/5 samples':'نقاطك '+XP+' · '+Object.keys(done).length+' مختبرات · '+SM.n+'/5 عينات';go('end');return}if($('nm'))$('nm').value=S.name||'';if($('chs')?.children.length)sel($('chs'),S.ch||0);if($('pls')?.children.length)sel($('pls'),ORD.indexOf(S.pl));if($('rks')?.children.length)sel($('rks'),S.rk||0);$('n2').disabled=!S.pl;if(scr==='s2'||scr==='s3')$('who').textContent=(localStorage.getItem('ac_lang')||'ar')==='en'?'Astronaut '+S.name:'الرائد '+S.name+' · '+CH[S.ch].r;if(scr==='s3')$('trip').textContent=(localStorage.getItem('ac_lang')||'ar')==='en'?'Earth to '+(PL[S.pl]?.n||'Mars'):'من الأرض إلى '+(PL[S.pl]?.n||'المريخ');go(['s1','s2','s3'].includes(scr)?Number(scr.slice(1)):1)}
+
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+const rnd=(a,b)=>a+Math.random()*(b-a);
+let S={name:'',ch:0,pl:'mars',rk:0},G=null,busy=false,near=null,done={},mcHide=false,tips=[],tipI=0,tipT=null;
+
+/* ---------- بيانات ---------- */
+const CH=[
+ {r:'قائد المهمة',d:'بدلة الإطلاق البرتقالي',suit:'#ff7a1a',sec:'#c9520a',gl:'#2a2a2a',skin:'#c68642',st:'aces',w:9,hw:9,hh:8,ll:5,bt:0,bk:'chute',strap:1,vis:'#243a6e',vt:'rgba(20,35,90,.72)'},
+ {r:'مهندس طيران',d:'بدلة السير في الفضاء',suit:'#eceff4',sec:'#d12b2b',gl:'#eceff4',skin:'#8d5524',st:'emu',w:10,hw:9,hh:8,ll:5,bt:1,ax:3,bk:'big',hose:1,vis:'#e6a817'},
+ {r:'طيار تجارب',d:'بدلة الطيران الزرقاء',suit:'#1f4fa8',sec:'#12306b',gl:'#12306b',skin:'#f1c27d',st:'blue',w:6,hw:6,hh:6,ll:7,bt:0,bk:'none',mask:1,vis:'#f08a2a',vt:'rgba(240,138,42,.5)',hc:'#c9d4e8'},
+ {r:'عالمة كواكب',d:'بدلة EMU بهوائي وكاميرا',suit:'#eceff4',sec:'#2e6bd6',gl:'#eceff4',skin:'#e0ac69',st:'emu',w:8,hw:8,hh:7,ll:6,bt:0,bk:'mid',ant:1,cam:1,wr:1,vis:'#5fd0ff'},
+ {r:'طبيبة فضاء',d:'بدلة إطلاق وحقيبة إسعاف',suit:'#ff7a1a',sec:'#c9520a',gl:'#2a2a2a',skin:'#6f4a2f',st:'aces',w:7,hw:7,hh:7,ll:5,bt:0,bk:'mid',cross:1,vis:'#2b2b33'},
+ {r:'رائدة أرتميس',d:'بدلة AxEMU للقمر',suit:'#f4f6fa',sec:'#ff7a1a',gl:'#c9ced6',skin:'#b0714a',st:'emu',w:9,hw:10,hh:8,ll:6,bt:1,bk:'big',ant:1,vis:'#d9b44a'},
+ {r:'رائد أبولو',d:'بدلة أبولو الكلاسيكية',suit:'#e9e6dc',sec:'#d12b2b',gl:'#e9e6dc',skin:'#d9a066',st:'emu',w:10,hw:10,hh:8,ll:5,bt:1,ax:3,bk:'big',hose:1,pt:1,vis:'#e6b800'},
+ {r:'رائد ميركوري',d:'بدلة ميركوري الفضية',suit:'#b8c0cc',sec:'#8b93a8',gl:'#8b93a8',skin:'#f0c8a0',st:'blue',w:7,hw:8,hh:8,ll:6,bt:0,bk:'none',hose:1,shine:1,vis:'#1b2340',hc:'#c9ced6'}
+];
+const RK=[
+ {n:'فالكون',d:'خفيف وسريع، وبيرجع يتستخدم تاني'},
+ {n:'SLS أرتميس',d:'أقوى صاروخ ناسا لرحلات القمر'},
+ {n:'ستارشيب',d:'أضخم صاروخ، معمول لرحلات المريخ'},{n:'مكوك الفضاء',d:'أيقونة ناسا: مدار أبيض وخزان برتقالي ومعززان'},{n:'ساتورن V',d:'الصاروخ اللي وصّل أبولو للقمر'},{n:'سويوز',d:'أطول سجل نجاح في التاريخ، بدفعات جانبية'},{n:'نيو غلين',d:'معزّز ضخم قابل لإعادة الاستخدام'}
+];
+const PL={
+ moon:{n:'القمر',kind:'قمر الأرض',dist:'384 ألف كم',ty:'rock',sd:1,g:['#9a9aa2','#85858e','#55555e'],
+  p:{v:'≈ 0 كيلوباسكال',n:'مفيش غلاف جوي يضغط عليك، يعني مفيش صوت ولا رياح.'},
+  t:{v:'‎−173 ← +127 °م',n:'الفرق بين الليل والنهار ضخم لأن مفيش هواء يحتفظ بالحرارة.'},
+  s:{v:'ريجوليث (غبار صخري)',rows:[['أكسجين',43],['سيليكون',21],['حديد',13],['كالسيوم',8],['ألومنيوم',7]],n:'نِسَب تقريبية. الغبار ناعم وحاد لأن مفيش مطر ولا رياح بتنعّمه.'},
+  a:{v:'غلاف شبه معدوم',n:'ذرات قليلة جدًا من الهيليوم والنيون والأرجون. مينفعش تتنفس هنا.'},
+  tips:['القمر بيبعد عن الأرض حوالي 384 ألف كم، ورحلة أبولو كانت بتاخد 3 أيام.','آثار الأقدام على القمر ممكن تفضل ملايين السنين لأن مفيش رياح تمسحها.','الجاذبية على القمر سدس جاذبية الأرض، يعني هتنط أعلى بكتير.']},
+ mercury:{n:'عطارد',kind:'كوكب',dist:'91 مليون كم',ty:'rock',sd:2,g:['#8f847c','#7a6f68','#4a423d'],
+  p:{v:'≈ 0 كيلوباسكال',n:'غلافه الجوي رقيق لدرجة إنه تقريبًا فراغ.'},
+  t:{v:'‎−180 ← +430 °م',n:'أقرب كواكب للشمس، بس مش الأسخن. الزهرة أسخن.'},
+  s:{v:'صخور سيليكات غنية بالحديد',n:'قلبه من الحديد وبياخد حوالي 85% من نصف قطره.'},
+  a:{v:'إكسوسفير رقيق',n:'ذرات أكسجين وصوديوم وهيدروجين وهيليوم بتتطاير من السطح.'},
+  tips:['عطارد بيلف حوالين الشمس في 88 يوم أرضي بس.','أصغر كواكب المجموعة الشمسية، أكبر بشوية من القمر.','سطحه مليان فوهات زي القمر.']},
+ venus:{n:'الزهرة',kind:'كوكب',dist:'41 مليون كم',ty:'cloud',sd:3,atm:'#ffcf7a',g:['#e3b566','#d19a4c','#a86d2f'],
+  p:{v:'9,200 كيلوباسكال',n:'حوالي 92 ضعف ضغط الأرض، كأنك على عمق كيلومتر تحت البحر.'},
+  t:{v:'465 °م',n:'أسخن كوكب في المجموعة الشمسية، بيذوّب الرصاص.'},
+  s:{v:'بازلت بركاني',n:'سطحه مليان براكين وسهول من الحمم المتجمدة.'},
+  a:{v:'ثاني أكسيد الكربون',rows:[['CO₂',96.5],['نيتروجين',3.5]],n:'سحب من حمض الكبريتيك، وده بيحبس الحرارة (احتباس حراري هائل).'},
+  tips:['اليوم على الزهرة أطول من سنتها!','بتلف عكس معظم الكواكب، فالشمس بتشرق من الغرب.','أغلب المسابر اللي نزلت عليها اتدمرت في ساعات قليلة.']},
+ mars:{n:'المريخ',kind:'كوكب',dist:'78 مليون كم',ty:'mars',sd:4,atm:'#ff9d6e',g:['#c75d3a','#ad4a2d','#6e2c1b'],
+  p:{v:'0.6 كيلوباسكال',n:'أقل من 1% من ضغط الأرض. السوائل بتغلي بسهولة هنا.'},
+  t:{v:'متوسط ‎−63 °م',n:'بين ‎−140 و +20 °م حسب الموسم ومكانك.'},
+  s:{v:'بازلت وأكاسيد حديد',rows:[['سيليكا',44],['أكسيد الحديد',17],['أكسيد الكالسيوم',7],['أكسيد المغنيسيوم',7]],n:'قيم تقريبية. الصدأ هو اللي بيدّي المريخ لونه الأحمر.'},
+  a:{v:'ثاني أكسيد الكربون',rows:[['CO₂',95],['نيتروجين',2.8],['أرجون',2],['أكسجين',0.17]],n:'مفيش أكسجين كفاية للتنفس، لازم نصنعه.'},
+  tips:['أعلى جبل في المجموعة الشمسية هو أوليمبوس مونس على المريخ.','يوم المريخ أطول من يوم الأرض بحوالي 40 دقيقة.','مركبات ناسا (بيرسيفيرنس وكيوريوسيتي) بتدرس تربته دلوقتي.']},
+ jupiter:{n:'المشتري',kind:'كوكب غازي',dist:'628 مليون كم',ty:'bands',sd:7,spot:1,g:['#e0c39a','#c48f5a','#9a5a3a'],
+  p:{v:'100 كيلوباسكال (عند مستوى 1 بار)',n:'قريب من ضغط الأرض، بس على عمق معين في السحب. كل ما تنزل الضغط بيزيد جدًا.'},
+  t:{v:'حوالي ‎−108 °م',n:'عند نفس المستوى، وبيسخن كل ما نزلت لتحت.'},
+  s:{v:'مفيش سطح صلب',n:'بدل التربة بنحلل السحب (أمونيا وماء وغيرهم). المنصة بتطفو في الغلاف الجوي.'},
+  a:{v:'هيدروجين وهيليوم',rows:[['هيدروجين',90],['هيليوم',10]],n:'نفس مكونات الشمس تقريبًا. مفيش أكسجين للتنفس.'},
+  tips:['البقعة الحمراء العظيمة عاصفة أكبر من الأرض وعمرها قرون.','المشتري أكبر كواكب المجموعة الشمسية وله أكتر من 90 قمر.']},
+ io:{n:'آيو',kind:'قمر المشتري',dist:'628 مليون كم',ty:'rock',sd:8,hot:1,g:['#e8d24a','#d4a82e','#6b3a1f'],
+  p:{v:'جزء من المليار من ضغط الأرض',n:'غلاف رقيق جدًا من غاز ثاني أكسيد الكبريت بيطلع من البراكين.'},
+  t:{v:'حوالي ‎−143 °م',n:'السطح بارد، بس فوهات البراكين بتعدّي 1000 °م.'},
+  s:{v:'كبريت وصخور بركانية',n:'ألوانه الصفراء والبرتقالية من مركبات الكبريت.'},
+  a:{v:'ثاني أكسيد الكبريت',n:'مينفعش تتنفسه، ولازم تبعد عن البراكين.'},
+  tips:['آيو أكتر جرم نشاطًا بركانيًا في المجموعة الشمسية.','جاذبية المشتري بتشدّه وبتسخّنه من جوه.']},
+ europa:{n:'أوروبا',kind:'قمر المشتري',dist:'628 مليون كم',ty:'ice',sd:5,g:['#e6e1d2','#d0c9b6','#9a5f45'],
+  p:{v:'جزء من المليار من ضغط الأرض',n:'غلاف جوي رقيق جدًا لدرجة إنه تقريبًا فراغ.'},
+  t:{v:'حوالي ‎−171 °م',n:'قشرة جليد صلبة زي الصخر.'},
+  s:{v:'جليد مائي وأملاح',n:'تحت الجليد محيط مالح ضخم، من أكتر الأماكن المرشحة لوجود حياة.'},
+  a:{v:'أكسجين رقيق جدًا',n:'بيتكوّن لما إشعاع المشتري بيكسر جزيئات جليد السطح.'},
+  tips:['محيط أوروبا ممكن يكون فيه ماء أكتر من كل محيطات الأرض.','مسبار Europa Clipper متجه لدراستها.']},
+ ganymede:{n:'جانيميد',kind:'قمر المشتري',dist:'628 مليون كم',ty:'rock',sd:9,g:['#8a7f73','#756c62','#cfd3d6'],
+  p:{v:'غلاف رقيق جدًا',n:'فيه كمية ضئيلة جدًا من الأكسجين.'},
+  t:{v:'حوالي ‎−163 °م',n:'متوسط تقريبي، والأقطاب أبرد.'},
+  s:{v:'جليد مائي وصخور داكنة',n:'تحت القشرة محيط مالح مدفون بين طبقات جليد.'},
+  a:{v:'أكسجين رقيق جدًا',n:'مفيش هواء تتنفسه، لازم بدلة.'},
+  tips:['جانيميد أكبر قمر في المجموعة الشمسية، وأكبر من عطارد.','القمر الوحيد المعروف إن له مجال مغناطيسي خاص.']},
+ titan:{n:'تيتان',kind:'قمر زحل',dist:'1.2 مليار كم',ty:'cloud',sd:6,atm:'#ffb347',g:['#d9a441','#c28a2a','#8a6320'],
+  p:{v:'147 كيلوباسكال',n:'حوالي 1.45 ضعف ضغط الأرض، وممكن تقف عليه من غير بدلة ضغط (بس بدلة تدفئة).'},
+  t:{v:'حوالي ‎−179 °م',n:'بارد جدًا، بس ده الجو المناسب لبحيرات الميثان السايل.'},
+  s:{v:'جليد صلب ورمال هيدروكربونية',n:'كثبان رمال عضوية وبحيرات من الميثان والإيثان.'},
+  a:{v:'نيتروجين وميثان',rows:[['نيتروجين',95],['ميثان',5]],n:'غلافه أكتف من غلاف الأرض.'},
+  tips:['تيتان أكبر قمر لزحل، وأكبر من عطارد!','المسبار هويجنز نزل عليه سنة 2005.','مركبة Dragonfly هتروح تستكشفه بطيارة ذاتية.']},
+ enceladus:{n:'إنسيلادوس',kind:'قمر زحل',dist:'1.2 مليار كم',ty:'ice',sd:10,g:['#f2f6f8','#dce6ec','#6fb0d6'],
+  p:{v:'≈ 0 كيلوباسكال',n:'مفيش غلاف جوي ثابت، بس نافورات بخار بتطلع من القطب الجنوبي.'},
+  t:{v:'حوالي ‎−198 °م',n:'بارد جدًا، بس تحت القشرة مياه سايلة.'},
+  s:{v:'جليد ماء نقي',n:'سطحه من أنصع الأسطح في المجموعة الشمسية لأنه جليد جديد.'},
+  a:{v:'بخار ماء من النافورات',n:'بخار ماء مع ثاني أكسيد الكربون وميثان وآثار لجزيئات تانية.'},
+  tips:['مسبار كاسيني طار في نافوراته واتأكد إن تحت الجليد محيط.','من أهم الأماكن اللي بيدوروا فيها على حياة.']},
+ triton:{n:'تريتون',kind:'قمر نبتون',dist:'4.3 مليار كم',ty:'ice',sd:11,g:['#d9c7c0','#c9b5b0','#8aa0a8'],
+  p:{v:'≈ 0.0014 كيلوباسكال',n:'غلاف رقيق من النيتروجين، حوالي جزء من 70 ألف من ضغط الأرض.'},
+  t:{v:'حوالي ‎−235 °م',n:'من أبرد الأماكن اللي اتقاست في المجموعة الشمسية.'},
+  s:{v:'جليد نيتروجين وميثان',n:'فيه نافورات (غيزر) نيتروجين بتطلع من تحت الجليد.'},
+  a:{v:'نيتروجين مع آثار ميثان',n:'غلاف خفيف بيعمل ضباب وسحب رقيقة.'},
+  tips:['تريتون بيدور عكس اتجاه دوران نبتون، غالبًا لأنه اتأسر من حزام كايبر.','فوياجر 2 هو المسبار الوحيد اللي زاره سنة 1989.']},
+ pluto:{n:'بلوتو',kind:'كوكب قزم',dist:'4.3 مليار كم',ty:'rock',sd:12,heart:1,g:['#cfae90','#b8957a','#7a5a44'],
+  p:{v:'≈ 0.001 كيلوباسكال',n:'حوالي واحد على مئة ألف من ضغط الأرض.'},
+  t:{v:'حوالي ‎−229 °م',n:'بيتغير حسب بُعده عن الشمس.'},
+  s:{v:'جليد نيتروجين وميثان',n:'القلب الشهير (توموب ريجيو) سهل واسع من جليد النيتروجين.'},
+  a:{v:'نيتروجين مع ميثان',n:'بيتجمد ويتبخر مع مواسم بلوتو الطويلة.'},
+  tips:['بلوتو كوكب قزم مش كوكب كامل، من سنة 2006.','نيو هورايزنز زاره سنة 2015 وصوّر القلب الشهير.']},
+ saturn:{n:'زحل',kind:'كوكب غازي',dist:'1.2 مليار كم',ty:'bands',ring:1,sd:13,g:['#e8d9a8','#d9c288','#b99a58'],
+  p:{v:'100 كيلوباسكال (عند مستوى 1 بار)',n:'قريب من ضغط الأرض، بس على عمق معين في السحب.'},
+  t:{v:'حوالي ‎−139 °م',n:'عند نفس المستوى، وبيسخن كل ما نزلت لتحت.'},
+  s:{v:'مفيش سطح صلب',n:'بنحلل السحب بدل التربة، والمنصة بتطفو في الغلاف الجوي.'},
+  a:{v:'هيدروجين وهيليوم',rows:[['هيدروجين',96],['هيليوم',3.2]],n:'مفيش أكسجين للتنفس.'},
+  tips:['حلقات زحل معظمها جليد وصخور، من حبات صغيرة لحد كتل كبيرة.','زحل أخف من الماء بالمتوسط: ممكن يطفو لو لقينا حوض يكفيه!']},
+ uranus:{n:'أورانوس',kind:'عملاق جليدي',dist:'2.6 مليار كم',ty:'bands',sd:14,g:['#b9f1f3','#9fe4e6','#6fc3c8'],
+  p:{v:'100 كيلوباسكال (عند مستوى 1 بار)',n:'ضغط قريب من الأرض عند المستوى ده من السحب.'},
+  t:{v:'حوالي ‎−197 °م',n:'من أبرد الغلافات الجوية في المجموعة الشمسية.'},
+  s:{v:'مفيش سطح صلب',n:'بنحلل السحب، والمنصة بتطفو في الغلاف الجوي.'},
+  a:{v:'هيدروجين وهيليوم وميثان',rows:[['هيدروجين',83],['هيليوم',15],['ميثان',2.3]],n:'الميثان بيمتص الأحمر فاللون أزرق مخضر.'},
+  tips:['أورانوس مايل حوالي 98 درجة، فبيدور تقريبًا على جنبه.','زاره مسبار واحد بس: فوياجر 2 سنة 1986.']},
+ neptune:{n:'نبتون',kind:'عملاق جليدي',dist:'4.3 مليار كم',ty:'bands',sd:15,g:['#4a6bff','#3a5ae8','#1d2f8f'],
+  p:{v:'100 كيلوباسكال (عند مستوى 1 بار)',n:'ضغط قريب من الأرض عند المستوى ده من السحب.'},
+  t:{v:'حوالي ‎−201 °م',n:'بارد جدًا، والرياح هنا من الأسرع في المجموعة الشمسية.'},
+  s:{v:'مفيش سطح صلب',n:'بنحلل السحب، والمنصة بتطفو في الغلاف الجوي.'},
+  a:{v:'هيدروجين وهيليوم وميثان',rows:[['هيدروجين',80],['هيليوم',19],['ميثان',1.5]],n:'سحب الميثان بتبان بيضا فوق اللون الأزرق.'},
+  tips:['رياح نبتون بتوصل لأكتر من 2,000 كم/س.','فوياجر 2 هو المسبار الوحيد اللي زاره سنة 1989.']}
+};
+Object.keys(PL).forEach(k=>PL[k].id=k);
+const LM={moon:['فوهة تيخو','فوهة عمرها حوالي 110 مليون سنة وحواليها خطوط فاتحة من الحطام'],mercury:['حوض كالوريس','من أكبر أحواض الاصطدام، قطره حوالي 1,500 كم'],venus:['جبل ماكسويل','أعلى قمم الزهرة، ارتفاعه حوالي 11 كم'],mars:['أوليمبوس مونس','أعلى جبل في المجموعة الشمسية'],jupiter:['البقعة الحمراء','عاصفة عملاقة عمرها قرون'],io:['بركان بيلي','من أنشط براكين آيو'],europa:['خطوط الجليد','شقوق بنية في القشرة الجليدية'],ganymede:['غاليليو ريجيو','منطقة قديمة داكنة على السطح'],titan:['بحر كراكن','بحر من الميثان السايل'],enceladus:['خطوط النمر','شقوق بتنفث بخار ماء من القطب الجنوبي'],triton:['أرض الكانتالوب','تضاريس غريبة بتشبه جلد الشمام'],pluto:['توموب ريجيو','سهل جليدي على شكل قلب']};
+const TC={moon:-53,mercury:167,venus:465,mars:-63,jupiter:-108,io:-143,europa:-171,ganymede:-163,titan:-179,enceladus:-198,triton:-235,pluto:-229,earth:15};
+const PK={moon:0,mercury:0,venus:9200,mars:.6,jupiter:100,io:0,europa:0,ganymede:0,titan:147,enceladus:0,triton:.0014,pluto:.001};
+Object.assign(LM,{saturn:['سداسي القطب','عاصفة سداسية الشكل حول القطب الشمالي'],uranus:['الميل الجانبي','الكوكب مائل حوالي 98 درجة'],neptune:['البقعة المظلمة','عاصفة عملاقة سجّلها فوياجر 2']});
+const RADN={moon:'إشعاع كوني وشمسي مباشر',mercury:'إشعاع شمسي شديد',venus:'منخفض عند السطح بفضل الغلاف السميك',mars:'أعلى من الأرض لأن الغلاف رقيق',jupiter:'شديد جدًا داخل أحزمة الإشعاع',saturn:'متوسط داخل أحزمة الإشعاع',uranus:'متوسط',neptune:'متوسط',io:'شديد جدًا من حزام المشتري',europa:'شديد جدًا من حزام المشتري',ganymede:'عالٍ ويخفّفه مجاله المغناطيسي',titan:'منخفض بفضل الغلاف السميك',enceladus:'متوسط من حزام زحل',triton:'منخفض نسبيًا',pluto:'منخفض (بعيد عن الشمس)'};
+const MAGN={moon:'مفيش مجال مغناطيسي عالمي.',mercury:'مجال ضعيف جدًا مقارنة بالأرض.',venus:'مفيش مجال خاص بيها.',mars:'مفيش مجال عالمي، بس بقع مغناطيسية قديمة في القشرة.',jupiter:'مجال هائل، الأقوى بين الكواكب.',saturn:'مجال قوي ومتماثل تقريبًا مع محور الدوران.',uranus:'مجال مائل ومزاح عن مركز الكوكب.',neptune:'مجال مائل ومزاح عن مركز الكوكب.',io:'بيتأثر بمجال المشتري القوي.',europa:'مجال مستحث بيدل على محيط مالح تحت الجليد.',ganymede:'القمر الوحيد المعروف إن له مجال مغناطيسي خاص.',titan:'مفيش مجال خاص.',enceladus:'مفيش مجال خاص.',triton:'مجال مستحث ضعيف.',pluto:'غير معروف بدقة.'};
+Object.assign(TC,{saturn:-139,uranus:-197,neptune:-201});Object.assign(PK,{saturn:100,uranus:100,neptune:100});
+const GR={moon:.17,mercury:.38,venus:.9,mars:.38,jupiter:2.53,saturn:1.07,uranus:.89,neptune:1.14,io:.18,europa:.13,ganymede:.15,titan:.14,enceladus:.01,triton:.08,pluto:.06};
+const ORD=['moon','mars'];
+const TR={moon:{r:['#3f3f46','#5a5a63','#75757e','#8e8e96','#a8a8b0'],sc:.012,cr:90,m:'rock'},mercury:{r:['#3b3430','#544a44','#6e625b','#877a72','#a09289'],sc:.014,cr:100,m:'rock'},venus:{r:['#4a2412','#6e3a1c','#93542a','#b87038','#d98d4a'],sc:.012,cr:8,m:'lava',g:'#e8782a'},mars:{r:['#5c2a1a','#823a22','#a84c2c','#c8643a','#e08a58'],sc:.011,cr:30,m:'dune'},jupiter:{r:['#8a6a55','#b9805a','#d9a878','#ecdcc2','#f4ead8'],sc:.008,cr:0,m:'cloud'},saturn:{r:['#a8905a','#c9b076','#dcc994','#ecdcb0','#f4ebcc'],sc:.008,cr:0,m:'cloud'},uranus:{r:['#6fc3c8','#8ad9dd','#a5e6ea','#c0f0f2','#dcf8f8'],sc:.008,cr:0,m:'cloud'},neptune:{r:['#1f3aa8','#2f4fd0','#4a6bff','#7d95ff','#c0ccff'],sc:.008,cr:0,m:'cloud'},io:{r:['#6b3a1f','#a8782a','#d4a82e','#e8d24a','#f2ecc0'],sc:.012,cr:30,m:'lava',g:'#ff6a1f',lk:'#ff6a1f'},europa:{r:['#a8957e','#cbbfa8','#e2d9c6','#efe9db','#fbf8f0'],sc:.011,cr:6,m:'crack',cc:'#8a4a32'},ganymede:{r:['#4f463e','#6d635a','#8a8076','#a89f94','#c8c2b8'],sc:.012,cr:60,m:'groove'},titan:{r:['#6b4a14','#98701f','#c28a2a','#d9a441','#ecc06a'],sc:.011,cr:0,m:'dune',lk:'#10182e'},enceladus:{r:['#9ec0d4','#c4dbe8','#e0edf4','#f2f8fb','#ffffff'],sc:.011,cr:4,m:'crack',cc:'#4a8fc0'},triton:{r:['#7a6a6c','#a89498','#d2bab8','#ecd6d2','#f8ece8'],sc:.011,cr:6,m:'crack',cc:'#4a3c44'},pluto:{r:['#4a3028','#7a5a44','#a8856a','#c9a98a','#e8d4be'],sc:.011,cr:30,m:'rock',ht:1}};
+const WEA={venus:{t:['#d9803a',.18],s:['#ffd9a0',18,60,10]},titan:{t:['#c28a2a',.16]},mars:{t:['#c8643a',.06],s:['#e8b08a',26,240,20]},jupiter:{f:1,s:['#f4ead8',16,170,0]},saturn:{f:1,s:['#f4ebcc',16,150,0]},uranus:{s:['#dcf8f8',14,120,0]},neptune:{f:1,s:['#c0ccff',18,210,0]},io:{t:['#ff5a1f',.1],f:1},europa:{s:['#ffffff',34,10,30]},enceladus:{s:['#ffffff',34,10,30]},triton:{s:['#ffffff',30,10,28]},pluto:{s:['#ffffff',26,8,22]}};
+const STG=[[{t:6.4,rs:[[0,31,24,29]],vx:[10],bot:31,m:'انفصال المرحلة الأولى (وهترجع تهبط بنفسها)'},{t:8.2,rs:[[0,0,12,13],[12,0,12,13]],vx:[-50,50],bot:31,m:'انفصال غطاء الحمولة (Fairing)'}],
+ [{t:5.8,rs:[[3,12,5,44],[16,12,5,44]],vx:[-60,60],bot:56,m:'انفصال معززات الوقود الصلب (SRB)'},{t:8.2,rs:[[0,15,24,45]],vx:[8],bot:15,m:'انفصال المرحلة المركزية'}],
+ [{t:6.3,rs:[[0,26,24,34]],vx:[12],bot:26,m:'تباعد ساخن: انفصال Super Heavy'}],
+ [{t:6.1,rs:[[15,10,4,46]],vx:[60],bot:56,m:'انفصال معزّز الوقود الصلب'},{t:8.6,rs:[[9,0,6,60]],vx:[40],bot:44,m:'انفصال الخزان الخارجي'}],
+ [{t:5,rs:[[10,0,4,4]],vx:[30],bot:60,m:'قذف برج الهروب'},{t:6.6,rs:[[0,36,24,24]],vx:[10],bot:36,m:'انفصال المرحلة الأولى S-IC'},{t:8.6,rs:[[0,22,24,14]],vx:[10],bot:22,m:'انفصال المرحلة الثانية S-II'}]];
+const FX=[12,12,12,8,12,12,12],FW=[9,12,14,10,16,12,15],FC=[[0xffd24a,0xff7a1a],[0xffb347,0xff6a1f],[0x9fd8ff,0x4aa8ff],[0xff9a3a,0xffd24a],[0xffb347,0xff6a1f],[0xffd24a,0xff7a1a],[0x9fd8ff,0x4aa8ff]],FL2=[[],[[6,5.8],[18,5.8]],[],[[16.5,6.1]],[],[[8,5.5],[16,5.5]],[]];
+STG.push([{t:5.5,rs:[[6,22,4,34],[14,22,4,34]],vx:[-70,70],bot:54,m:'انفصال الدفعات الجانبية (Strap-ons)'},{t:7.6,rs:[[0,14,24,46]],vx:[10],bot:14,m:'انفصال المرحلة الثانية'},{t:8.8,rs:[[10,0,4,6]],vx:[30],bot:14,m:'قذف برج الهروب'}],[{t:6.2,rs:[[0,28,24,32]],vx:[10],bot:28,m:'انفصال المعزّز (هيهبط على سفينة في البحر)'},{t:8.4,rs:[[0,0,12,12],[12,0,12,12]],vx:[-50,50],bot:28,m:'انفصال الغطاء'}]);
+const ICO={p:['..####..','.#....#.','#..#...#','#...#..#','#....#.#','.#....#.','..####..','...##...'],t:['...##...','..#..#..','..#.##..','..#.##..','..#.##..','.#.##.#.','.#.##.#.','..####..'],s:['........','########','#.#.#.##','########','#..##..#','########','.######.','........'],a:['...##...','..####..','.######.','########','........','##.##.##','........','.##.##..']};
+Object.assign(ICO,{w:['...##...','...##...','...##...','.######.','..####..','...##...','........','########'],r:['...##...','..####..','.#.##.#.','###..###','###..###','.#.##.#.','..####..','...##...']});
+Object.keys(PL).forEach(k=>{PL[k].w={v:GR[k]+'g',n:'عينة وزنها 10 كجم على الأرض بتبقى هنا حوالي '+(10*GR[k]).toFixed(1)+' كجم.'};PL[k].r={v:RADN[k],n:MAGN[k]}});
+const PLANET_KEEP=['moon','mars'];
+Object.keys(PL).filter(k=>!PLANET_KEEP.includes(k)).forEach(k=>delete PL[k]);
+[LM,TC,PK,RADN,MAGN,GR,TR].forEach(map=>Object.keys(map).filter(k=>!PLANET_KEEP.includes(k)).forEach(k=>delete map[k]));
+function ICON(k,u,col){const e=mk(8*u,8*u),q=e.getContext('2d');q.fillStyle=col;ICO[k].forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch=='#')q.fillRect(x*u,y*u,u,u)}));return e}
+const ST={p:{n:'ضغط الجو',c:'#ffb347',x:480,y:300},t:{n:'الحرارة',c:'#ff6b8b',x:1120,y:300},s:{n:'التربة',c:'#c98a4b',x:480,y:720},a:{n:'الهواء',c:'#4de3c1',x:1120,y:720},w:{n:'الجاذبية',c:'#b58cff',x:0,y:0},r:{n:'الإشعاع',c:'#ff8a5c',x:0,y:0}};
+
+/* ---------- رسم البكسل ---------- */
+function drawChar(c,h,u,dr='d',fr=0){
+ const k=(col,x,y,w,hh)=>{c.fillStyle=col;c.fillRect(x*u,y*u,w*u,hh*u)},st=fr==1?-1:fr==3?1:0,w=h.w,hw=h.hw,hh=h.hh,ll=h.ll,bh=h.bt?3:2,R='#d9dde5',bp=h.st=='blue'?'#5b6b8c':'#d8dce6',hc=h.hc||'#f2f4f8';
+ const X=Math.round(8-w/2),HX=Math.round(8-hw/2),lw=Math.max(2,Math.floor((w-1)/2)),vh=hh-3,yo=26-(15+ll+bh);
+ c.save();c.translate(0,yo*u);
+ if(dr=='s'){
+  const sw=Math.max(5,w-2),SX=Math.round(8-sw/2),bk=h.bk,bw=bk=='big'?3:bk=='mid'?2:bk=='chute'?1:0,bl=bk=='big'?7:bk=='mid'?5:4;
+  if(bw){k(bp,SX-bw,8,bw,bl);k(h.sec,SX-bw,8+bl-1,bw,1)}
+  k(h.suit,SX+1-st*2,15,lw,ll);k('#1c1c26',SX+1-st*2,15+ll,lw+1,bh);k(h.suit,SX+1+st*2,15,lw,ll);k('#1c1c26',SX+1+st*2,15+ll,lw+1,bh);
+  if(h.st=='aces'){k(R,SX+1-st*2,17,lw,1);k(R,SX+1+st*2,17,lw,1)}
+  k(h.suit,SX,7,sw,8);k(h.sec,SX,11,sw,1);k('#c9ced6',SX,7,sw,1);
+  const ax=SX+Math.floor(sw/2)-1-st;k(h.suit,ax,7,3,7);k(h.gl,ax,14,3,2);k(h.sec,ax,9,3,1);
+  const hx=HX+1;k(hc,hx,0,hw-1,hh);if(hh<7)k('#c9ced6',SX+1,hh,3,7-hh);k(h.vis,hx+hw-4,2,3,vh);k('rgba(255,255,255,.6)',hx+hw-4,2,1,1);
+  if(h.ant){k('#8b93a8',hx,0,1,3);k('#e86a1a',hx,0,1,1)}if(h.mask)k('#e86a1a',hx+hw-3,2+vh-1,2,1);
+ }else{
+  const ly=[st<0?-1:0,st>0?-1:0],ay=[st>0?-1:st<0?1:0,st<0?-1:st>0?1:0],ax=h.ax||2,bx=h.bt?1:0;
+  k(h.suit,X,15+ly[0],lw,ll);k('#1c1c26',X-bx,15+ll+ly[0],lw+bx,bh);k(h.suit,X+w-lw,15+ly[1],lw,ll);k('#1c1c26',X+w-lw,15+ll+ly[1],lw+bx,bh);
+  k(h.suit,X-ax,7+ay[0],ax,7);k(h.gl,X-ax,14+ay[0],ax,2);k(h.suit,X+w,7+ay[1],ax,7);k(h.gl,X+w,14+ay[1],ax,2);
+  k(h.suit,X,7,w,8);k(h.sec,X,11,w,1);k('#c9ced6',X+1,7,w-2,1);
+  if(h.st=='emu'){k(h.sec,X-ax,9+ay[0],ax,1);k(h.sec,X+w,9+ay[1],ax,1);k(h.sec,X,15+ly[0],1,ll);k(h.sec,X+w-1,15+ly[1],1,ll)}
+  if(h.st=='aces'){k(R,X-ax,10+ay[0],ax,1);k(R,X+w,10+ay[1],ax,1);k(R,X,17+ly[0],lw,1);k(R,X+w-lw,17+ly[1],lw,1)}
+  if(h.wr)k('#2a8cff',X-ax,13+ay[0],ax,1);
+  if(h.cross)k('#e8e8e8',X+w,13+ay[1],2,3),k('#d12b2b',X+w,14+ay[1],2,1);
+  if(dr=='d'){
+   if(h.st=='blue'){k('#eceff4',8,8,1,6);k('#1a3a8a',X+w-3,8,2,2);k('#d12b2b',X+w-3,9,2,1);k(h.sec,X,16,2,2)}
+   else if(h.cross){k('#fff',X+1,9,3,3);k('#d12b2b',X+2,9,1,3);k('#d12b2b',X+1,10,3,1)}
+   else{k('#fff',X+1,8,2,1);k('#d12b2b',X+w-3,9,2,2)}
+   if(h.st=='emu'){k('#9aa3b5',X+2,12,w-4,2);k('#2a8cff',X+3,13,1,1);k('#ff4d4d',X+w-4,13,1,1)}
+   if(h.strap){k('#16181f',X+1,7,1,7);k('#16181f',X+w-2,7,1,7)}
+   if(h.hose){k('#6b7280',X+1,8,1,4);k('#6b7280',X+w-2,8,1,4)}if(h.pt){k('#d12b2b',X+1,8,2,1);k('#fff',X+1,9,2,1);k('#1a3a8a',X+1,10,2,1)}if(h.shine)k('rgba(255,255,255,.4)',X+1,8,1,6);
+   k(hc,HX,0,hw,hh);if(hh<7)k('#c9ced6',6,hh,4,7-hh);
+   if(h.vt){k(h.skin,HX+1,2,hw-2,vh);k('#111',HX+2,3,1,1);k('#111',HX+hw-3,3,1,1);c.fillStyle=h.vt;c.fillRect((HX+1)*u,2*u,(hw-2)*u,vh*u)}else{k(h.vis,HX+1,2,hw-2,vh);k('rgba(255,255,255,.7)',HX+2,2,1,1)}
+   if(h.mask){k('#e86a1a',7,2+vh-1,2,1);k('#e86a1a',8,hh,1,3)}
+   k('#ffd24a',HX,3,1,1);k('#ffd24a',HX+hw-1,3,1,1);if(h.cam)k('#16181f',HX+1,1,2,1);
+  }else{
+   const bk=h.bk;if(bk=='big'){k(bp,X+1,8,w-2,7);k('#8b93a8',X+2,9,w-4,1);k(h.sec,X+1,14,w-2,1)}else if(bk=='mid'){k(bp,X+1,8,w-2,5);k(h.sec,X+1,12,w-2,1)}else if(bk=='chute'){k(h.sec,X+1,8,w-2,4);k('#16181f',X+1,8,1,6);k('#16181f',X+w-2,8,1,6)}else{k('#8b93a8',X+2,9,1,3);k('#8b93a8',X+w-3,9,1,3)}
+   k(hc,HX,0,hw,hh);if(hh<7)k('#c9ced6',6,hh,4,7-hh);k('#c9ced6',HX+1,hh-1,hw-2,1);
+  }
+  if(h.ant){k('#8b93a8',HX+hw,0,1,4);k('#e86a1a',HX+hw,0,1,1)}
+ }
+ c.restore();
+ if(dr!='s'){c.globalCompositeOperation='source-atop';c.fillStyle='rgba(0,0,40,.2)';c.fillRect(9*u,0,7*u,26*u);c.fillStyle='rgba(255,255,255,.12)';c.fillRect(2*u,0,2*u,26*u);c.globalCompositeOperation='source-over'}
+}
+const CCC={};
+function charCv(i,u,dr='d',fr=0){const key=i+'_'+u+dr+fr;if(CCC[key])return CCC[key];const w=16*u,h=26*u,a=mk(w,h);drawChar(a.getContext('2d'),CH[i],u,dr,fr);
+ const m=mk(w,h),q=m.getContext('2d');q.drawImage(a,0,0);q.globalCompositeOperation='source-in';q.fillStyle='#0b0e1c';q.fillRect(0,0,w,h);
+ const o=mk(w+2*u,h+2*u),c=o.getContext('2d');[[-u,0],[u,0],[0,-u],[0,u]].forEach(d=>c.drawImage(m,u+d[0],u+d[1]));c.drawImage(a,u,u);return CCC[key]=o}
+function rocketCv(t,u){const cv=mk(24*u,60*u),q=cv.getContext('2d'),k=(col,x,y,w,h)=>{q.fillStyle=col;q.fillRect(x*u,y*u,w*u,h*u)},W='#f4f6fa',G='#c9ced6',D='#16181f',N='#3a3f4d',O='#ff8a2b';
+ if(t==0){k(W,9,13,6,39);k(G,14,13,1,39);k(W,9,2,6,11);k(W,10,1,4,1);k(W,11,0,2,1);k(G,14,2,1,11);k(D,9,13,6,1);k(D,9,24,6,1);k(D,9,30,6,2);k(W,9,32,6,1);k('#9aa3b5',10,38,4,1);k('#9aa3b5',10,42,4,1);
+  k(D,7,33,2,2);k(D,15,33,2,2);[[8,44],[7,46],[6,48],[5,50]].forEach(a=>k('#2a2f3d',a[0],a[1],1,2));[[15,44],[16,46],[17,48],[18,50]].forEach(a=>k('#2a2f3d',a[0],a[1],1,2));
+  k(D,9,52,6,2);k(N,10,54,1,2);k(N,13,54,1,2);k(N,11,54,2,1);k('#d12b2b',9,6,1,3)}
+ if(t==1){k(O,8,12,8,42);k('#d96a14',15,12,1,42);k(W,9,28,6,1);k('#d12b2b',10,30,4,1);k(W,9,6,6,6);k(G,9,6,1,6);k(W,10,3,4,3);k(G,9,5,6,1);k(W,11,1,2,2);k(D,11,0,2,1);k('#ffd24a',11,8,2,1);
+  [4,16].forEach(x=>{k(W,x,16,4,38);k(G,x+(x<8?0:3),16,1,38);k(W,x+1,13,2,3);k(D,x+1,12,2,1);k(G,x,28,4,1);k(G,x,40,4,1);k('#d12b2b',x,20,4,1);k(N,x+1,54,2,2)});
+  k(N,9,54,6,2);k(D,9,56,1,1);k(D,11,56,1,1);k(D,12,56,1,1);k(D,14,56,1,1)}
+ if(t==2){k(G,9,4,6,22);k('#8b93a8',14,4,1,22);k(G,10,2,4,2);k(G,11,1,2,1);k(D,9,6,1,18);k('#2a2f3d',11,9,2,1);k('#2a2f3d',7,8,2,4);k('#2a2f3d',15,8,2,4);k('#2a2f3d',6,22,3,5);k('#2a2f3d',15,22,3,5);k(D,9,26,6,1);
+  k('#b8bfcc',9,27,6,27);k('#8b93a8',14,27,1,27);k('#8b93a8',9,34,6,1);k('#8b93a8',9,44,6,1);k('#2a2f3d',6,27,3,2);k('#2a2f3d',15,27,3,2);k('#7f8798',10,30,4,1);k(D,9,54,6,2);[10,11,12,13].forEach(x=>k(N,x,56,1,1))}
+ if(t==3){k(O,9,3,6,49);k('#d96a14',14,3,1,49);k(O,10,1,4,2);k('#8b93a8',11,0,2,1);k('#d12b2b',10,20,4,1);
+  k(W,15,12,4,40);k(G,18,12,1,40);k(D,16,10,2,2);k(W,15,12,4,1);k('#d12b2b',15,24,4,1);k(G,15,36,4,1);k(N,16,52,2,2);
+  k(W,5,14,4,26);k(G,8,14,1,26);k(D,6,12,2,2);k(D,6,16,2,1);k(G,6,20,1,14);k(W,3,34,2,7);k(G,2,36,3,6);k(W,3,36,5,6);k(D,3,42,5,1);k('#d0d5e0',5,38,4,2);k(N,5,41,1,2);k(N,7,41,1,2);k('#d12b2b',5,18,2,1)}
+ if(t==4){k(W,9,36,6,18);k(D,9,40,3,4);k(D,12,44,3,4);k(D,9,48,3,4);k(D,9,34,6,2);k(W,9,22,6,12);k(G,14,22,1,12);k(W,9,12,6,10);k(D,9,21,6,1);k(D,9,10,6,2);k(W,10,6,4,4);k(G,10,8,4,1);k(W,11,3,2,3);k(D,11,0,2,3);k('#d12b2b',11,2,2,1);
+  k(D,6,46,3,8);k(D,15,46,3,8);k(W,6,48,3,2);k(W,15,48,3,2);k('#d12b2b',9,28,2,1);k(N,9,54,6,2);k('#8b93a8',8,56,8,1);k(D,10,57,1,1);k(D,13,57,1,1)}
+ if(t==5){const B='#d9d6cc',S2='#a8a49a';k(B,10,10,4,44);k(S2,13,10,1,44);k(B,10,3,4,7);k(S2,13,3,1,7);k(D,10,10,4,1);k(D,11,0,2,3);k('#d12b2b',10,5,4,1);k(D,10,30,4,1);
+  [6,14].forEach(x=>{k(B,x+1,22,2,3);k(B,x,25,4,29);k(S2,x+(x>10?3:0),25,1,29);k(D,x,40,4,1);k(N,x,54,4,2);k('#d12b2b',x+1,32,2,1)});k(N,10,54,4,2);k(D,10,56,1,1);k(D,13,56,1,1)}
+ if(t==6){const BL='#2a5acb';k(W,8,22,8,32);k(G,15,22,1,32);k(BL,8,26,8,2);k(BL,8,44,8,2);k(W,8,8,8,14);k(G,15,8,1,14);k(W,9,3,6,5);k(W,10,1,4,2);k(W,11,0,2,1);k(BL,8,20,8,2);k('#2a2f3d',5,46,3,8);k('#2a2f3d',16,46,3,8);k(D,8,54,8,2);[9,10,11,12,13,14].forEach(x=>k(N,x,56,1,1))}
+ return cv}
+const E=(u,v,a,b,rx,ry)=>((u-a)/rx)**2+((v-b)/ry)**2<1;
+const FT={
+moon:(u,v,k,c)=>E(u,v,-.35,-.32,.34,.24)||E(u,v,.22,-.18,.26,.2)||E(u,v,.3,.12,.3,.2)||E(u,v,-.62,.1,.22,.42)?'#5f5f69':Math.hypot(u+.05,v-.62)<.07?'#f4f4f4':c,
+mercury:(u,v,k,c)=>E(u,v,.35,-.1,.3,.3)?'#a39689':c,
+venus:(u,v,k,c)=>Math.sin(v*9+Math.abs(u)*5+k)>.85?'#f6e6b8':c,
+mars:(u,v,k,c)=>E(u,v,.12,-.05,.22,.3)||E(u,v,-.35,.2,.18,.15)?'#7d3320':E(u,v,-.1,.52,.2,.1)?'#e6b08a':E(u,v,-.58,-.08,.07,.07)?'#e8a98a':c,
+jupiter:(u,v,k,c)=>{const B=['#e8d8c0','#c9926a','#e6d2b4','#b87a52','#ecdcc2','#a3623f','#e8d4b8','#b9805a','#e8dcc8','#c89a72','#d6c4a8'],i=Math.max(0,Math.min(10,Math.floor((v+Math.sin(u*5+v*7)*.04+1)*5.5)));
+ if(Math.abs(v)>.86)return'#8a6a55';if(E(u,v,.38,.3,.12,.065))return'#8f2f20';if(E(u,v,.38,.3,.2,.11))return'#c44a2e';if(E(u,v,.38,.3,.27,.16))return'#f0e2cc';return B[i]},
+io:(u,v,k,c)=>k>.5?'#f2ecc0':k<-.6?'#cf9a2c':c,
+europa:(u,v,k,c)=>Math.abs(Math.sin(u*8+v*5+k*2))<.06||Math.abs(Math.sin(u*5-v*9+k*3))<.05?'#9a5f45':(Math.abs(v)<.35&&k>.5?'#c2a182':c),
+ganymede:(u,v,k,c)=>E(u,v,-.2,.1,.5,.42)||E(u,v,.55,-.3,.25,.3)?'#675c52':(k>.7?'#c8c2b8':'#9d9488'),
+titan:(u,v,k,c)=>v<-.7?'#a87028':Math.abs(v-.05)<.08?'#c58f2c':(k>.5?'#e0ae4c':'#d9a441'),
+enceladus:(u,v,k,c)=>v>.55&&Math.abs(Math.sin((u+v*.4)*14))<.12?'#5fa8d6':(k>.6?'#e4eef4':'#f7fbfc'),
+triton:(u,v,k,c)=>v>.1?(Math.abs(Math.sin(u*18+k*3))<.06?'#5a4a50':'#f0d8d0'):(k>.2?'#8aa0a8':'#a9b8b2'),
+pluto:(u,v,k,c)=>{const a=(u-.2)/.3,b=-(v-.1)/.3;if(Math.pow(a*a+b*b-1,3)-a*a*b*b*b<0)return'#f1e6d6';if(E(u,v,-.5,.25,.3,.18))return'#5a3a2e';return k>.2?'#c9a98a':'#b08c72'}};
+function dia(n,col,hi){const e=mk(n,n),q=e.getContext('2d'),m=n/2;for(let r=0;r<n;r++){const h=r<m?r:n-1-r;q.fillStyle=r==Math.floor(n/4)?hi:col;q.fillRect(m-1-h,r,2+2*h,1)}return e}
+Object.assign(FT,{saturn:(u,v,k,c)=>{const B=['#e8d9a8','#d9c288','#ecdcb0','#c9b076','#e3d3a0','#d4bd84'],i=Math.max(0,Math.min(5,Math.floor((v+Math.sin(u*4+v*6)*.03+1)*3)));return Math.abs(v)>.9?'#b99a58':B[i]},
+uranus:(u,v,k,c)=>Math.abs(v)>.8?'#a5e6ea':(k>.4?'#b9f1f3':'#9fe4e6'),
+neptune:(u,v,k,c)=>E(u,v,-.25,.2,.2,.1)?'#1d2f8f':(Math.abs(Math.sin(v*14+k))<.08&&u>-.2?'#e8f0ff':(k>.3?'#4a6bff':'#3a5ae8'))});
+const PCC={};
+function planetCv(p,n){const key=p.id+'_'+n;if(PCC[key])return PCC[key];
+ const w=p.ring?n*2:n,ox=p.ring?n/2:0,e=mk(w,n),q=e.getContext('2d'),r=n/2-3,cx=n/2-.5,s=p.sd,B=[[0,2],[3,1]],f=x=>x-Math.floor(x);
+ const nz=(x,y)=>Math.sin(x*.29+s)*Math.cos(y*.23+s*2)+.5*Math.sin((x+y)*.17+s*3);
+ const nc=(p.ty=='rock'||p.ty=='mars')?(p.ty=='mars'?7:16):0,
+ cr=[...Array(nc)].map((_,i)=>{const a=Math.sin(s*9+i*7.1)*43758.5,b=Math.sin(s*5+i*3.3)*24634.6;return[3+f(a)*(n-6),3+f(b)*(n-6),1.5+f(a*b)*n*.09]});
+ for(let y=0;y<n;y++)for(let X=0;X<w;X++){const x=X-ox,dx=x-cx,dy=y-cx,d=Math.hypot(dx,dy);if(d>r)continue;
+  const k=nz(x,y);let col=p.g[k>.2?1:0],rim=0;
+  if(p.ty=='rock'&&k<-.8)col=p.g[2];
+  if(p.ty=='bands'||p.ty=='cloud'){const b=p.ty=='bands',ww=Math.sin(y*(b?.55:.24)+k*(b?1.3:2.8)+s);col=p.g[ww>.45?2:ww>-.2?1:0];if(b&&Math.abs(Math.sin(y*.55+s))<.12)col='#f3e6d0'}
+  if(p.ty=='ice'){const c1=Math.abs(Math.sin(x*.55+y*.8+k*2)),c2=Math.abs(Math.sin(x*.9-y*.5+k*3));if(c1<.08||c2<.05)col=p.g[2]}
+  const ft=FT[p.id];if(ft)col=ft(dx/r,dy/r,k,col);
+  cr.forEach(c=>{const cd=Math.hypot(x-c[0],y-c[1]);if(cd<c[2]-.4){col=p.g[2];if(p.hot&&cd<c[2]*.5)col='#ff5a1f'}else if(cd<c[2]+.9)rim=1});
+  q.fillStyle=col;q.fillRect(X,y,1,1);
+  if(rim){q.fillStyle='rgba(255,255,255,.2)';q.fillRect(X,y,1,1)}
+  const l=(dx+dy)*.6/r,t=B[y&1][x&1]*.07;if(l>.05+t){q.fillStyle='rgba(2,2,14,'+(l>.5+t?.6:.32)+')';q.fillRect(X,y,1,1)}}
+ q.fillStyle='rgba(255,255,255,.5)';q.fillRect(ox+cx-r*.5|0,cx-r*.5|0,2,1);
+ if(p.atm){q.globalAlpha=.5;q.strokeStyle=p.atm;q.lineWidth=1.5;q.beginPath();q.arc(ox+cx+.5,cx+.5,r+1.6,0,7);q.stroke();q.globalAlpha=1}
+ if(p.ring){const R1=n*.95,R2=n*.6;for(let y=0;y<n;y++)for(let X=0;X<w;X++){const ax=X-w/2,ay=(y-n/2)-ax*.12,d=Math.hypot(ax,ay/.3);if(d<R2||d>R1)continue;const front=(y-n/2)>ax*.12,bd=Math.hypot(X-ox-cx,y-cx);if(!front&&bd<r)continue;
+   const t=(d-R2)/(R1-R2);if(t>.42&&t<.5)continue;q.fillStyle=t<.42?'#9c8660':t<.85?'#e8d8b0':'#b8a47a';if(((X+y)&1)&&t>.5)q.fillStyle='#d6c394';q.fillRect(X,y,1,1)}}
+ return PCC[key]=e}
+function earthCv(n){const e=mk(n,n),q=e.getContext('2d'),r=n/2-2;
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){const dx=x-n/2,dy=y-n/2;if(Math.hypot(dx,dy)>r)continue;
+  const land=Math.sin(x*.07)*Math.cos(y*.09)+Math.sin((x+y)*.05)*.6>.35,cl=Math.sin(x*.11+y*.04)*Math.cos(y*.13-x*.05)>.62;
+  q.fillStyle=cl?'#f3f7ff':land?(Math.sin(x*.2)>.3?'#7a8f4a':'#3f9a52'):'#2a6fd6';q.fillRect(x,y,1,1);const l=(dx+dy)*.6/r;if(l>.1){q.fillStyle='rgba(0,0,20,'+Math.min(.7,(l-.1)*.9)+')';q.fillRect(x,y,1,1)}}
+ q.globalAlpha=.5;q.strokeStyle='#8fd0ff';q.lineWidth=1.5;q.beginPath();q.arc(n/2,n/2,r+.5,0,7);q.stroke();return e}
+function tex(sc,k,cv){if(sc.textures.exists(k))sc.textures.remove(k);sc.textures.addCanvas(k,cv)}
+
+/* ---------- الخلفية ---------- */
+(function(){const cv=$('bg'),c=cv.getContext('2d');let W,H,PS,st=[],moon,astro,P;
+ function rs(){PS=Math.max(2,Math.round(Math.min(innerWidth,innerHeight*1.7)/(CFG.q?300:230)));W=cv.width=Math.ceil(innerWidth/PS);H=cv.height=Math.ceil(innerHeight/PS);
+  st=[...Array(Math.floor(W*H/80))].map(()=>({x:Math.random()*W,y:Math.random()*H,s:Math.random()*.1+.02,c:Math.random(),p:Math.random()*6}));
+  const mh=Math.ceil(H*.2);moon=mk(W,mh);const q=moon.getContext('2d');
+  for(let x=0;x<W;x++){const y=Math.floor(mh*.3+Math.sin(x*.04)*2+Math.sin(x*.11)*1.2);q.fillStyle='#7d72a8';q.fillRect(x,y,1,mh-y);q.fillStyle='#a396d4';q.fillRect(x,y,1,1)}
+  for(let i=0;i<Math.floor(W/14);i++){const x=Math.random()*W,y=mh*.5+Math.random()*mh*.45,r=2+Math.random()*5;q.fillStyle='#5d5388';q.beginPath();q.ellipse(x,y,r,r*.45,0,0,7);q.fill();q.strokeStyle='#a396d4';q.lineWidth=1;q.beginPath();q.ellipse(x,y-.5,r,r*.45,0,Math.PI,0);q.stroke()}
+  astro=charCv(1,2,'u',0);P={sat:planetCv(PL.mars,32),a:planetCv(PL.mars,28),b:planetCv(PL.moon,22),n:planetCv(PL.moon,26),v:planetCv(PL.moon,16),ear:earthCv(180),rk:rocketCv(0,1)}}
+ rs();addEventListener('resize',rs);
+ (function f(t){requestAnimationFrame(f);if($('gm').classList.contains('on'))return;if(!CFG.q&&t-(f.l||0)<33)return;f.l=t;
+  const ti=$('s0').classList.contains('on'),g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,ti?'#0b0a2e':'#080b22');g.addColorStop(1,ti?'#2a1c5e':'#1a1346');c.fillStyle=g;c.fillRect(0,0,W,H);
+  if(ti){const n=c.createRadialGradient(W*.55,H*.3,0,W*.55,H*.3,W*.55);n.addColorStop(0,'rgba(100,70,220,.35)');n.addColorStop(1,'rgba(100,70,220,0)');c.fillStyle=n;c.fillRect(0,0,W,H)}
+  st.forEach(s=>{s.y=(s.y+s.s*(ti?.3:1))%H;c.globalAlpha=ti?.4+.6*(.5+.5*Math.sin(t/400+s.p)):1;c.fillStyle=s.c>.85?'#ffd9a0':s.c>.5?'#fff':'#6d78c0';c.fillRect(s.x|0,s.y|0,1,1)});c.globalAlpha=1;
+  if(ti){const sz=Math.min(H*1.15,W*.55)|0,gl=c.createRadialGradient(sz*.12,H*.5,sz*.3,sz*.12,H*.5,sz*.8);gl.addColorStop(0,'rgba(90,170,255,.3)');gl.addColorStop(1,'rgba(90,170,255,0)');c.fillStyle=gl;c.fillRect(0,0,W,H);
+   c.drawImage(P.ear,-sz*.38|0,H*.06|0,sz,sz);c.drawImage(P.sat,W*.78|0,H*.06+Math.sin(t/900)*2|0);c.drawImage(P.n,W*.06|0,H*.05+Math.sin(t/1100)*2|0);
+   c.drawImage(P.a,W*.36|0,H*.6+Math.sin(t/1000)*2|0);c.drawImage(P.b,W*.5|0,H*.64+Math.sin(t/1300)*2|0);c.drawImage(P.v,W*.44|0,H*.78|0);c.drawImage(P.n,W*.88|0,H*.52|0,16,16);
+   const x=(W*.6+(t/60)%(W*.25))|0,y=H*.28-((t/60)%(W*.25))*.5;c.save();c.translate(x,y);c.rotate(.9);c.drawImage(P.rk,0,0,6,15);c.restore();
+   const ss=(t/1000)%8;if(ss<.8){c.fillStyle='#fff';c.fillRect(W*.7-ss*W*.5|0,H*.1+ss*H*.3|0,3,1)}
+   c.drawImage(moon,0,H-moon.height);const bob=Math.sin(t/700)>.6?1:0;c.drawImage(astro,W*.1|0,H-moon.height+moon.height*.55-astro.height+bob|0)}
+  else{c.drawImage(P.a,W*.78|0,H*.14+Math.sin(t/3000)*2|0);c.drawImage(P.b,W*.1|0,H*.2|0);c.drawImage(P.ear,W*.12|0,H*.7+Math.sin(t/2500)*2|0,30,30)}
+ })(0)})();
+
+/* ---------- الواجهات ---------- */
+function go(n){$('fs').style.display=n==-1?'none':'block';['s0','s1','s2','s3','end','set','quit'].forEach(i=>$(i).classList.toggle('on',i==(n=='end'||n=='set'||n=='quit'?n:'s'+n)));if(n==2)document.querySelectorAll('#pls .card small').forEach((e,i)=>{const k=ORD[i];e.textContent=PL[k].kind+' · '+PL[k].dist+(PROG[k]?' · ★'+PROG[k]:'')});if(n==-1)MUS.set('launch');else if(n==0||n=='end')MUS.set('title')}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+function sel(box,i){[...box.children].forEach((e,j)=>e.classList.toggle('sel',i==j))}
+
+const ICN=(rows,pal,u)=>{const e=mk(rows[0].length*u,rows.length*u),q=e.getContext('2d');rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(pal[ch]){q.fillStyle=pal[ch];q.fillRect(x*u,y*u,u,u)}}));return e};
+[['i1',['..WWWW..','.WWWWWW.','WWDDDDWW','WDDBDDDW','WDDDDDDW','WWDDDDWW','.WWWWWW.','..W..W..'],{W:'#fff',D:'#1b2340',B:'#8fa6ff'}],['i2',['...WW...','.W.WW.W.','..WWWW..','WWW..WWW','WWW..WWW','..WWWW..','.W.WW.W.','...WW...'],{W:'#fff'}],['i3',['...YY...','...YY...','YYYYYYYY','.YYYYYY.','..YYYY..','.YYYYYY.','.YY..YY.','YY....YY'],{Y:'#ffd24a'}]].forEach(a=>{const c=$(a[0]),q=c.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(ICN(a[1],a[2],3),0,0)});
+$('continueGame').onclick=continueGame;$('newGame').onclick=beginNewGame;$('bset').onclick=()=>{setUI();go('set')};$('bq').onclick=()=>{go('quit');try{window.close()}catch(_){}};$('setx').onclick=()=>go(0);$('qb').onclick=()=>go(0);syncMenu();
+function setUI(){const en=(localStorage.getItem('ac_lang')||'ar')==='en',L=en?[['snd','Sound effects',['Off','On']],['mus','Music',['Off','On']],['q','Graphics',['Low','Medium','High']],['mc','Control center',['Off','On']],['mm','Mini-map',['Off','On']]]:[['snd','المؤثرات الصوتية',['إيقاف','تشغيل']],['mus','الموسيقى',['إيقاف','تشغيل']],['q','الجرافيك',['منخفض','متوسط','عالي']],['mc','مركز التحكم',['إيقاف','تشغيل']],['mm','الخريطة الصغيرة',['إيقاف','تشغيل']]];
+ $('setb').innerHTML=L.map(r=>'<div class="sr"><span>'+r[1]+'</span><div class="seg">'+r[2].map((o,i)=>'<button data-k="'+r[0]+'" data-v="'+i+'" class="'+(CFG[r[0]]==i?'on':'')+'">'+o+'</button>').join('')+'</div></div>').join('')+'<div class="sr"><span>'+(en?'Fullscreen':'ملء الشاشة')+'</span><div class="seg"><button id="sfs">'+(en?'Toggle':'تبديل')+'</button></div></div>';
+ $('setb').querySelectorAll('button[data-k]').forEach(b=>b.onclick=()=>{CFG[b.dataset.k]=+b.dataset.v;MUS.vol();if(!CFG.snd)AMB.set(null);try{localStorage.setItem('ac_cfg',JSON.stringify(CFG))}catch(_){}setUI();window.dispatchEvent(new Event('resize'))});
+ $('sfs').onclick=fsToggle}
+CH.forEach((h,i)=>{const b=document.createElement('button');b.className='card'+(i==0?' sel':'');
+ const cv=charCv(i,5);cv.style.width='90px';b.append(cv);b.insertAdjacentHTML('beforeend','<b>'+h.r+'</b><small>'+h.d+'</small>');
+ b.onclick=()=>{S.ch=i;sel($('chs'),i);saveGameProgress(document.querySelector('.scr.on')?.id||'s1')};$('chs').append(b)});
+$('nm').oninput=()=>saveGameProgress('s1');$('n1').onclick=()=>{S.name=$('nm').value.trim()||((localStorage.getItem('ac_lang')||'ar')==='en'?'Commander':'رائد');const en=(localStorage.getItem('ac_lang')||'ar')==='en';$('who').textContent=en?'Astronaut '+S.name+' · '+CH[S.ch].r:'الرائد '+S.name+' · '+CH[S.ch].r;
+ const e=$('earth').getContext('2d');e.clearRect(0,0,96,96);e.drawImage(earthCv(96),0,0);go(2);saveGameProgress('s2')};
+ORD.forEach(k=>{const p=PL[k],b=document.createElement('button');b.className='card';const cv=planetCv(p,48);cv.style.width=Math.min(cv.width*2,126)+'px';
+ b.append(cv);b.insertAdjacentHTML('beforeend','<b>'+p.n+'</b><small>'+p.kind+' · '+p.dist+'</small>');
+ b.onclick=()=>{S.pl=k;sel($('pls'),ORD.indexOf(k));$('n2').disabled=false;saveGameProgress('s2')};$('pls').append(b)});
+$('n2').onclick=()=>{const en=(localStorage.getItem('ac_lang')||'ar')==='en';$('trip').textContent=en?'Earth to '+PL[S.pl].n:'من الأرض إلى '+PL[S.pl].n;go(3);saveGameProgress('s3')};
+RK.forEach((r,i)=>{const b=document.createElement('button');b.className='card'+(i==0?' sel':'');const cv=rocketCv(i,2);cv.style.height='120px';
+ b.append(cv);b.insertAdjacentHTML('beforeend','<b>'+r.n+'</b><small>'+r.d+'</small>');b.onclick=()=>{S.rk=i;sel($('rks'),i);saveGameProgress('s3')};$('rks').append(b)});
+
+/* ---------- ملء الشاشة ---------- */
+const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',4500)}
+function fsEnter(){const e=document.documentElement,f=e.requestFullscreen||e.webkitRequestFullscreen;if(!f||fsEl())return false;
+ try{const r=f.call(e);if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(_){}}).catch(()=>toast('المتصفح منع ملء الشاشة هنا. افتح اللعبة في تبويب مستقل.'))}catch(_){}return true}
+function fsToggle(){const d=document,e=d.documentElement;if(fsEl())(d.exitFullscreen||d.webkitExitFullscreen).call(d);
+ else if(e.requestFullscreen||e.webkitRequestFullscreen)fsEnter();else toast('المتصفح ده مبيدعمش ملء الشاشة. على الآيفون: مشاركة ← إضافة إلى الشاشة الرئيسية.')}
+$('fs').onclick=fsToggle;
+addEventListener('keydown',e=>{if((e.key=='f'||e.key=='F')&&document.activeElement.tagName!='INPUT')fsToggle();if(e.key=='Escape'&&$('pn').classList.contains('on')&&$('cl'))$('cl').click()});
+['fullscreenchange','webkitfullscreenchange'].forEach(v=>document.addEventListener(v,()=>$('fs').textContent=fsEl()?'خروج من ملء الشاشة':'ملء الشاشة'));
+addEventListener('contextmenu',e=>{if(e.target.closest('#dp'))e.preventDefault()});
+
+const J={u:0,d:0,l:0,r:0},dp=$('dp'),nub=$('nub');
+function jd(e){const r=dp.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,m=Math.hypot(x,y)||1,c=Math.min(m,44);J.l=x<-16?1:0;J.r=x>16?1:0;J.u=y<-16?1:0;J.d=y>16?1:0;nub.style.transform='translate('+x/m*c+'px,'+y/m*c+'px)'}
+dp.onpointerdown=e=>{e.preventDefault();try{dp.setPointerCapture(e.pointerId)}catch(_){}jd(e)};dp.onpointermove=e=>{if(e.buttons||e.pressure)jd(e)};
+dp.onpointerup=dp.onpointercancel=()=>{J.u=J.d=J.l=J.r=0;nub.style.transform=''};
+const ac=()=>{try{AC=window.AC||(window.AC=new(window.AudioContext||window.webkitAudioContext)());if(AC.state=='suspended')AC.resume();return AC}catch(_){return null}};let AC;
+function tone(f,d,type='square',v=.05,t0=0,f2){const c=ac();if(!c||!CFG.snd)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d,v,fq,type='bandpass',t0=0){const c=ac();if(!c||!CFG.snd)return;const n=c.sampleRate*d|0,b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain(),t=c.currentTime+t0;s.buffer=b;f.type=type;f.frequency.value=fq;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}
+const SFX={ui:()=>tone(520,.04,'square',.025),ok:()=>{tone(660,.08);tone(880,.12,'square',.05,.08)},fail:()=>tone(180,.2,'sawtooth',.05,0,90),beep:()=>tone(880,.12,'square',.06),go:()=>tone(1320,.4,'square',.07),rumble:()=>noise(6,.14,160,'lowpass'),sep:()=>{noise(.35,.15,900);tone(110,.25,'sawtooth',.06,0,50)},
+ step:()=>noise(.05,.05,500+Math.random()*300),engine:()=>tone(80+Math.random()*10,.12,'sawtooth',.03),jump:()=>tone(300,.2,'sine',.05,0,700),thud:()=>noise(.14,.09,200,'lowpass'),pick:()=>{tone(988,.08,'triangle',.06);tone(1319,.14,'triangle',.06,.07)},radar:()=>tone(400,.9,'sine',.05,0,1400),mount:()=>{tone(220,.1,'square',.05);tone(330,.1,'square',.05,.1)},siren:()=>{[0,1,2,3].forEach(i=>tone(i%2?820:620,.28,'sawtooth',.06,i*.3))},windb:()=>noise(2,.14,700),boom:()=>{noise(.8,.2,120,'lowpass');tone(70,.7,'sine',.15,0,30)},quake:()=>noise(2.5,.18,90,'lowpass'),heart:()=>{tone(60,.12,'sine',.12);tone(55,.14,'sine',.1,.18)},fan:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.07,i*.12))},ach:()=>{[784,988,1175].forEach((f,i)=>tone(f,.2,'triangle',.07,i*.1))}};
+const sfx=n=>{try{(SFX[n]||(()=>{}))()}catch(_){}};
+function bp(f=660,d=.09){tone(f,d,'square',.05)}
+const AMB={n:null,set(kind){const c=ac();if(!c)return;if(this.n){try{this.n.s.stop();if(this.n.l)this.n.l.stop()}catch(_){}this.n=null}if(!kind||!CFG.snd)return;const sr=c.sampleRate,b=c.createBuffer(1,sr*2,sr),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
+ const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain(),pr=kind=='prop';s.buffer=b;s.loop=true;f.type=pr?'lowpass':'bandpass';f.frequency.value=pr?260:kind=='storm'?900:500;g.gain.value=pr?.05:kind=='storm'?.06:.012;let l=null;
+ if(pr){l=c.createOscillator();const lg=c.createGain();l.frequency.value=16;lg.gain.value=.03;l.connect(lg);lg.connect(g.gain);l.start()}s.connect(f);f.connect(g);g.connect(c.destination);s.start();this.n={s,l}}};
+const MUS={on:0,mode:'title',nx:0,bar:0,
+ start(){const c=ac();if(!c||this.on)return;this.on=1;this.m=c.createGain();this.m.gain.value=CFG.mus?.55:0;this.m.connect(c.destination);this.nx=c.currentTime+.2;this.iv=setInterval(()=>this.tick(),150)},
+ vol(){if(this.m)this.m.gain.value=CFG.mus?.55:0},set(m){this.mode=m},
+ note(f,t,d,type,v,a=.02){const c=AC,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(this.m);o.start(t);o.stop(t+d+.05)},
+ kick(t){const c=AC,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(40,t+.14);g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g);g.connect(this.m);o.start(t);o.stop(t+.2)},
+ tick(){const c=AC;if(!c||!this.m||c.state!='running')return;const M=this.mode,bpm=M=='danger'?112:M=='launch'?128:M=='title'?72:M=='gas'?66:88,b=60/bpm,n=f=>440*Math.pow(2,(f-69)/12),
+  P=M=='danger'?[[45,48,51,57],[44,47,51,56],[43,46,49,55],[42,46,49,54]]:M=='title'?[[48,55,59,64],[53,57,60,64],[45,52,57,60],[43,50,55,59]]:M=='gas'?[[45,52,57,59],[43,50,55,59],[41,48,55,57],[43,50,55,62]]:[[45,52,57,60],[41,48,53,57],[36,48,52,55],[43,50,55,59]];
+  while(this.nx<c.currentTime+1.4){const ch=P[this.bar%4],t=this.nx;ch.slice(1).forEach(x=>this.note(n(x),t,b*4,'triangle',.05,.6));this.note(n(ch[0]),t,b*2,'sine',.09);this.note(n(ch[0]),t+b*2,b*2,'sine',.07);
+   if(M!='title'){const N=M=='danger'?16:8,st=M=='danger'?b/4:b/2;for(let i=0;i<N;i++)this.note(n(ch[1+(i%3)]+12+(i>N*.75?12:0)),t+i*st,st*1.1,M=='danger'?'sawtooth':'square',M=='launch'?.03:M=='danger'?.022:.018)}
+   if(M=='launch'||M=='danger')for(let i=0;i<4;i++)this.kick(t+i*b);if(M=='title')this.note(n(ch[3]+24),t+b*2.5,b*1.8,'sine',.03,.05);
+   this.nx+=b*4;this.bar++}}};
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{MUS.start()},{once:true}));
+document.addEventListener('pointerdown',e=>{const t=e.target;if(t.closest&&t.closest('button,.card,.tb'))sfx('ui')},true);
+
+/* ---------- مركز التحكم ---------- */
+let mcT=0;
+function say(t){clearInterval(mcT);const e=$('mct');e.textContent='';let i=0;mcT=setInterval(()=>{e.textContent=t.slice(0,++i);if(i%4==0)bp(900,.012);if(i>=t.length)clearInterval(mcT)},16)}
+const FACTS=['الصوت مش بينتقل في الفراغ، عشان كده الفضاء ساكت.','درجة الحرارة في العلوم بتتقاس بالكلفن، والصفر المطلق −273 °م.','ضغط الأرض عند سطح البحر حوالي 101 كيلوباسكال.','الجاذبية بتحدد مدى ارتفاع قفزتك على أي كوكب.'];
+{const a=ICN(['..BBBB..','.BSSSSB.','BSKSSKSB','BSSSSSSB','BSSRRSSB','.BSSSSB.','..HHHH..','..H..H..'],{B:'#4de3c1',S:'#f1c27d',K:'#111',R:'#c0392b',H:'#2c3675'},3),q=$('mca').getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(a,0,0)}
+$('mcb').onclick=e=>{const q=e.target.dataset.q;if(!q)return;if(q=='where')say(GS?GS.guide():'استعد للهبوط.');else if(q=='hint')say(HINT||'اكتشف المختبرات والعينات، وأنا معاك.');else{const f=(PL[S.pl].tips||[]).concat(FACTS);say(f[Math.random()*f.length|0])}}
+function mcSet(h){mcHide=h;$('mc').style.display=h?'none':'flex';$('mcShow').style.display=h&&$('hud').classList.contains('on')?'block':'none'}
+$('mcx').onclick=()=>mcSet(true);$('mcShow').onclick=()=>mcSet(false);
+function chips(){const b=$('chips');b.innerHTML='';Object.keys(ST).forEach(k=>{const e=document.createElement('span');e.className='chip'+(done[k]?' ok':'');e.append(ICON(k,2,done[k]?'#0b2a22':ST[k].c),LABS[k].slice(6));b.append(e)});[['عينات '+SM.n+'/5',SM.n>=5],['⭐ '+XP+' · '+rank(),0]].concat(GS&&GS.sg?[['🎯 '+GS.sgn+'/'+GS.sg.n,GS.sgn>=GS.sg.n]]:[]).forEach(x=>{const e=document.createElement('span');e.className='chip'+(x[1]?' ok':'');e.textContent=x[0];b.append(e)})}
+
+/* ---------- الإطلاق ---------- */
+function startGame(resume=false){if(typeof Phaser=='undefined'){toast((localStorage.getItem('ac_lang')||'ar')==='en'?'The game engine did not load. Check your internet and reload.':'محرك اللعبة مش اتحمّل. اتأكد من الإنترنت وحدّث الصفحة.');return}if(!resume){SM.n=0;SM.photo=0;done={};XP=0;LAB={};ACH={};USED=[];HINT='';GS=null;ALLDONE=0;RESTORE_GAME=null}fsEnter();busy=false;near=null;go(-1);saveGameProgress('launch');$('hud').classList.add('on');$('mm').style.display='none';$('rad').style.display='none';$('jmp').style.display='none';$('rov').style.display='none';$('cmp').style.display='none';mcHide=!CFG.mc;$('mc').style.display=mcHide?'none':'flex';
+ $('dp').style.display='none';$('chips').innerHTML='';$('tg').innerHTML=S.name+' <span>'+CH[S.ch].r+'</span>';
+ if(!resume)say('تمام يا '+S.name+'، كل الأنظمة جاهزة. استعد للعدّ التنازلي.');
+ $('gm').classList.add('on');$('skip').style.display='block';$('act').style.display='none';
+ if(G)G.destroy(true);
+ const launch=()=>{G=new Phaser.Game({type:Phaser.AUTO,parent:'gm',width:960,height:540,pixelArt:true,roundPixels:true,fps:{target:60},render:{antialias:false,powerPreference:'high-performance'},backgroundColor:'#000',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},scene:resume?[Explore]:[Launch,Explore]})};Promise.race([document.fonts&&document.fonts.load?document.fonts.load('700 16px Cairo'):0,new Promise(r=>setTimeout(r,1200))]).catch(()=>{}).then(launch)}
+$('launch').onclick=()=>startGame(false);
+
+function groundCv(p,W,H,cell){const T=TR[p.id],w=W/cell|0,h=H/cell|0,cv=mk(w,h),c=cv.getContext('2d'),im=c.createImageData(w,h),D=im.data,sd=p.sd*13.7,hxa=x=>[parseInt(x.slice(1,3),16),parseInt(x.slice(3,5),16),parseInt(x.slice(5,7),16)],R=T.r.map(hxa),M=T.m,K=cell*T.sc;
+ const hs=(x,y)=>{const n=Math.sin(x*127.1+y*311.7+sd)*43758.5453;return n-Math.floor(n)};
+ const vn=(x,y)=>{const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=hs(xi,yi),b=hs(xi+1,yi),c1=hs(xi,yi+1),d=hs(xi+1,yi+1);return a+(b-a)*u+(c1-a)*v+(a-b-c1+d)*u*v};
+ const fb=(x,y)=>vn(x,y)*.5+vn(x*2.1,y*2.1)*.28+vn(x*4.3,y*4.3)*.15+vn(x*8.9,y*8.9)*.07,cl01=v=>Math.max(0,Math.min(1,v));
+ const gc=T.g?hxa(T.g):0,cc=T.cc?hxa(T.cc):0,lk=T.lk?hxa(T.lk):0;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const wx=x*cell,wy=y*cell;let v=fb(x*K,y*K),o=null;if(M!='cloud')v=cl01(v+(vn(x*K*.22+77,y*K*.22)-.5)*.4);
+  if(M=='cloud'){const t=x/w,s2=y*K*.45;v=.5+.5*Math.sin(wy*.014+(fb(x*K*.5,s2)*(1-t)+fb((x-w)*K*.5,s2)*t)*6)}
+  else if(M=='dune')v=cl01(v+.2*Math.sin(wx*.014+wy*.007+v*9));
+  else if(M=='groove')v=cl01(v+.16*Math.sin(wx*.05+v*14));
+  else if(M=='lava'){if(Math.abs(fb(x*K*2.4+9,y*K*2.4)-.5)<.018)o=gc}
+  else if(M=='crack'){if(Math.abs(Math.sin(fb(x*K*1.5,y*K*1.5)*16+wx*.003))<.05)o=cc}
+  if(lk&&fb(x*K*.7+50,y*K*.7)<.27)o=lk;
+  if(T.ht){const a=(wx-W*.62)/(W*.07),b=-(wy-H*.4)/(W*.07);if(Math.pow(a*a+b*b-1,3)-a*a*b*b*b<0)o=[236,225,208]}
+  const d=(((x&1)+((y&1)<<1))*.25-.35)*.6,col=o||R[Math.max(0,Math.min(4,Math.floor(v*5+d)))],i=(y*w+x)*4;D[i]=col[0];D[i+1]=col[1];D[i+2]=col[2];D[i+3]=255}
+ c.putImageData(im,0,0);
+ const NC=Math.round(T.cr*W*H/3840000);for(let i=0;i<NC;i++){const x=Math.random()*w,y=Math.random()*h,r=(2+Math.random()*Math.random()*14)*4/cell;
+  c.fillStyle='rgba(0,0,0,.3)';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.fillStyle='rgba(0,0,0,.18)';c.beginPath();c.arc(x+r*.2,y+r*.2,r*.75,0,7);c.fill();
+  c.strokeStyle='rgba(255,255,255,.22)';c.lineWidth=Math.max(1,r*.15);c.beginPath();c.arc(x,y,r,Math.PI*.9,Math.PI*1.9);c.stroke()}
+ return cv}
+
+/* ---------- الإطلاق ---------- */
+const SIG={moon:{t:'عواكس الليزر',ty:'deploy',n:3,col:'#9fd8ff',it:'عاكس ليزر',g:'a6',f:'عواكس أبولو لسه بتُستخدم لقياس المسافة للقمر بدقة سنتيمترات.'},
+ mercury:{t:'مجسّات الحرارة',ty:'deploy',n:3,col:'#ff8a5c',it:'مجسّ حرارة',g:'p2',f:'عطارد فيه فوهات عند القطبين ظلها دايم وفيها جليد ماء رغم قرب الشمس.'},
+ venus:{t:'سحب الحمض',ty:'collect',n:3,col:'#e8d24a',it:'عينة سحابة حمضية',f:'سحب الزهرة من حمض الكبريتيك.'},
+ mars:{t:'شبكة السيزمومتر',ty:'deploy',n:3,col:'#ffb347',it:'سيزمومتر',g:'s6',f:'مسبار InSight سجّل زلازل المريخ وكشف تركيب قلبه.'},
+ jupiter:{t:'خلايا البرق',ty:'collect',n:4,col:'#ffffff',it:'خلية برق',f:'البرق على المشتري أقوى بكتير من برق الأرض.'},
+ saturn:{t:'جسيمات الحلقات',ty:'collect',n:4,col:'#e8d8b0',it:'عنقود جليد',f:'حلقات زحل معظمها جليد ماء.'},
+ uranus:{t:'مجسّات الميل',ty:'deploy',n:3,col:'#9fe4e6',it:'مجسّ مغناطيسي',g:'a6',f:'مجال أورانوس مائل ومزاح عن مركز الكوكب.'},
+ neptune:{t:'مطر الألماس',ty:'collect',n:4,col:'#c0ccff',it:'قطرة كربون',f:'العلماء بيتوقعوا إن الضغط العميق في نبتون ممكن يكوّن ألماس.'},
+ io:{t:'بلورات الكبريت',ty:'collect',n:3,col:'#f2ecc0',it:'بلورة كبريت',f:'ألوان آيو من مركبات الكبريت البركانية.'},
+ europa:{t:'مثاقب الجليد',ty:'deploy',n:3,col:'#cde8ff',it:'مثقاب جليد',g:'p2',f:'تحت قشرة أوروبا محيط مالح ضخم.'},
+ ganymede:{t:'مقاييس المجال',ty:'deploy',n:3,col:'#c8a0ff',it:'مقياس مجال',g:'a6',f:'جانيميد القمر الوحيد المعروف بمجال مغناطيسي ذاتي.'},
+ titan:{t:'بحيرات الميثان',ty:'collect',n:3,col:'#4a7ad0',it:'عينة ميثان سائل',f:'تيتان فيه بحيرات وأنهار من الميثان السائل.'},
+ enceladus:{t:'نافورات البخار',ty:'collect',n:3,col:'#9fe4ff',it:'عينة نافورة',f:'نافورات إنسيلادوس بتغذي حلقة E لزحل.'},
+ triton:{t:'مراقبو الغيزر',ty:'deploy',n:3,col:'#ffd0e0',it:'مراقب غيزر',g:'s6',f:'تريتون فيه غيزر نيتروجين بيطلع لارتفاعات كبيرة.'},
+ pluto:{t:'جليد القلب',ty:'collect',n:3,col:'#fff0dd',it:'عينة جليد نيتروجين',f:'قلب بلوتو سهل جليد نيتروجين اسمه سبوتنيك بلانيشيا.'}};
+const SPEC={moon:['a5','عدّاد النيازك','☄️'],mercury:['t5','خريطة الحرارة','🗺️'],venus:['t4','تبريد المسبار','🧊'],mars:['s5','كاشف الصدأ','🔴'],jupiter:['r1','عاصفة الإشعاع','⚡'],saturn:['s4','فرز حبيبات الحلقات','💍'],uranus:['r2','محاذاة المجال المائل','🧲'],neptune:['a4','قياس الرياح الفائقة','🌀'],io:['p4','سد تسريبات الكبريت','🌋'],europa:['s2','طبقات الجليد','❄️'],ganymede:['r2','بوصلات المجال','🧭'],titan:['a','صيد الميثان','🛢️'],enceladus:['a5','عدّ جزيئات النافورة','💧'],triton:['p5','توقيت الغيزر','💨'],pluto:['s3','مطابقة جليد القلب','💗']};
+const EVS={moon:['solar'],mercury:['solar'],venus:['wind','quake'],mars:['dust','solar'],jupiter:['wind','solar'],saturn:['wind'],uranus:['wind'],neptune:['wind'],io:['lava','solar'],europa:['quake','solar'],ganymede:['solar','quake'],titan:['wind','quake'],enceladus:['quake'],triton:['quake','wind'],pluto:['quake']};
+const EVD={dust:{t:'عاصفة ترابية',ic:'🌪️',tint:'#c8643a',warn:'رادار الغلاف الجوي رصد جبهة غبار ضخمة!',hit:'العاصفة وصلت! اجري للملجأ!',game:'run',sec:18,sfx:'windb'},
+ wind:{t:'رياح عاتية',ic:'💨',tint:'#9fd8ff',warn:'رياح شديدة السرعة في الطريق!',hit:'الرياح بتسحبك! ثبّت نفسك!',game:'brace',sec:22,sfx:'windb'},
+ solar:{t:'عاصفة شمسية',ic:'☀️',tint:'#ffd24a',warn:'انفجار شمسي مرصود، الإشعاع هيوصل بعد لحظات!',hit:'الإشعاع وصل! فعّل الدرع!',game:'shield',sec:26,sfx:'boom'},
+ lava:{t:'ثوران بركاني',ic:'🌋',tint:'#ff5a1f',warn:'اهتزازات بركانية قوية تحت أقدامك!',hit:'قنابل حمم بتتساقط! اتفادى!',game:'dodge',sec:20,sfx:'boom'},
+ quake:{t:'زلزال',ic:'🫨',tint:'#aab2c8',warn:'اهتزازات أرضية متصاعدة!',hit:'الأرض بتهتز! اتوازن!',game:'balance',sec:24,sfx:'quake'}};
+const LORE={moon:'مسبار لونا 9 السوفيتي: أول هبوط ناعم على القمر (1966).',mercury:'حطام ميسنجر: المسبار اللي دار حوالين عطارد ثم ارتطم بسطحه عام 2015.',venus:'فينيرا 13 السوفيتية: صوّرت سطح الزهرة وعاشت أقل من ساعتين (1982).',mars:'مركبة سوجورنر (1997): أول روفر ناجح على المريخ.',jupiter:'مسبار غاليليو دخل غلاف المشتري سنة 1995 وبعتلنا بيانات لحد ما اتدمر.',saturn:'كاسيني ختم مهمته بالغطس في زحل سنة 2017.',uranus:'فوياجر 2 هو المسبار الوحيد اللي مرّ بجانب أورانوس (1986).',neptune:'فوياجر 2 زار نبتون سنة 1989 واكتشف البقعة المظلمة.',io:'غاليليو مرّ قريب من آيو وصوّر براكينها.',europa:'غاليليو لقى أدلة على محيط تحت جليد أوروبا.',ganymede:'غاليليو اكتشف المجال المغناطيسي لجانيميد سنة 1996.',titan:'هويجنز هبط على تيتان سنة 2005 وبعت صور من سطحه.',enceladus:'كاسيني طار داخل نافورات إنسيلادوس وأخد عينات.',triton:'فوياجر 2 صوّر غيزر تريتون سنة 1989.',pluto:'نيو هورايزنز مرّ ببلوتو سنة 2015 وكشف قلبه.'};
+function landerCv(t){const cv=mk(48,63),q=cv.getContext('2d'),k=(c,x,y,w,h)=>{q.fillStyle=c;q.fillRect(x*3,y*3,w*3,h*3)},W='#f4f6fa',G='#c9ced6',D='#16181f',N='#3a3f4d',Y='#e8b830',B='#1c2c6b',L='#4a6bd0',S='#6b7280';
+ if(t==0){k(W,6,1,4,2);k(W,5,3,6,4);k(W,4,7,8,5);k(G,11,7,1,5);k(D,4,12,8,2);k(N,5,14,6,3);k(S,2,10,2,8);k(S,12,10,2,8);k(G,1,18,4,1);k(G,11,18,4,1);k(D,7,17,2,2);k(L,6,4,1,1)}
+ if(t==1){k(W,6,2,4,3);k(W,5,5,6,3);k(G,4,8,8,6);k(N,5,14,6,2);k(B,0,8,4,5);k(L,1,9,2,3);k(B,12,8,4,5);k(L,13,9,2,3);k(S,3,15,2,4);k(S,11,15,2,4);k(G,2,19,4,1);k(G,10,19,4,1);k(D,7,16,2,2)}
+ if(t==2){k(G,6,0,4,2);k('#b8bfcc',5,2,6,14);k('#8b93a8',10,2,1,14);k(D,5,3,1,12);k(N,3,4,2,4);k(N,11,4,2,4);k(N,2,13,3,4);k(N,11,13,3,4);k(D,6,16,4,1);k(S,4,17,2,3);k(S,10,17,2,3);k(D,7,17,2,2)}
+ if(t==3){k(W,6,1,4,12);k(D,6,0,4,1);k(D,7,3,2,1);k(W,2,8,4,6);k(W,10,8,4,6);k(W,0,12,16,3);k(D,0,15,16,1);k(W,7,10,2,5);k(N,7,15,2,2);k(S,3,16,1,3);k(S,12,16,1,3);k(S,8,17,1,2)}
+ if(t==4){k(Y,3,9,10,5);k('#b08a1a',3,13,10,1);k(G,5,3,6,6);k('#2a2f3d',6,5,4,2);k(G,4,2,8,1);k(N,7,14,2,2);k(S,1,13,2,6);k(S,13,13,2,6);k(G,0,19,4,1);k(G,12,19,4,1);k(S,4,14,1,5);k(S,11,14,1,5)}
+ if(t==5){k(G,5,2,6,3);k(W,4,5,8,5);k('#d9d6cc',3,10,10,5);k(D,4,15,8,2);k(B,0,6,3,6);k(L,0,7,2,4);k(B,13,6,3,6);k(L,14,7,2,4);k(S,3,17,2,3);k(S,11,17,2,3);k(G,2,20,4,1);k(G,10,20,4,1)}
+ if(t==6){k(W,5,1,6,14);k('#2a5acb',5,5,6,2);k('#2a5acb',5,11,6,2);k(G,10,1,1,14);k(N,6,15,4,2);k(S,2,14,3,6);k(S,11,14,3,6);k(G,0,20,5,1);k(G,11,20,5,1);k(D,7,17,2,2)}
+ return cv}
+function cut(o,cb){busy=true;const e=$('cut');e.style.setProperty('--c',o.col||'#ff5a3a');$('cuti').textContent=o.ic||'';$('cutt').textContent=o.title||'';$('cuts').textContent=o.sub||'';e.classList.remove('on');void e.offsetWidth;e.classList.add('on');if(o.sfx)sfx(o.sfx);if(o.sfx2)setTimeout(()=>sfx(o.sfx2),900);
+ setTimeout(()=>{e.classList.remove('on');setTimeout(()=>{busy=false;if(cb)cb()},450)},(o.sec||3)*1000)}
+const EVG={
+run(b,win,lose){let p=0,st=0,last='',id,lt=performance.now();b.innerHTML='<p class="sub">اجري للملجأ! دوس ⬅️➡️ بالتبادل أسرع من العاصفة</p><div class="bar"><i id="pp" style="background:#4de3c1"></i></div><div class="sub">إنت</div><div class="bar"><i id="ps2" style="background:#ff6b8b"></i></div><div class="sub">العاصفة</div><div class="row"><button class="btn" data-s="L" style="min-width:110px;min-height:64px">⬅️</button><button class="btn" data-s="R" style="min-width:110px;min-height:64px">➡️</button></div>';
+ b.querySelectorAll('[data-s]').forEach(x=>{x.style.touchAction='none';x.onpointerdown=e=>{e.preventDefault();const s=x.dataset.s;if(s!=last){last=s;p+=4.5;bp(500+p*4,.04)}else{p=Math.max(0,p-2);bp(180,.05)}$('pp').style.width=Math.min(100,p)+'%';if(p>=100){cancelAnimationFrame(id);win()}}});
+ const lp=t=>{const dt=Math.min(.05,(t-lt)/1000);lt=t;st+=dt*7;$('ps2').style.width=Math.min(100,st)+'%';if(st>=100){cancelAnimationFrame(id);lose();return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+brace(b,win,lose){let lives=3,n=0,tt,cur=-1;b.innerHTML='<p class="sub">رياح عاتية! لما تشوف اتجاه الهبّة دوس على نفس الاتجاه عشان تثبّت نفسك (5 هبّات، 3 أرواح)</p><div class="big" id="gu" style="font-size:54px;min-height:70px">…</div><div class="row"><button class="btn" data-d="0" style="min-width:110px;min-height:64px">⬅️</button><button class="btn" data-d="1" style="min-width:110px;min-height:64px">➡️</button></div><div class="sub" id="gs"></div>';
+ const draw=()=>{$('gs').textContent='❤️'.repeat(Math.max(0,lives))+' · '+n+'/5'};
+ const nx=()=>{if(n>=5){win();return}cur=-1;$('gu').textContent='…';tt=setTimeout(()=>{cur=Math.random()<.5?0:1;$('gu').textContent=cur?'💨➡️':'💨⬅️';bp(300,.2);tt=setTimeout(()=>{if(cur>=0){lives--;draw();bp(180,.3);cur=-1;if(lives<=0)lose();else nx()}},950)},700+Math.random()*900)};
+ b.querySelectorAll('[data-d]').forEach(x=>{x.style.touchAction='none';x.onpointerdown=e=>{e.preventDefault();if(cur<0)return;const d=+x.dataset.d;clearTimeout(tt);if(d!=cur){lives--;bp(180,.2)}else{n++;bp(880)}cur=-1;draw();if(lives<=0)lose();else nx()}});mgStop=()=>clearTimeout(tt);draw();nx()},
+dodge(b,win,lose){let lane=1,hit=0,tm=14,list=[],id,lt=performance.now(),acc=0;b.innerHTML='<p class="sub">قنابل حمم! اتحرك بين 3 مسارات وتفادى (اصمد 14 ثانية، 3 إصابات تفشلك)</p><div class="arena" id="ar" style="height:210px"><div id="pl" style="position:absolute;bottom:4px;width:33.3%;text-align:center;font-size:34px">🧑‍🚀</div></div><div class="row"><button class="btn" id="L" style="min-width:90px;min-height:60px">⬅️</button><button class="btn" id="R" style="min-width:90px;min-height:60px">➡️</button></div><div class="sub" id="ds"></div>';
+ const ar=$('ar'),pl=$('pl'),mv=()=>{pl.style.left=(lane*33.33)+'%'};mv();$('L').style.touchAction=$('R').style.touchAction='none';$('L').onpointerdown=e=>{e.preventDefault();lane=Math.max(0,lane-1);mv()};$('R').onpointerdown=e=>{e.preventDefault();lane=Math.min(2,lane+1);mv()};
+ const sp=()=>{const l=Math.random()*3|0,e=document.createElement('i');e.textContent='🔥';e.style.cssText='position:absolute;top:0;font-size:30px;width:33.3%;text-align:center;left:'+(l*33.33)+'%';ar.append(e);list.push({e,l,y:-30,v:150+Math.random()*80})};
+ const lp=t=>{const dt=Math.min(.05,(t-lt)/1000);lt=t;acc+=dt;tm-=dt;if(acc>.55){acc=0;sp()}const h=ar.clientHeight||210;
+  list.forEach(o=>{o.y+=o.v*dt;o.e.style.transform='translateY('+o.y+'px)';if(o.y>h-46&&o.y<h-6&&o.l==lane&&!o.dead){o.dead=1;o.e.remove();hit++;bp(180,.25)}if(o.y>h&&!o.dead){o.dead=1;o.e.remove()}});list=list.filter(o=>!o.dead);
+  $('ds').textContent='الوقت '+Math.max(0,Math.ceil(tm))+' · إصابات '+hit+'/3';if(hit>=3){lose();return}if(tm<=0){win();return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+balance(b,win,lose){let x=0,v=0,ok=0,id,lt=performance.now();b.innerHTML='<p class="sub">الأرض بتهتز! دوس ⬅️➡️ عشان تفضل في النص 9 ثواني (تراكمي)</p><div class="gauge" style="height:34px"><i style="left:35%;right:35%"></i><b id="nd" style="left:50%"></b></div><div class="row"><button class="btn" id="L" style="min-width:110px;min-height:64px">⬅️</button><button class="btn" id="R" style="min-width:110px;min-height:64px">➡️</button></div><div class="bar"><i id="pr"></i></div>';
+ $('L').style.touchAction=$('R').style.touchAction='none';$('L').onpointerdown=e=>{e.preventDefault();v-=.55;bp(300,.03)};$('R').onpointerdown=e=>{e.preventDefault();v+=.55;bp(380,.03)};
+ const lp=t=>{const dt=Math.min(.05,(t-lt)/1000);lt=t;v+=(Math.sin(t/260)*.9+(Math.random()-.5)*1.4)*dt*2.2;v*=.992;x+=v*dt*40;if(Math.abs(x)>50){x=Math.sign(x)*50;v=0}$('nd').style.left=(50+x)+'%';if(Math.abs(x)<15)ok+=dt;$('pr').style.width=Math.min(100,ok/9*100)+'%';if(ok>=9){win();return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)}};
+const GCH={};function getGround(p){const cell=[6,5,4][CFG.q],key=p.id+cell;return GCH[key]||(GCH[key]=groundCv(p,3600,2400,cell))}
+class Launch extends Phaser.Scene{
+ constructor(){super('Launch')}
+ create(){this.t=0;this.g=this.add.graphics().setDepth(0);this.fin=false;this.k='rkb'+Math.random();this.bc=rocketCv(S.rk,3);this.bt=this.textures.addCanvas(this.k,this.bc);
+  tex(this,'pp',planetCv(PL[S.pl],96));tex(this,'ea',earthCv(64));
+  this.rk=this.add.image(480,340,this.k).setScale(1.5).setDepth(3);this.ev=STG[S.rk].map(e=>({...e,done:0}));this.bot=60;this.parts=[];
+  this.pln=this.add.image(480,-200,'pp').setDepth(1);this.ea=this.add.image(480,900,'ea').setScale(14).setDepth(1);
+  this.stars=[...Array(CFG.q?90:40)].map(()=>({x:rnd(0,960),y:rnd(0,540),s:rnd(1,3)}));this.sm=[];
+  this.cl=[...Array(7)].map(()=>({x:rnd(0,960),y:rnd(-300,500),w:rnd(80,180)}));
+  setTimeout(()=>getGround(PL[S.pl]),60);$('skip').onclick=()=>this.finish();$('cd').style.display='block';$('ph').style.display='block'}
+ finish(){if(this.fin)return;this.fin=true;this.cameras.main.fadeOut(500);this.cameras.main.once('camerafadeoutcomplete',()=>this.scene.start('Explore'))}
+ deployLander(){const l='ld'+Math.random();tex(this,l,landerCv(S.rk));this.sep({rs:[[0,0,24,60]],vx:[-30],bot:0,m:'اللاندر انفصل وكمّل رحلته لوحده'});this.lk=this.add.image(this.rk.x,this.rk.y,l).setScale(1.4).setDepth(3).setAlpha(0);this.tweens.add({targets:this.lk,alpha:1,duration:400});say('الصاروخ خلّص مهمته. اللاندر بس هو اللي هيهبط على '+PL[S.pl].n+'.')}
+ sep(e){const u=3,bc=this.bc,q=bc.getContext('2d');
+  e.rs.forEach((r,i)=>{const x=r[0]*u,y=r[1]*u,w=r[2]*u,h=r[3]*u,pc=mk(bc.width,bc.height);pc.getContext('2d').drawImage(bc,x,y,w,h,x,y,w,h);q.clearRect(x,y,w,h);
+   const key='pt'+Math.random();tex(this,key,pc);const im=this.add.image(this.rk.x,this.rk.y,key).setScale(1.5).setDepth(2);this.parts.push({im,vx:e.vx[i]||0,vy:30,sp:(e.vx[i]||8)*.9,life:3})});
+  this.bt.refresh();this.bot=e.bot;this.lab=e.m;this.labT=this.t;say(e.m);sfx('sep');
+  const f=this.add.circle(this.rk.x,this.rk.y-135+e.bot*4.5,18,0xffffff,.85).setDepth(4);this.tweens.add({targets:f,scale:3,alpha:0,duration:420,onComplete:()=>f.destroy()})}
+ update(_,dt){dt/=1000;this.t+=dt;const t=this.t,g=this.g;g.clear();
+  const k=Phaser.Math.Clamp((t-3)/7,0,1),lp=(a,b,f)=>Math.round(a+(b-a)*f),e1=Math.min(1,k*1.5),A=[lp(70,2,e1),lp(150,3,e1),lp(235,12,e1)],Bc=[lp(170,2,k),lp(220,4,k),lp(255,16,k)];
+  for(let i=0;i<20;i++){const f=i/19;g.fillStyle(Phaser.Display.Color.GetColor(lp(A[0],Bc[0],f),lp(A[1],Bc[1],f),lp(A[2],Bc[2],f)),1);g.fillRect(0,i*27,960,28)}
+  g.fillStyle(0xffffff,1);const sa=Phaser.Math.Clamp((t-6)/3,0,1);g.fillStyle(0xffffff,sa);this.stars.forEach(s=>{s.y=(s.y+s.s*(t>3?1.2:0))%540;g.fillRect(s.x,s.y,s.s>2?3:2,s.s>2?3:2)});
+  const a=Math.max(0,t-3),sc=a*a*45;
+  if(t<8){g.fillStyle(0xffffff,.8*(1-k));this.cl.forEach(c=>{const y=(c.y+sc*1.3)%700-100;g.fillRect(c.x,y,c.w,12);g.fillRect(c.x+14,y-10,c.w*.6,10)});
+   const gy=440+sc;g.fillStyle(0xffe9a8,1);g.fillCircle(830,130+sc*.4,34);g.fillStyle(0x3d6a8a,1);g.fillTriangle(0,gy,170,gy-120,340,gy);g.fillTriangle(560,gy,740,gy-150,960,gy);g.fillStyle(0x2f566f,1);g.fillTriangle(200,gy,330,gy-70,460,gy);
+   g.fillStyle(0x3b7a4a,1);g.fillRect(0,gy,960,200);g.fillStyle(0x58657a,1);g.fillRect(380,gy-6,200,14);g.fillStyle(0xc9533a,1);g.fillRect(340,gy-300,16,300);g.fillRect(340,gy-250,40,6);g.fillRect(340,gy-170,40,6)}
+  if(t>2){this.sm=this.sm.filter(s=>s.a>0);if(t<4&&Math.random()<.9)this.sm.push({x:480+rnd(-60,60),y:440+sc+rnd(-8,8),r:rnd(14,30),a:.7,vx:rnd(-90,90)});
+   this.sm.forEach(s=>{s.a-=dt*.35;s.r+=dt*30;s.x+=s.vx*dt;g.fillStyle(0xdde3ee,Math.max(0,s.a));g.fillCircle(s.x,s.y,s.r)})}
+  const sh=t>3?Math.sin(t*60)*(t<7?2:.6):0;this.rk.x=480+sh;this.rk.y=340-Math.min(80,a*14);if(this.lk){this.lk.x=this.rk.x;this.lk.y=this.rk.y-10}
+  this.ev.forEach(e=>{if(!e.done&&t>e.t){e.done=1;this.sep(e)}});
+  if(t>2.5&&!this.rum){this.rum=1;sfx('rumble')}
+  if(t>2.5){const l=36+rnd(0,26),sx=gx=>this.rk.x-54+gx*4.5,by=this.rk.y-135+this.bot*4.5,fl=(x,y,len,w,c)=>{g.fillStyle(c[1],1);g.fillTriangle(x-w,y,x+w,y,x,y+len+20);g.fillStyle(c[0],1);g.fillTriangle(x-w*.6,y,x+w*.6,y,x,y+len);g.fillStyle(0xffffff,1);g.fillTriangle(x-w*.25,y,x+w*.25,y,x,y+len*.5)};
+   if(this.bot>20)fl(sx(FX[S.rk]),by,l,FW[S.rk],FC[S.rk]);FL2[S.rk].forEach(f=>{if(t<f[1])fl(sx(f[0]),this.rk.y-135+54*4.5,l*.8,6,FC[S.rk])});if(this.lk)fl(this.rk.x,this.rk.y+26,8+rnd(0,8),5,[0x9fd8ff,0x4aa8ff])}
+  if(t>9.3&&!this.lnd){this.lnd=1;this.deployLander()}
+  this.parts=this.parts.filter(p=>p.life>0);this.parts.forEach(p=>{p.vy+=260*dt;p.im.x+=p.vx*dt;p.im.y+=p.vy*dt;p.im.angle+=p.sp*dt;p.life-=dt;p.im.setAlpha(Phaser.Math.Clamp(p.life,0,1));if(p.life<=0)p.im.destroy()});
+  if(t>6){this.ea.y=900+(t-6)*45;this.ea.setAlpha(Phaser.Math.Clamp(1-(t-12)/3,0,1))}
+  if(t>9){const f=Phaser.Math.Clamp((t-9)/6,0,1);this.pln.y=-120+f*270;this.pln.setScale(.3+f*2.1)}
+  const cd=$('cd'),ph=$('ph');if(t<3){const n=Math.ceil(3-t);cd.textContent=n;if(n!=this.cn){this.cn=n;sfx('beep')}}else if(t<4.2){cd.textContent='GO!';if(!this.go){this.go=1;sfx('go')}}else cd.style.display='none';
+  ph.textContent=(this.lab&&t-this.labT<2.4)?this.lab:t<3?'منصة الإطلاق':t<5?'تروبوسفير: الطقس والسحاب':t<7?'ستراتوسفير: طبقة الأوزون':t<9?'خرجنا من الغلاف الجوي':'اللاندر في الطريق إلى '+PL[S.pl].n;
+  if(t>3&&!this.m1){this.m1=1;say('انطلقنا! بنعدّي الغلاف الجوي دلوقتي، وده أصعب جزء في الرحلة.')}
+  if(t>9&&!this.m2){this.m2=1;say('خرجنا للفضاء. '+PL[S.pl].tips[0])}
+  if(t>15)this.finish()}
+}
+
+/* ---------- الاستكشاف ---------- */
+const ROVP=['moon','mars','mercury','titan'];
+function campCv(k,c){const e=mk(96,80),q=e.getContext('2d'),f=(col,x,y,w,h)=>{q.fillStyle=col;q.fillRect(x,y,w,h)};
+ f('rgba(0,0,0,.3)',4,70,88,8);f('#7a7f93',4,64,88,6);f('#5b6075',4,68,88,2);
+ const cr=(x,y)=>{f('#8a6a3a',x,y,10,9);f('#a8864c',x,y,10,2);f('#5b431f',x+4,y+2,2,7)},sol=(x,y)=>{f('#1c2c6b',x,y,20,9);for(let i=0;i<3;i++)f('#4a6bd0',x+1+i*6,y+1,5,7);f('#9aa3b5',x+9,y+9,2,5)},fl=(x,y)=>{f('#ddd',x,y,1,16);f(c,x+1,y,10,5);f('#fff',x+1,y+5,10,4)},dome=(cx,top,ws,col,sh)=>ws.forEach((w,i)=>{f(col,cx-w/2,top+i*4,w,4);f(sh,cx+w/2-4,top+i*4,4,4)});
+ if(k=='p'){dome(36,26,[12,22,28,32,34,36,36,36,36,36],'#e8ecf6','#bfc7da');f('#2a3050',29,50,14,14);f(c,24,32,6,6);f('#9aa3b5',70,24,3,40);f('#fff',64,12,16,16);f(c,69,17,6,6);f('#111',71,14,2,8);sol(52,40);cr(76,56);fl(14,10)}
+ if(k=='t'){f('#cfd6e6',8,34,56,30);f('#aab2c8',8,34,56,5);for(let i=0;i<5;i++)f('#9aa3b5',14+i*11,42,2,20);f('#2a3050',46,46,14,18);[0,1,2].forEach(i=>f('#b0b8c8',68,40+i*8,10,5));f('#eee',82,16,5,48);f('#ff4d4d',83,32,3,32);f('#ff4d4d',81,60,7,7);sol(10,12);fl(52,18)}
+ if(k=='s'){for(let j=0;j<18;j++)f(j%6<3?'#e8a24a':'#d48a30',32-j*1.7,30+j*2,j*3.4,2);f('#2a3050',28,56,8,10);f('#555e75',66,14,4,52);for(let i=0;i<4;i++)f('#9aa3b5',62,20+i*10,12,2);f('#ffd24a',64,8,8,6);f('#8a7a66',50,60,12,5);cr(6,56);fl(44,6)}
+ if(k=='a'){f('#9aa3b5',44,12,4,54);f('#ff7a1a',48,20,18,5);f('#fff',56,20,4,5);f('#e8ecf6',8,44,26,22);f(c,6,40,30,6);f('#2a3050',16,52,8,14);sol(60,44);fl(70,12)}
+ if(k=='w'){f('#9aa3b5',16,8,60,4);f('#7a7f93',16,8,4,58);f('#7a7f93',72,8,4,58);f('#ddd',46,12,2,32);f(c,41,44,12,12);cr(26,56);sol(54,46);fl(78,4)}
+ if(k=='r'){f('#e8ecf6',8,38,36,28);for(let i=0;i<9;i++)f(i%2?'#111':'#ffd24a',8+i*4,38,4,5);f('#2a3050',20,50,12,16);f('#cfd6e6',56,30,26,4);f('#9aa3b5',68,34,3,30);f('#ffd24a',58,46,18,16);f('#111',65,50,4,4);f('#111',62,56,10,2);sol(44,16);fl(12,16)}
+ return e}
+function hovCv(){const e=mk(64,28),q=e.getContext('2d'),f=(c,x,y,w,h)=>{q.fillStyle=c;q.fillRect(x,y,w,h)};f('#5b6075',4,12,56,10);f('#9aa3b5',6,10,52,8);f('#c9ced6',8,10,48,3);f('#2c3558',10,18,44,4);[8,20,32,44].forEach(x=>f('#4de3c1',x,19,3,2));f('#3a3f4d',0,6,10,4);f('#3a3f4d',54,6,10,4);f('#3a3f4d',4,22,8,4);f('#3a3f4d',52,22,8,4);f('#222',26,22,12,5);return e}
+function roverCv(w){const e=mk(48,30),q=e.getContext('2d'),f=(c,x,y,ww,h)=>{q.fillStyle=c;q.fillRect(x,y,ww,h)};f('#cfd6e6',6,10,34,10);f('#9aa3b5',6,18,34,3);f('#4de3c1',28,4,10,6);f('#1c2c6b',4,2,18,6);f('#4a6bd0',6,3,4,4);f('#4a6bd0',12,3,4,4);f('#4a6bd0',17,3,4,4);f('#9aa3b5',34,0,1,6);f('#ff4d4d',33,0,3,2);
+ [10,24,38].forEach(x=>{f('#16181f',x-5,18,10,10);f('#555e75',x-3,20,6,6);f(w?'#cfd6e6':'#16181f',x-1,20,2,6)});return e}
+class Explore extends Phaser.Scene{
+ constructor(){super('Explore')}
+ hover(x,y,s,f){const im=this.add.image(x,y,'hv').setScale(s).setDepth(1.5),pr=[0,1,2,3].map(()=>({d:this.add.ellipse(x,y,26*s,6*s,0xffffff,.22).setDepth(6),b:this.add.rectangle(x,y,24*s,2,0xffffff,.8).setDepth(6),g:this.add.ellipse(x,y,6*s,8*s,0x4de3c1,.5).setDepth(1.4)})),o={im,pr,x,y,s,f,ph:Math.random()*6,lk:[],tl:0};this.hv.push(o);return o}
+ create(){this.savedRestore=RESTORE_GAME;const p=PL[S.pl],W=3600,H=2400,B={x:1800,y:1200},cell=[6,5,4][CFG.q],gas=p.ty=='bands',hc=x=>Phaser.Display.Color.HexStringToColor(x).color,T=TR[p.id],WE=WEA[p.id]||{},RV=ROVP.includes(S.pl),KS=Object.keys(ST),SG=SIG[S.pl];
+  GS=this;this.W=W;this.H=H;this.B=B;this.rvc=0;this.rad=0;this.jt=-1;this.mt=0;this.gas=gas;this.mount=0;this.hv=[];this.an=[];this.sg=SG;this.sgn=0;this.sgs=[];this.evA=null;this.evT=rnd(40,60);this.stun=0;this.fxo=[];this.fxp=[];this.amb=gas?'prop':(WE.t||WE.s?'wind':null);this.cameras.main.fadeIn(500);
+  $('cd').style.display='none';$('ph').style.display='none';$('skip').style.display='none';$('dp').style.display='block';$('rad').style.display='block';$('jmp').style.display='block';$('rov').style.display='block';$('mm').style.display=CFG.mm?'block':'none';$('cmp').style.display=CFG.mm?'block':'none';chips();
+  $('tg').innerHTML=S.name+' <span>'+CH[S.ch].r+' · جاذبية '+GR[S.pl]+'g</span>';
+  tex(this,'gr',getGround(p));this.add.image(0,0,'gr').setOrigin(0).setScale(cell);tex(this,'hv',hovCv());
+  if(gas&&CFG.q){this.ov=this.add.tileSprite(0,0,W,H,'gr').setOrigin(0).setAlpha(.28);this.ov.tileScaleX=cell;this.ov.tileScaleY=cell;this.ov.setBlendMode(Phaser.BlendModes.ADD)}
+  const an=[-150,-90,-30,30,90,150].sort(()=>Math.random()-.5),P={};KS.forEach((k,i)=>{const a=(an[i]+rnd(-12,12))*Math.PI/180,r=rnd(800,1250);P[k]={x:Phaser.Math.Clamp(B.x+Math.cos(a)*r*1.5,300,W-300),y:Phaser.Math.Clamp(B.y+Math.sin(a)*r,300,H-300)}});if(this.savedRestore?.scene?.P)Object.keys(P).forEach(k=>{if(this.savedRestore.scene.P[k])P[k]=this.savedRestore.scene.P[k]});this.P=P;
+  const pg=this.add.graphics().setDepth(0),pad=(x,y,w)=>{pg.fillStyle(0,.28);pg.fillRect(x-w/2+6,y-w*.4+10,w,w*.8);pg.fillStyle(0x2c3558,1);pg.fillRect(x-w/2,y-w*.4,w,w*.8);pg.lineStyle(2,0x4b58ad,1);pg.strokeRect(x-w/2,y-w*.4,w,w*.8);for(let i=1;i<4;i++)pg.lineBetween(x-w/2+i*w/4,y-w*.4,x-w/2+i*w/4,y+w*.4)};
+  if(!gas){const pr=T.r,rock=(x,y,s)=>{if(p.ty=='ice'){pg.fillStyle(hc(pr[4]),.9);pg.fillTriangle(x-s*.6,y,x+s*.6,y,x,y-s*1.8);pg.fillStyle(hc(pr[2]),.9);pg.fillTriangle(x,y-s*1.8,x+s*.6,y,x+s*.1,y)}else{pg.fillStyle(0,.22);pg.fillEllipse(x+s*.5,y+s*.3,s*2,s*.8);pg.fillStyle(hc(pr[1]),1);pg.fillRect(x-s,y-s*.7,s*2,s*.9);pg.fillStyle(hc(pr[3]),1);pg.fillRect(x-s,y-s*.7,s*2,s*.3)}};
+   for(let i=0;i<(CFG.q+1)*80;i++){const x=rnd(30,W-30),y=rnd(30,H-30);if(Math.hypot(x-B.x,y-B.y)<190)continue;rock(x,y,rnd(5,18))}
+   for(let c=0;c<16;c++){const cx=rnd(250,W-250),cy=rnd(250,H-250);if(Math.hypot(cx-B.x,cy-B.y)<350)continue;const n=rnd(4,9)|0;for(let j=0;j<n;j++)rock(cx+rnd(-60,60),cy+rnd(-40,40),rnd(8,24))}
+   pad(B.x,B.y+10,230)}else this.bh=this.hover(B.x,B.y+40,5);
+  tex(this,'ld',landerCv(S.rk));this.rkI=this.add.image(B.x,B.y-350,'ld').setOrigin(.5,1).setScale(1.3).setDepth(3);this.land=1;this.fl=this.add.graphics().setDepth(2);
+  this.add.text(B.x,B.y+30,gas?'منصة القاعدة':'قاعدة الهبوط',{fontFamily:'Cairo',fontSize:'14px',color:'#fff',backgroundColor:'#0008',padding:{x:6,y:2},rtl:true}).setOrigin(.5,0).setDepth(3);
+  this.tweens.add({targets:this.rkI,y:B.y-20,duration:3000,ease:'Cubic.easeOut',onComplete:()=>{this.land=0;this.fl.clear();sfx('thud');if(this.bh)this.bh.lk.push([this.rkI,B.y-20]);for(let i=0;i<10;i++){const d=this.add.circle(B.x+(Math.random()-.5)*80,B.y-16,10+Math.random()*10,0xffffff,.5).setDepth(6);this.tweens.add({targets:d,x:d.x+(i-5)*16,alpha:0,scale:2.5,duration:900,onComplete:()=>d.destroy()})}this.tweens.add({targets:[this.pl,this.sh],alpha:1,duration:500})}});
+  KS.forEach(k=>{const s=ST[k],X=P[k].x,Y=P[k].y;tex(this,'cp'+k,campCv(k,s.c));const hvr=gas?this.hover(X,Y+50,2.5):(pad(X,Y+52,170),null);
+   const ci=this.add.image(X,Y,'cp'+k).setScale(1.6).setDepth(2),bl=this.add.rectangle(X,Y-70,6,6,hc(s.c)).setDepth(3);if(hvr)hvr.lk.push([ci,Y],[bl,Y-70]);this.tweens.add({targets:bl,alpha:.1,yoyo:true,repeat:-1,duration:500});
+   if(!gas){const ring=this.add.graphics().setDepth(1);ring.lineStyle(3,hc(s.c),1);ring.strokeCircle(X,Y+36,76);this.tweens.add({targets:ring,alpha:.2,yoyo:true,repeat:-1,duration:800})}
+   const lb=this.add.text(X,Y-86,LABS[k],{fontFamily:'Cairo',fontSize:'16px',fontStyle:'bold',color:'#fff',backgroundColor:'#0009',padding:{x:6,y:2},rtl:true}).setOrigin(.5).setDepth(3);if(hvr)hvr.lk.push([lb,Y-86]);
+   if(k=='a'){const ar=this.add.rectangle(X-6,Y-52,30,3,0xffffff,.9).setDepth(3);this.an.push(ar);if(hvr)hvr.lk.push([ar,Y-52])}
+   if(CFG.q)this.time.addEvent({delay:1300+Math.random()*600,loop:true,callback:()=>{const d=this.add.circle(X+14,Y-60,4,0xffffff,.5).setDepth(6);this.tweens.add({targets:d,y:d.y-40,alpha:0,scale:2.5,duration:1400,onComplete:()=>d.destroy()})}})});
+  tex(this,'sm',dia(12,'#ffd24a','#fff6c0'));
+  const NS=[['عينة صخر بازلتي','غبار سطحي','معدن حديدي','حبيبات رمل','صخرة فوهة'],['جليد مائي','ملح معدني','جليد نيتروجين','قشرة متجمدة','غبار جليدي'],['قطرات سحاب','أمونيا متجمدة','هيدروجين','بخار ماء','هباء جوي']][p.ty=='ice'?1:gas?2:0];
+  const far=(x,y,min)=>Math.hypot(x-B.x,y-B.y)>min&&KS.every(k=>Math.hypot(P[k].x-x,P[k].y-y)>min*.8);
+  this.sam=[];for(let i=0;i<5;i++){let x,y,t=0;do{x=rnd(150,W-150);y=rnd(150,H-150);t++}while(t<60&&!far(x,y,260));const saved=this.savedRestore?.scene?.sam?.[i];if(saved){x=saved.x;y=saved.y}const im=this.add.image(x,y,'sm').setScale(2).setDepth(3);this.tweens.add({targets:im,y:y-6,yoyo:true,repeat:-1,duration:700+i*90});const c={x,y,im,nm:NS[i],got:!!saved?.got};if(c.got)im.setVisible(false);this.sam.push(c)}
+  tex(this,'sgi',dia(16,SG.col,'#ffffff'));
+  for(let i=0;i<SG.n;i++){let x,y,t=0;do{x=rnd(250,W-250);y=rnd(250,H-250);t++}while(t<80&&(!far(x,y,420)||this.sgs.some(o=>Math.hypot(o.x-x,o.y-y)<600)));const saved=this.savedRestore?.scene?.sgs?.[i];if(saved){x=saved.x;y=saved.y}
+   const im=this.add.image(x,y,'sgi').setScale(2.2).setDepth(3);this.tweens.add({targets:im,scale:2.7,yoyo:true,repeat:-1,duration:700});
+   if(SG.ty=='deploy'){const rg=this.add.graphics().setDepth(1);rg.lineStyle(3,hc(SG.col),1);rg.strokeCircle(x,y+14,46);this.tweens.add({targets:rg,alpha:.25,yoyo:true,repeat:-1,duration:800})}else if(gas)this.tweens.add({targets:im,x:x+80,y:y-50,yoyo:true,repeat:-1,duration:2600+i*400,ease:'Sine.easeInOut'});
+   const bm=this.add.rectangle(x,y-100,10,200,hc(SG.col),.2).setDepth(2);this.tweens.add({targets:bm,alpha:.06,yoyo:true,repeat:-1,duration:900});this.sgs.push({x,y,im,bm,done:!!saved?.done});if(saved?.done){im.setVisible(false);bm.setVisible(false)}}if(this.savedRestore?.scene)this.sgn=this.savedRestore.scene.sgn||0;
+  {let x,y,t=0;do{x=rnd(300,W-300);y=rnd(300,H-300);t++}while(t<60&&!far(x,y,500));const wc=mk(40,30),q=wc.getContext('2d'),f=(c,a,b,w,h)=>{q.fillStyle=c;q.fillRect(a,b,w,h)};f('#555e75',6,12,22,10);f('#9aa3b5',8,8,18,5);f('#1c2c6b',0,4,8,6);f('#c9ced6',26,2,2,12);f('#c9ced6',22,0,10,3);f('#2a2f3d',10,22,4,6);f('#2a2f3d',22,22,4,6);tex(this,'wr',wc);
+   const savedWreck=this.savedRestore?.scene?.wr;if(savedWreck){x=savedWreck.x;y=savedWreck.y}this.wr={x,y,done:!!savedWreck?.done};if(gas){}else{this.add.image(x,y,'wr').setScale(2).setDepth(2).setAngle(rnd(-12,12));this.add.text(x,y+34,'حطام مسبار قديم',{fontFamily:'Cairo',fontSize:'13px',color:'#fff',backgroundColor:'#0009',padding:{x:5,y:1},rtl:true}).setOrigin(.5,0).setDepth(3)}}
+  if(RV){tex(this,'rv0',roverCv(0));tex(this,'rv1',roverCv(1));this.rv=this.add.image(B.x+200,B.y+80,'rv0').setScale(1.5).setDepth(3);this.add.text(B.x+200,B.y+112,'الروفر 🚙',{fontFamily:'Cairo',fontSize:'14px',color:'#fff',backgroundColor:'#0008',padding:{x:6,y:2},rtl:true}).setOrigin(.5,0).setDepth(3)}
+  ['d','u','s'].forEach(d=>[0,1,2,3].forEach(f=>tex(this,'pc_'+d+f,charCv(S.ch,3,d,f))));
+  this.sh=this.add.ellipse(B.x,B.y+60,34,12,0,.35).setDepth(4).setAlpha(0);
+  this.pl=this.add.image(B.x,B.y+60,'pc_u0').setOrigin(.5,1).setDepth(5).setAlpha(0);this.px=this.savedRestore?.scene?.player?.[0]??B.x;this.py=this.savedRestore?.scene?.player?.[1]??B.y+60;this.fc='u';this.fx=false;
+  if(gas)this.hp=this.hover(B.x,B.y+60,1.5,1);
+  this.cameras.main.setBounds(0,0,W,H).startFollow(this.pl,true,.12,.12);this.cameras.main.setZoom(innerWidth<700?1:1.15);
+  this.cu=this.input.keyboard.createCursorKeys();this.wa=this.input.keyboard.addKeys('W,A,S,D,E');
+  this.input.keyboard.on('keydown-E',()=>this.tryOpen());this.input.keyboard.on('keydown-ENTER',()=>this.tryOpen());this.input.keyboard.on('keydown-SPACE',()=>this.jump());
+  this.dir=J;this.walk=0;$('act').onclick=()=>this.tryOpen();$('rad').onclick=()=>this.ping();$('rov').onclick=()=>this.probe();$('jmp').onclick=()=>this.jump();this.mc=$('mm').getContext('2d');
+  this.wp=[];if(WE.t){this.tn=this.add.rectangle(480,270,1500,900,hc(WE.t[0]),WE.t[1]).setScrollFactor(0).setDepth(20);this.tweens.add({targets:this.tn,alpha:WE.t[1]*.5,yoyo:true,repeat:-1,duration:2600})}
+  if(WE.s&&CFG.q){const n=Math.ceil(WE.s[1]*(CFG.q+1)/3);for(let i=0;i<n;i++){const sn=WE.s[3]>=20&&WE.s[2]<20,r=this.add.rectangle(rnd(0,960),rnd(0,540),sn?2:rnd(18,50),2,hc(WE.s[0]),sn?.8:.3).setScrollFactor(0).setDepth(21);this.wp.push({r,x:r.x,y:r.y,vx:WE.s[2]*rnd(.6,1.3),vy:WE.s[3]*rnd(.6,1.3)})}}
+  if(WE.f&&CFG.q){this.fr=this.add.rectangle(480,270,1500,900,0xffffff,0).setScrollFactor(0).setDepth(22);this.time.addEvent({delay:rnd(4000,9000),loop:true,callback:()=>{this.tweens.add({targets:this.fr,alpha:.5,yoyo:true,duration:90,repeat:1});noise(.5,.1,300,'lowpass')}})}
+  if(CFG.q&&!gas)for(let i=0;i<20;i++){const m=this.add.rectangle(rnd(0,W),rnd(0,H),3,3,0xffffff,.2).setDepth(6);this.tweens.add({targets:m,x:m.x+260,y:m.y+rnd(-40,40),duration:rnd(6000,12000),repeat:-1})}
+  this.calm();if(this.savedRestore?.scene?.sam)this.sam.forEach((o,i)=>{if(this.savedRestore.scene.sam[i]?.got){o.got=1;o.im.setVisible(false)}});if(this.savedRestore?.scene?.wr?.done&&this.wr)this.wr.done=1;
+  say('وصلنا '+p.n+'! '+(gas?'مفيش سطح صلب، فإنت والمختبرات على منصات بأربع مراوح. ':'')+'مهمتك الخاصة: «'+SG.t+'» ('+SG.n+' '+(SG.ty=='deploy'?'أجهزة تنشرها':'عينات تجمعها')+'). وخلّي بالك: ممكن تحصل أحداث كبيرة!');
+  clearInterval(tipT);tips=p.tips;tipI=1;tipT=setInterval(()=>{if(!busy&&!this.evA)say(tips[tipI++%tips.length])},16000)}
+ calm(){MUS.set(this.gas?'gas':'game');AMB.set(this.amb)}
+ chk(){const L=Object.keys(done).length==Object.keys(ST).length,M=this.sgn>=this.sg.n;if(L&&M&&!ALLDONE){ALLDONE=1;say('كل المطلوب اتنفذ! ارجع للقاعدة وارفع العلم.')}else if(L&&!M)say('المختبرات خلصت! فاضل المهمة الخاصة: «'+this.sg.t+'».');else if(M&&!L)say('المهمة الخاصة خلصت! كمّل المختبرات.')}
+ take(c){c.got=1;SM.n++;chips();sfx('pick');const t=this.add.text(c.x,c.y-20,'+ '+c.nm,{fontFamily:'Cairo',fontSize:'16px',color:'#ffd24a',stroke:'#000',strokeThickness:3,rtl:true}).setOrigin(.5).setDepth(8);this.tweens.add({targets:t,y:t.y-40,alpha:0,duration:1300,onComplete:()=>t.destroy()});this.tweens.add({targets:c.im,scale:3.5,alpha:0,duration:300});say('جمعت '+c.nm+' ('+SM.n+'/5). كل عينة بتتحلل في المعمل.');if(SM.n==1)ach('s1','أول عينة');if(SM.n==5)ach('s5','جامع العينات')}
+ sgDone(o){this.sgn++;chips();sfx('pick');const last=this.sgn>=this.sg.n;this.tweens.add({targets:[o.im,o.bm],alpha:last?0:.5,duration:300});say(this.sg.it+' ('+this.sgn+'/'+this.sg.n+'). '+(last?this.sg.f:''));addXP(last?50:15,last?'أنجزت مهمة '+this.sg.t:this.sg.it);if(last){ach('sg','مهمة '+this.sg.t);this.chk()}}
+ deploy(i){const SG=this.sg,pn=$('pn');busy=true;pn.className='on';pn.innerHTML='<h3>🎯 '+SG.t+': '+SG.it+'</h3><p class="sub">ثبّت الجهاز بنجاح عشان يشتغل</p><div id="mg"></div><button class="btn ghost" id="cl">إلغاء</button>';
+  $('cl').onclick=()=>{mgStop();pn.className='';busy=false;near=null;HINT=''};HINT='ركّز ومتستعجلش.';let fin=0;
+  MG[SG.g]($('mg'),()=>{if(fin)return;fin=1;mgStop();pn.className='';busy=false;near=null;HINT='';const o=this.sgs[i];o.done=1;this.sgDone(o)},{})}
+ tryOpen(){if(!near||busy)return;if(near=='FG')this.plant();else if(near=='RV')this.ride(1);else if(near=='DM')this.ride(0);else if(near=='DP')this.deploy(this.dpi);else openSt(near)}
+ ride(on){if(!this.rv)return;if(on){this.mount=1;this.px=this.rv.x;this.py=this.rv.y+10;this.pl.setAlpha(0);this.sh.setAlpha(0);say('ركبت الروفر! سرعتك أعلى بكتير. وصّل لأي مختبر وادخل، أو انزل من الزرار.')}else{this.mount=0;this.rv.setPosition(this.px,this.py-10);this.pl.setAlpha(1);this.sh.setAlpha(.35);say('نزلت من الروفر.')}sfx('mount');near=null}
+ ping(){if(this.rcd>0||this.land||busy)return;this.rcd=10;this.rad=8;sfx('radar');const c=this.add.circle(this.px,this.py-20,10,0x4de3c1,0).setStrokeStyle(3,0x4de3c1).setDepth(7);this.tweens.add({targets:c,scale:40,alpha:0,duration:1400,onComplete:()=>c.destroy()});this.sam.forEach(s=>{if(!s.got)this.tweens.add({targets:s.im,alpha:1,duration:300})});say('المسح كشف العينات. بتظهر دهبية على الخريطة الصغيرة لمدة 8 ثواني.')}
+ jump(){if(this.jt>=0||this.land||busy||this.mount)return;this.jh=Math.min(80,22/Math.sqrt(GR[S.pl]));this.jd=.35+this.jh/120;this.jt=0;sfx('jump')}
+ plant(){busy=true;near=null;$('act').style.display='none';const x=this.B.x+130,y=this.B.y+50,g=this.add.graphics().setDepth(4);sfx('fan');
+  this.tweens.addCounter({from:0,to:80,duration:1800,onUpdate:t=>{const h=t.getValue();g.clear();g.fillStyle(0xdddddd,1);g.fillRect(x-2,y-h,4,h);g.fillStyle(0xce1126,1);g.fillRect(x+2,y-h,40,10);g.fillStyle(0xffffff,1);g.fillRect(x+2,y-h+10,40,10);g.fillStyle(0x000000,1);g.fillRect(x+2,y-h+20,40,10)},onComplete:()=>{say('تم رفع العلم! مبروك يا '+S.name+'.');setTimeout(()=>finish(),2200)}})}
+ probe(){if(this.rvc>0||this.land||busy)return;const c=this.sam.filter(x=>!x.got).sort((a,b)=>Math.hypot(a.x-this.px,a.y-this.py)-Math.hypot(b.x-this.px,b.y-this.py))[0];if(!c){say('مفيش عينات تانية للمسبار.');return}this.rvc=25;sfx('mount');
+  const r=this.add.container(this.px,this.py,[this.add.rectangle(0,0,18,10,0xcfd6e6),this.add.rectangle(0,-7,8,5,0x4de3c1),this.add.rectangle(-12,-4,12,2,0xffffff),this.add.rectangle(12,-4,12,2,0xffffff)]).setDepth(7);
+  say('المسبار طلع يجيب '+c.nm+'.');this.tweens.add({targets:r,x:c.x,y:c.y,duration:Math.min(9000,Math.hypot(c.x-this.px,c.y-this.py)*7),ease:'Sine.easeInOut',onComplete:()=>{if(!c.got)this.take(c);this.tweens.add({targets:r,alpha:0,duration:500,onComplete:()=>r.destroy()})}})}
+ /* ===== الأحداث الكبيرة ===== */
+ rollEvent(){const L=EVS[S.pl];this.evT=rnd(45,85);if(Math.random()>.7)return;this.forecast(L[Math.random()*L.length|0])}
+ forecast(type){const D=EVD[type];this.evA={type,ph:'warn',t:rnd(11,16)};MUS.set('danger');AMB.set('storm');this.cameras.main.shake(2600,.004);
+  say('تحذير: '+D.warn+' احتمال الحدوث حوالي 70%. جهّز نفسك.');cut({ic:D.ic,title:'تحذير: '+D.t,sub:D.warn,col:D.tint,sec:3.2,sfx:'siren',sfx2:'heart'})}
+ resolveEv(){const type=this.evA.type,D=EVD[type];$('evb').style.display='none';
+  if(Math.random()<.7){this.evA.ph='hit';this.cameras.main.flash(300,255,255,255);this.cameras.main.shake(2400,.012);this.fxOn(type);cut({ic:D.ic,title:D.t+'!',sub:D.hit,col:D.tint,sec:2.8,sfx:D.sfx,sfx2:'siren'},()=>this.evPanel(type))}
+  else{say('الحدث غيّر مساره وعدّى بعيد! نجوت المرة دي.');addXP(5,'تجنّبت '+D.t);this.evA=null;this.calm();toast('✅ العاصفة عدّت من غير ما تضرب')}}
+ fxOn(type){const D=EVD[type],hx=x=>Phaser.Display.Color.HexStringToColor(x).color,t=this.add.rectangle(480,270,1500,900,hx(D.tint),.3).setScrollFactor(0).setDepth(23);this.fxo.push(t);this.tweens.add({targets:t,alpha:.12,yoyo:true,repeat:-1,duration:500});
+  const wind=type=='dust'||type=='wind';for(let i=0;i<(CFG.q?40:14);i++){const r=this.add.rectangle(rnd(0,960),rnd(0,540),wind?rnd(30,80):3,wind?2:rnd(8,20),hx(D.tint),.5).setScrollFactor(0).setDepth(24);this.fxo.push(r);this.fxp.push({r,vx:wind?rnd(500,900):rnd(-20,20),vy:wind?rnd(-30,30):(type=='lava'||type=='solar'?rnd(150,300):rnd(100,200))})}}
+ fxOff(){this.fxo.forEach(o=>{if(o&&o.destroy)o.destroy()});this.fxo=[];this.fxp=[]}
+ evPanel(type){const D=EVD[type],pn=$('pn');busy=true;pn.className='on ev';pn.innerHTML='<h3>'+D.ic+' '+D.t+'</h3><p class="sub">'+D.hit+'</p><div class="bar"><i id="evt" style="background:#ff6b8b;width:100%"></i></div><div id="mg"></div>';
+  let left=D.sec,done_=0,iv;const fin=w=>{if(done_)return;done_=1;clearInterval(iv);mgStop();pn.className='';this.endEvent(type,w)};
+  iv=setInterval(()=>{left-=.1;const e=$('evt');if(e)e.style.width=Math.max(0,left/D.sec*100)+'%';if(left<=0)fin(0)},100);
+  HINT=D.game=='run'?'دوس يمين وشمال بالتبادل بس.':D.game=='brace'?'دوس نفس اتجاه الهبّة.':D.game=='dodge'?'اتحرك لمسار فاضي.':D.game=='balance'?'دوسات صغيرة عكس الميل.':'دوس على الجسيمات الحمرا قبل ما توصل.';
+  (D.game=='shield'?MG.r1:EVG[D.game])($('mg'),()=>fin(1),()=>fin(0),()=>fin(0));if(D.game!='shield'){} }
+ endEvent(type,win){const D=EVD[type];this.fxOff();this.cameras.main.shake(0);this.evA=null;this.evT=rnd(55,95);busy=false;near=null;HINT='';this.calm();
+  if(win){addXP(30,'نجوت من '+D.t);ach('ev_'+type,'ناجٍ من '+D.t);sfx('fan');say('نجوت! أداء رائع يا '+S.name+'.');toast('🏆 نجوت من '+D.t)}
+  else{XP=Math.max(0,XP-20);chips();sfx('fail');this.stun=2.5;this.cameras.main.shake(400,.01);toast('💥 البدلة اتضررت: -20 نقطة');say('الحدث أثّر عليك، بس كمّل. المرة الجاية أسرع.')}}
+ tgt(){if(ALLDONE)return{t:{x:this.B.x,y:this.B.y+40},n:'القاعدة: ارفع العلم'};let b=1e9,t=null,n='';Object.keys(ST).filter(k=>!done[k]).forEach(k=>{const d=Math.hypot(this.P[k].x-this.px,this.P[k].y-this.py);if(d<b){b=d;t=this.P[k];n=LABS[k]}});if(!t)this.sgs.forEach(o=>{if(!o.done){const d=Math.hypot(o.im.x-this.px,o.im.y-this.py);if(d<b){b=d;t={x:o.im.x,y:o.im.y};n=this.sg.it}}});return{t,n}}
+ cmp(){const o=this.tgt();if(!o.t)return;const dx=o.t.x-this.px,dy=o.t.y-this.py;$('ca').style.transform='rotate('+Math.atan2(dy,dx)+'rad)';$('ct').textContent=o.n+' · '+Math.round(Math.hypot(dx,dy)/10)+'م'}
+ guide(){const o=this.tgt();if(!o.t)return'كل المطلوب خلص!';const dx=o.t.x-this.px,dy=o.t.y-this.py,v=Math.abs(dy)>Math.abs(dx)*.5?(dy<0?'شمال':'جنوب'):'',h=Math.abs(dx)>Math.abs(dy)*.5?(dx<0?'غرب':'شرق'):'';return'الهدف: '+o.n+' ناحية '+(v+(v&&h?' ':'')+h)+' على بُعد حوالي '+Math.round(Math.hypot(dx,dy)/10)+' متر.'}
+ mm(){const c=this.mc,fx=120/this.W,fy=80/this.H;c.fillStyle='#0a0e2a';c.fillRect(0,0,120,80);c.fillStyle='#fff';c.fillRect(this.B.x*fx-2,this.B.y*fy-2,4,4);
+  Object.keys(ST).forEach(k=>{c.fillStyle=c.strokeStyle=ST[k].c;const x=this.P[k].x*fx,y=this.P[k].y*fy;if(done[k])c.fillRect(x-3,y-3,6,6);else c.strokeRect(x-3,y-3,6,6)});
+  c.fillStyle=this.sg.col;this.sgs.forEach(o=>{if(!o.done)c.fillRect(o.im.x*fx-2,o.im.y*fy-2,4,4)});
+  if(this.rv&&!this.mount){c.fillStyle='#4de3c1';c.fillRect(this.rv.x*fx-2,this.rv.y*fy-1,5,3)}
+  if(this.wr&&!this.wr.done){c.fillStyle='#888';c.fillRect(this.wr.x*fx-1,this.wr.y*fy-1,3,3)}
+  if(this.rad>0){c.fillStyle='#ffd24a';this.sam.forEach(s=>{if(!s.got)c.fillRect(s.x*fx-1,s.y*fy-1,3,3)})}
+  if(Math.floor(this.time.now/300)%2){c.fillStyle='#ffb347';c.fillRect(this.px*fx-2,this.py*fy-2,4,4)}
+  const v=this.cameras.main.worldView;c.strokeStyle='rgba(255,255,255,.35)';c.strokeRect(v.x*fx,v.y*fy,v.width*fx,v.height*fy)}
+ update(_,dt){dt/=1000;let vx=0,vy=0;const KS=Object.keys(ST),now=this.time.now;
+  if(this.land){const f=this.fl,y=this.rkI.y,l=20+Math.random()*30;f.clear();f.fillStyle(0x9fd8ff,1);f.fillTriangle(this.B.x-10,y-4,this.B.x+10,y-4,this.B.x,y+l+14);f.fillStyle(0xffffff,1);f.fillTriangle(this.B.x-5,y-4,this.B.x+5,y-4,this.B.x,y+l*.6)}
+  if(this.stun>0){this.stun-=dt;if(!this.mount)this.pl.setAlpha(Math.floor(this.stun*10)%2?.35:1);if(this.stun<=0&&!this.mount)this.pl.setAlpha(1)}
+  if(!busy&&!this.land&&this.stun<=0){if(this.cu.left.isDown||this.wa.A.isDown||this.dir.l)vx=-1;if(this.cu.right.isDown||this.wa.D.isDown||this.dir.r)vx=1;if(this.cu.up.isDown||this.wa.W.isDown||this.dir.u)vy=-1;if(this.cu.down.isDown||this.wa.S.isDown||this.dir.d)vy=1}
+  const m=vx||vy;if(vx&&vy){vx*=.707;vy*=.707}const sp=this.mount?340:200;
+  this.px=Phaser.Math.Clamp(this.px+vx*sp*dt,30,this.W-30);this.py=Phaser.Math.Clamp(this.py+vy*sp*dt,70,this.H-20);
+  if(m){this.walk+=dt*(this.mount?10:8);this.fc=(vy&&Math.abs(vy)>=Math.abs(vx))?(vy<0?'u':'d'):'s';if(vx)this.fx=vx<0;this.ft=(this.ft||0)+dt;if(this.ft>(this.mount?.2:.3)){this.ft=0;if(this.jt<0&&(this.mount||!this.gas))sfx(this.mount?'engine':'step')}}else this.walk=0;
+  const fr=(m&&!this.gas)?[1,0,3,0][Math.floor(this.walk)%4]:0;let jo=0;
+  if(this.jt>=0){this.jt+=dt/this.jd;if(this.jt>=1){this.jt=-1;sfx('thud');for(let i=0;i<5;i++){const d=this.add.circle(this.px+(i-2)*8,this.py-2,5,0xffffff,.4).setDepth(1);this.tweens.add({targets:d,alpha:0,scale:2.4,duration:420,onComplete:()=>d.destroy()})}}else jo=4*this.jh*this.jt*(1-this.jt)}
+  if(this.mount){this.rv.setPosition(this.px,this.py-10).setFlipX(this.fx).setTexture('rv'+(m?Math.floor(this.walk)%2:0));this.pl.setPosition(this.px,this.py);if(m&&(this.dt=(this.dt||0)+dt)>.1){this.dt=0;const d=this.add.circle(this.px+(this.fx?20:-20),this.py,5,0xffffff,.35).setDepth(1);this.tweens.add({targets:d,alpha:0,scale:2.6,duration:500,onComplete:()=>d.destroy()})}}
+  else{this.pl.setTexture('pc_'+this.fc+fr).setFlipX(this.fc=='s'&&this.fx);this.pl.x=this.px;this.pl.y=(this.gas&&this.hp?this.py+2+Math.sin(now*.0028+this.hp.ph)*2.5:this.py-(fr?2:0))-jo;this.sh.x=this.px;this.sh.y=this.py;this.sh.setScale(1-jo/(this.jh||1)*.3);if(this.gas)this.sh.setAlpha(0);
+   if(m&&jo==0&&!this.gas&&(this.dt=(this.dt||0)+dt)>.17){this.dt=0;const d=this.add.circle(this.px,this.py-2,4,0xffffff,.3).setDepth(1);this.tweens.add({targets:d,alpha:0,scale:2.4,duration:400,onComplete:()=>d.destroy()})}}
+  this.hv.forEach(o=>{const bob=Math.sin(now*.0028+o.ph)*2.5,X=o.f?this.px:o.x,Y=(o.f?this.py+6:o.y)+bob;o.im.setPosition(X,Y);if(o.f){o.tl+=(vx*7-o.tl)*Math.min(1,dt*8);o.im.angle=o.tl}
+   o.pr.forEach((r,i)=>{const cx=(i%2?1:-1),cy=(i<2?-1:1),qx=X+cx*26*o.s,qy=Y+cy*8*o.s-3*o.s;r.d.setPosition(qx,qy);r.b.setPosition(qx,qy);r.b.scaleX=.3+.7*Math.abs(Math.cos(now*.018+i*1.3));r.b.angle=Math.sin(now*.01+i)*4;r.g.setPosition(qx,qy+7*o.s)});o.lk.forEach(l=>{l[0].y=l[1]+bob})});
+  this.an.forEach(r=>r.angle+=dt*600);
+  let n=null,best=85;KS.forEach(k=>{const d=Math.hypot(this.P[k].x-this.px,this.P[k].y+20-this.py);if(d<best){best=d;n=k}});
+  if(!n)this.sgs.forEach((o,i)=>{if(this.sg.ty=='deploy'&&!o.done&&Math.hypot(o.x-this.px,o.y-this.py)<85){n='DP';this.dpi=i}});
+  if(!n&&this.rv&&!this.mount&&Math.hypot(this.rv.x-this.px,this.rv.y-this.py)<90)n='RV';
+  if(!n&&ALLDONE&&Math.hypot(this.B.x-this.px,this.B.y+40-this.py)<130)n='FG';
+  if(!n&&this.mount)n='DM';
+  if(!this.land){this.sam.forEach(c=>{if(!c.got&&Math.hypot(c.x-this.px,c.y-this.py)<34)this.take(c)});
+   if(this.sg.ty=='collect')this.sgs.forEach(o=>{if(!o.done&&Math.hypot(o.im.x-this.px,o.im.y-this.py)<42){o.done=1;this.sgDone(o)}});
+   if(this.wr&&!this.wr.done&&Math.hypot(this.wr.x-this.px,this.wr.y-this.py)<110){this.wr.done=1;sfx('ach');say('اكتشاف أثري! '+LORE[S.pl]);addXP(10,'اكتشاف أثري')}}
+  if(n!==near&&!busy){near=n;const a=$('act');if(n){a.style.display='block';a.textContent=n=='RV'?'اركب الروفر':n=='DM'?'انزل من الروفر':n=='FG'?'ارفع العلم':n=='DP'?'نشر: '+this.sg.it:'دخول: '+LABS[n]}else a.style.display='none'}
+  if(this.rad>0){this.rad-=dt;if(this.rad<=0)this.sam.forEach(s=>{if(!s.got)s.im.setAlpha(.35)})}
+  if(this.rcd>0){this.rcd=Math.max(0,this.rcd-dt);const tx=this.rcd>0?'مسح ('+Math.ceil(this.rcd)+')':'مسح';if($('rad').textContent!=tx)$('rad').textContent=tx}
+  if(this.rvc>0){this.rvc=Math.max(0,this.rvc-dt);const tx=this.rvc>0?'مسبار ('+Math.ceil(this.rvc)+')':'مسبار';if($('rov').textContent!=tx)$('rov').textContent=tx}
+  this.wp.forEach(o=>{o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x>980)o.x=-20;if(o.x<-30)o.x=970;if(o.y>560)o.y=-10;o.r.setPosition(o.x,o.y)});
+  this.fxp.forEach(o=>{o.r.x+=o.vx*dt;o.r.y+=o.vy*dt;if(o.r.x>990)o.r.x=-30;if(o.r.x<-30)o.r.x=990;if(o.r.y>560)o.r.y=-20;if(o.r.y<-20)o.r.y=560});
+  if(this.ov)this.ov.tilePositionX+=dt*10;
+  if(!busy&&!this.land&&!this.evA&&this.stun<=0){this.evT-=dt;if(this.evT<=0)this.rollEvent()}
+  if(this.evA&&this.evA.ph=='warn'&&!busy){this.evA.t-=dt;const e=$('evb');e.style.display='block';e.textContent='⚠ '+EVD[this.evA.type].t+' خلال '+Math.max(0,Math.ceil(this.evA.t))+'ث';if(this.evA.t<=0)this.resolveEv()}
+  if(CFG.mm&&(this.mt+=dt)>.12){this.mt=0;this.mm();this.cmp()}if(!this.saveAt||now-this.saveAt>1200){this.saveAt=now;saveGameProgress('play')}}
+}
+
+/* ---------- محطات القياس ---------- */
+const SM={n:0,photo:0};
+const Q=(q,o,r)=>{const m=o.map((t,i)=>[t,i]).sort(()=>Math.random()-.5);return{q,o:m.map(x=>x[0]),a:m.findIndex(x=>x[1]==r)}};
+const QZ=(b,win,qs)=>{let i=0;const go=()=>{const q=qs[i];b.innerHTML='<p class="sub">'+q.q+' ('+(i+1)+'/'+qs.length+')</p><div class="row">'+q.o.map((o,j)=>'<button class="btn ghost" data-j="'+j+'">'+o+'</button>').join('')+'</div>';
+ b.querySelectorAll('button').forEach(x=>x.onclick=()=>{if(+x.dataset.j==q.a){bp(880);i++;if(i>=qs.length)return win();go()}else{bp(200,.15);x.classList.add('shake');x.disabled=true}})};go()};
+const LABS={p:'مختبر الضغط',t:'مختبر الحرارة',s:'مختبر التربة',a:'مختبر الهواء'},LABN={p:['🧭','مختبر الضغط الجوي'],t:['🌡️','مختبر الحرارة'],s:['🪨','مختبر الجيولوجيا'],a:['💨','مختبر الغلاف الجوي']},RANKS=['متدرب','مستكشف','رائد','قائد','أسطورة'],rank=()=>RANKS[Math.min(4,Math.floor(XP/60))];
+const MGN={p:['⚙️','معايرة الضغط'],p2:['🛢️','تعبئة الخزان'],pq:['❓','اختبار الضغط'],p4:['💨','سد التسريبات'],p5:['⏱️','توقيت الصمام'],p6:['🔢','قراءة العدّاد'],pq2:['📏','وحدات الضغط'],t:['🌡️','توازن الحرارة'],t2:['↕️','ترتيب الحرارة'],t3:['🎚️','ضبط الترمومتر'],t4:['🎈','منظّم الحرارة'],t5:['🔥','كاميرا حرارية'],tq:['❓','اختبار الحرارة'],s:['⛏️','حفر العينات'],s2:['🧠','طبقات التربة'],s3:['🃏','مطابقة المعادن'],s4:['⚖️','فرز الحبيبات'],s5:['🧲','كاشف الحديد'],s6:['🪨','كسر الصخرة'],sq:['❓','اختبار الجيولوجيا'],a:['🫧','صيد الغاز'],a2:['📊','طيف المطياف'],aq:['❓','اختبار الغازات'],a4:['🧭','اتجاه الرياح'],a5:['🔵','عدّاد الجزيئات'],a6:['📡','ضبط المستشعر'],aq2:['🧪','رموز الغازات'],g3:['📈','تحليل البيانات']};
+const HT={p:'دوس لما المؤشر يعدّي الأخضر. بيسرّع كل مرة.',p2:'سيب الزرار قبل ما المؤشر يعدّي الأخضر بشوية.',p5:'استنى الضوء الأخضر ومتتسرعش.',t:'اتناوب بين الضغط والسيب عشان المؤشر يفضل في الأخضر.',t4:'دوسات خفيفة ومتقاربة أحسن من دوسة طويلة.',t3:'لو غلطت هيقولك أعلى ولا أقل.',s:'العينات الدهبية متباعدة، متحفرش جنب بعض.',s6:'دوس بسرعة وبإيقاع ثابت.',a:'الفقاعات الخضرا بس، والحمرا غبار.',a6:'حرّك ببطء وراقب الإشارة.',g3:'اجمع الأرقام واقسمها على 3.'};
+const MGP={p:['p','p2','pq','p4','p5','p6','pq2','g3'],t:['t','t2','t3','t4','t5','tq','g3'],s:['s','s2','s3','s4','s5','s6','sq','g3'],a:['a','a2','aq','a4','a5','a6','aq2','g3']};
+function addXP(n,why){XP+=n;chips();toast('⭐ +'+n+' · '+why)}
+function ach(id,t){if(ACH[id])return;ACH[id]=1;addXP(15,'إنجاز: '+t);bp(1200,.2)}
+Object.assign(LABS,{w:'مختبر الجاذبية',r:'مختبر الإشعاع'});Object.assign(LABN,{w:['⚖️','مختبر الجاذبية'],r:['☢️','مختبر الإشعاع والمجال']});
+Object.assign(MGN,{wq:['⚖️','وزن العيّنة'],wp:['🕰️','البندول'],wo:['↕️','ترتيب الجاذبية'],r1:['☢️','درع الإشعاع'],r2:['🧲','بوصلات المجال'],rq:['❓','اختبار الإشعاع'],photo:['📷','تصوير العيّنات']});
+Object.assign(HT,{wp:'البندول بيعدّي من النص مرتين في كل دورة.',r1:'ركّز على الجسيمات القريبة من القاع الأول.',r2:'كل دوسة بتلف البوصلة ربع لفة.'});
+Object.assign(MGP,{w:['wq','wp','wo','g3','photo'],r:['r1','r2','rq','g3','photo']});['p','t','s','a'].forEach(k=>MGP[k].push('photo'));
+const nmK=k=>k=='earth'?'الأرض':PL[k].n;
+let mgStop=()=>{};const HOT=['venus','mercury','io','moon'];
+const MG={
+p(b,win){b.innerHTML='<p class="sub">معايرة جهاز الضغط: دوس «ثبّت» لما المؤشر يعدّي على المنطقة الخضراء (3 مرات)</p><div class="gauge" id="gg"><i id="z"></i><b id="nd"></b></div><button class="btn" id="gb">ثبّت</button><div class="sub" id="gs">0/3</div>';
+ let a=0,dir=1,ok=0,zl=0,id,last=performance.now();const z=$('z'),W=22,pz=()=>{zl=10+Math.random()*(80-W);z.style.left=zl+'%';z.style.width=W+'%'};pz();
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;a+=dir*dt*(60+ok*30);if(a>100){a=100;dir=-1}if(a<0){a=0;dir=1}$('nd').style.left=a+'%';id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id);
+ $('gb').onclick=()=>{if(a>=zl&&a<=zl+W){ok++;bp(880);$('gs').textContent=ok+'/3';if(ok>=3){mgStop();win();return}pz()}else{bp(200,.15);const g=$('gg');g.classList.remove('shake');void g.offsetWidth;g.classList.add('shake')}}},
+t(b,win){const hot=HOT.includes(S.pl),w=hot?'تبريد':'تدفئة';b.innerHTML='<p class="sub">الحرارة بتتغيّر. اضغط باستمرار على «'+w+'» وسيبه عشان تحافظ على المؤشر في الأخضر 5 ثواني</p><div class="gauge"><i style="left:35%;width:30%"></i><b id="nd"></b></div><button class="btn" id="hd">'+w+' (اضغط باستمرار)</button><div class="bar"><i id="pr"></i></div>';
+ let v=50,h=0,ok=0,id,last=performance.now();const sg=hot?1:-1,hd=$('hd'),on=e=>{e.preventDefault();h=1},off=()=>h=0;
+ hd.style.touchAction='none';hd.oncontextmenu=e=>e.preventDefault();hd.onpointerdown=on;hd.onpointerup=off;hd.onpointerleave=off;hd.onpointercancel=off;
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;v=Math.max(0,Math.min(100,v+sg*(26-(h?52:0))*dt));$('nd').style.left=v+'%';
+  if(v>=35&&v<=65)ok+=dt;else ok=Math.max(0,ok-dt*1.5);$('pr').style.width=Math.min(100,ok/5*100)+'%';
+  if(ok>=5){bp(880);win();return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+s(b,win,d){const gl=PL[S.pl].g,nm=d.rows?d.rows.map(r=>r[0]).slice(0,3):['عينة صخر','عينة معدن','عينة جليد'];let digs=8,found=0;const ps=new Set();while(ps.size<3)ps.add(Math.random()*10|0);const P=[...ps];
+ b.innerHTML='<p class="sub">احفر وادوّر على 3 عينات مدفونة. عندك <b id="dg">8</b> محاولات</p><div class="grid" id="gr"></div>';
+ for(let i=0;i<10;i++){const t=document.createElement('button');t.className='tl';t.style.background=gl[i%3?0:1];
+  t.onclick=()=>{if(t.disabled||digs<=0)return;t.disabled=true;digs--;$('dg').textContent=digs;const j=P.indexOf(i);t.style.background='';
+   if(j>=0){found++;t.className='tl f';t.textContent=nm[j];bp(880)}else{t.className='tl o';t.textContent='·';bp(300,.05)}
+   if(found>=3){win();return}if(digs<=0){b.insertAdjacentHTML('beforeend','<button class="btn" id="rt">حاول تاني</button>');$('rt').onclick=()=>MG.s(b,win,d)}};$('gr').append(t)}},
+a(b,win,d){const tg=d.rows?d.rows[0][0]:'ذرة',N=6;let n=0,list=[],id,last=performance.now(),acc=0,tm=25,dn=0;
+ b.innerHTML='<p class="sub">اصطاد فقاعات «'+tg+'» الخضراء '+N+' مرات وابعد عن الغبار الأحمر. <b id="tm">25</b> ثانية</p><div class="arena" id="ar"></div><div class="sub" id="as">0/'+N+'</div>';const ar=$('ar');
+ const sp=()=>{const g=Math.random()<.6,e=document.createElement('button');e.className='bb '+(g?'g':'r');e.textContent=g?tg:'غبار';const o={e,x:Math.random()*Math.max(10,ar.clientWidth-64),y:ar.clientHeight,v:40+Math.random()*50};
+  e.onpointerdown=ev=>{ev.preventDefault();if(dn)return;if(g){n++;bp(880)}else{n=Math.max(0,n-1);bp(200,.1)}$('as').textContent=n+'/'+N;e.remove();o.dead=1;if(n>=N){dn=1;cancelAnimationFrame(id);win()}};ar.append(e);list.push(o)};
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;acc+=dt;tm-=dt;if(acc>.65){acc=0;sp()}
+  list.forEach(o=>{o.y-=o.v*dt;o.e.style.transform='translate('+o.x+'px,'+o.y+'px)';if(o.y<-70&&!o.dead){o.dead=1;o.e.remove()}});list=list.filter(o=>!o.dead);$('tm').textContent=Math.max(0,Math.ceil(tm));
+  if(tm<=0){b.insertAdjacentHTML('beforeend','<button class="btn" id="rt">حاول تاني</button>');$('rt').onclick=()=>MG.a(b,win,d);return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+p2(b,win){let ok=0,v=0,h=0,id,last=performance.now(),tz,W=18;b.innerHTML='<p class="sub">عبّي خزان الضغط: اضغط باستمرار وسيب لما المؤشر يوصل للأخضر (3 مرات). لو عدّيت 100 بيفضى</p><div class="gauge"><i id="z"></i><b id="nd"></b></div><button class="btn" id="hd">اضغط باستمرار للتعبئة</button><div class="sub" id="gs">0/3</div>';
+ const pz=()=>{tz=25+Math.random()*(70-W);$('z').style.left=tz+'%';$('z').style.width=W+'%'};pz();const hd=$('hd');hd.style.touchAction='none';hd.oncontextmenu=e=>e.preventDefault();
+ hd.onpointerdown=e=>{e.preventDefault();h=1;v=0};
+ const rl=()=>{if(!h)return;h=0;if(v>=tz&&v<=tz+W){ok++;bp(880);$('gs').textContent=ok+'/3';if(ok>=3){mgStop();win();return}pz()}else bp(200,.15);v=0;$('nd').style.left='0%'};hd.onpointerup=rl;hd.onpointerleave=rl;hd.onpointercancel=rl;
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;if(h){v+=dt*45;if(v>100){v=0;h=0;bp(200,.2)}}$('nd').style.left=v+'%';id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+pq(b,win){const c=PK[S.pl]<10?0:PK[S.pl]<1000?1:2;QZ(b,win,[Q('ضغط '+PL[S.pl].n+' مقارنة بالأرض (101 كيلوباسكال):',['أقل بكتير','قريب','أعلى بكتير'],c),Q('ضغط الأرض عند سطح البحر تقريبًا:',['101 كيلوباسكال','10 كيلوباسكال','1,000 كيلوباسكال'],0),Q('الضغط الجوي بيقيس إيه؟',['وزن عمود الغاز فوقك','سرعة الرياح','درجة الحرارة'],0)])},
+t2(b,win){const o=Object.keys(TC).filter(k=>k!=S.pl&&k!='earth').sort(()=>Math.random()-.5).slice(0,2),it=[S.pl,'earth',...o].sort(()=>Math.random()-.5),ord=[...it].sort((x,y)=>TC[x]-TC[y]);let i=0,tt;
+ b.innerHTML='<p class="sub">رتّب الأماكن من الأبرد للأسخن: دوس عليهم بالترتيب</p><div class="row" id="tr"></div>';mgStop=()=>clearTimeout(tt);
+ it.forEach(k=>{const x=document.createElement('button');x.className='btn ghost';x.textContent=nmK(k);x.onclick=()=>{if(x.disabled)return;if(k==ord[i]){x.disabled=true;x.innerHTML=nmK(k)+'<br><small>'+TC[k]+' °م</small>';bp(500+i*150);i++;if(i>=ord.length)tt=setTimeout(win,900)}else{bp(200,.15);x.classList.remove('shake');void x.offsetWidth;x.classList.add('shake')}};$('tr').append(x)})},
+s2(b,win){const C=['#c75d3a','#e8c040','#4de3c1','#6a7be8'],sq=[];let i=0,lock=1,to=[];
+ b.innerHTML='<p class="sub">حلّل الطبقات: اتفرج على الترتيب وكرره (4 جولات)</p><div class="row" id="sm"></div><div class="sub" id="ss">راقب...</div>';
+ const bs=C.map((c,j)=>{const x=document.createElement('button');x.className='btn';x.style.cssText='background:'+c+';width:68px;height:68px;padding:0';x.onclick=()=>press(j);$('sm').append(x);return x});
+ const fl=j=>{bs[j].style.filter='brightness(1.9)';bp(400+j*150,.2);to.push(setTimeout(()=>bs[j].style.filter='',300))};
+ const play=()=>{lock=1;i=0;sq.push(Math.random()*4|0);$('ss').textContent='راقب... '+sq.length+'/4';sq.forEach((j,k)=>to.push(setTimeout(()=>fl(j),700+k*650)));to.push(setTimeout(()=>{lock=0;$('ss').textContent='دورك'},700+sq.length*650))};
+ const press=j=>{if(lock)return;fl(j);if(j!=sq[i]){lock=1;sq.length=0;$('ss').textContent='غلط! من الأول';to.push(setTimeout(play,900));return}i++;if(i>=sq.length){if(sq.length>=4){mgStop();win();return}lock=1;to.push(setTimeout(play,700))}};
+ mgStop=()=>to.forEach(clearTimeout);play()},
+a2(b,win,d){const gs=(d.rows?d.rows.map(r=>r[0]):[]).concat(['هيدروجين','هيليوم','نيتروجين','ميثان','أرجون','أكسجين']).filter((x,i,a)=>a.indexOf(x)==i);let r=0;
+ const ln=n=>{let h=0;for(const ch of n)h=(h*31+ch.charCodeAt(0))%9973;const o=[];for(let i=0;i<7;i++){h=(h*73+19)%9973;o.push(5+h%90)}return o},bx=l=>'<div class="spc">'+l.map(x=>'<i style="left:'+x+'%"></i>').join('')+'</div>';
+ const go=()=>{const ops=[];while(ops.length<3){const o=gs[Math.random()*gs.length|0];if(!ops.includes(o))ops.push(o)}const g=ops[Math.random()*3|0];
+  b.innerHTML='<p class="sub">المطياف التقط طيف غاز مجهول. طابقه مع المكتبة ('+(r+1)+'/3)</p>'+bx(ln(g))+'<div class="row">'+ops.map(o=>'<button class="btn ghost" style="flex:1 1 90px" data-g="'+o+'">'+o+bx(ln(o))+'</button>').join('')+'</div>';
+  b.querySelectorAll('button').forEach(x=>x.onclick=()=>{if(x.dataset.g==g){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);x.classList.add('shake');x.disabled=true}})};go()},
+photo(b,win){const AW=300,AH=170;b.innerHTML='<p class="sub">📷 وجّه الكاميرا: الهدف بيعدّي أفقيًا. دوس «التقط» لما يبقى جوه الإطار (مرتين)</p><div class="arena" id="ar" style="width:'+AW+'px;max-width:100%;height:'+AH+'px;margin:0 auto;background:'+PL[S.pl].g[0]+'"><div id="tg" class="tgt"></div><div class="xh" style="width:84px;height:84px;margin:-42px 0 0 -42px"></div><div id="fl" style="position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s"></div></div><button class="btn" id="sn">التقط 📷</button><div class="sub" id="ps">0/2</div>';
+ let ok=0,id,X=0;const t0=performance.now(),aw=Math.min(AW,$('ar').clientWidth||AW);
+ const lp=t=>{const s=(t-t0)/1000,k=.9+ok*.5;X=Math.sin(s*1.4*k)*aw*.34;$('tg').style.transform='translate('+(aw/2-14+X)+'px,'+(AH/2-14+Math.sin(s*3)*10)+'px)';id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id);
+ $('sn').onclick=()=>{const f=$('fl');if(Math.abs(X)<40){ok++;bp(880);f.style.transition='none';f.style.opacity=1;void f.offsetWidth;f.style.transition='opacity .4s';f.style.opacity=0;$('ps').textContent=ok+'/2';if(ok>=2){mgStop();$('sn').disabled=true;setTimeout(win,450)}}else{bp(200,.15);$('ps').textContent=ok+'/2 · استنى الهدف يعدّي من النص'}}},
+p4(b,win){let hit=0,round=0,tt;b.innerHTML='<p class="sub">فيه تسريبات غاز في الخزان! دوس على التسريب قبل ما يختفي (6 إصابات)</p><div class="arena" id="ar"></div><div class="sub" id="ls">0/6</div>';const ar=$('ar');mgStop=()=>clearTimeout(tt);
+ const nx=()=>{if(hit>=6)return;round++;if(round>14){b.insertAdjacentHTML('beforeend','<button class="btn" id="rt">حاول تاني</button>');$('rt').onclick=()=>MG.p4(b,win);return}
+  const e=document.createElement('button');e.className='bb r';e.textContent='تسريب';e.style.transform='translate('+Math.random()*Math.max(10,ar.clientWidth-64)+'px,'+Math.random()*Math.max(10,ar.clientHeight-64)+'px)';
+  e.onpointerdown=ev=>{ev.preventDefault();hit++;bp(880);$('ls').textContent=hit+'/6';e.remove();clearTimeout(tt);if(hit>=6)win();else tt=setTimeout(nx,300)};ar.append(e);tt=setTimeout(()=>{e.remove();nx()},1300)};nx()},
+t3(b,win){const ks=[S.pl,...Object.keys(TC).filter(k=>k!=S.pl).sort(()=>Math.random()-.5).slice(0,2)];let i=0;
+ const go=()=>{const k=ks[i];b.innerHTML='<p class="sub">اضبط مؤشر الحرارة على متوسط حرارة <b>'+nmK(k)+'</b> ('+(i+1)+'/3). السماح ±25 °م</p><div class="big" id="sv">0 °م</div><input type="range" id="sl" min="-250" max="500" value="0" style="width:100%;box-shadow:none;padding:0"><div class="sub" id="hn"></div><button class="btn" id="ok">تأكيد</button>';
+  const sl=$('sl');sl.oninput=()=>$('sv').textContent=sl.value+' °م';
+  $('ok').onclick=()=>{const d=+sl.value-TC[k];if(Math.abs(d)<=25){bp(880);i++;if(i>=3)return win();go()}else{bp(200,.15);$('hn').textContent=d>0?'أقل من كده ↓':'أعلى من كده ↑';$('sv').classList.remove('shake');void $('sv').offsetWidth;$('sv').classList.add('shake')}}};go()},
+s3(b,win,d){const nm=(d.rows?d.rows.map(r=>r[0]):[]).concat(['حديد','سيليكون','كالسيوم','ألومنيوم','مغنيسيوم','أكسجين']).filter((x,i,a)=>a.indexOf(x)==i).slice(0,3),cards=[...nm,...nm].sort(()=>Math.random()-.5);let open=[],found=0,lock=0,tt;
+ b.innerHTML='<p class="sub">طابق أزواج المعادن (3 أزواج)</p><div class="grid" style="grid-template-columns:repeat(3,1fr)" id="gr"></div>';mgStop=()=>clearTimeout(tt);
+ cards.forEach(n=>{const t=document.createElement('button');t.className='tl';t.style.height='54px';t.textContent='?';
+  t.onclick=()=>{if(lock||t.dataset.o)return;t.dataset.o=1;t.className='tl f';t.textContent=n;open.push([t,n]);bp(500);
+   if(open.length==2){lock=1;if(open[0][1]==open[1][1]){found++;open=[];lock=0;bp(880);if(found>=3)tt=setTimeout(win,500)}else tt=setTimeout(()=>{open.forEach(o=>{o[0].className='tl';o[0].textContent='?';delete o[0].dataset.o});open=[];lock=0},800)}};$('gr').append(t)})},
+aq(b,win,d){const qs=[];if(d.rows){const o=[d.rows[0][0],...d.rows.slice(1).map(r=>r[0]).slice(0,2)];['هيليوم','أرجون','أكسجين'].forEach(x=>{if(o.length<3&&!o.includes(x))o.push(x)});qs.push(Q('الغاز الأكتر في جو '+PL[S.pl].n+':',o,0))}
+ qs.push(Q('هل ينفع تتنفس هواء '+PL[S.pl].n+' من غير جهاز؟',['لا، مفيش أكسجين كفاية أو الجو سام','أيوه عادي'],0),Q('الغلاف الجوي هو:',['طبقة غازات حوالين الكوكب','طبقة صخور','محيط'],0));QZ(b,win,qs)},
+p5(b,win){let n=0,tms=[],st=0,tt;b.innerHTML='<p class="sub">اضغط «افتح الصمام» أول ما الضوء يبقى أخضر (5 مرات، المتوسط أقل من 0.7 ثانية)</p><div id="lt" class="big" style="background:#8a3a4a;padding:18px;color:#fff">انتظر...</div><button class="btn" id="gb">افتح الصمام</button><div class="sub" id="gs">0/5</div>';
+ const arm=()=>{st=0;$('lt').style.background='#8a3a4a';$('lt').textContent='انتظر...';tt=setTimeout(()=>{st=performance.now();$('lt').style.background='#1f9d6b';$('lt').textContent='دلوقتي!'},800+Math.random()*1800)};mgStop=()=>clearTimeout(tt);arm();
+ $('gb').onclick=()=>{if(!st){clearTimeout(tt);bp(200,.2);$('gs').textContent='بدري! جرّب تاني';arm();return}const r=performance.now()-st;tms.push(r);n++;bp(880);$('gs').textContent=n+'/5 · '+Math.round(r)+'ms';if(n>=5){const avg=tms.reduce((a,x)=>a+x,0)/5;if(avg<700)return win();tms=[];n=0;$('gs').textContent='المتوسط '+Math.round(avg)+'ms. جرّب تاني'}arm()}},
+p6(b,win){let r=0;const go=()=>{const v=1+Math.random()*8|0,ops=[v];while(ops.length<3){const o=1+Math.random()*9|0;if(!ops.includes(o))ops.push(o)}ops.sort(()=>Math.random()-.5);
+ b.innerHTML='<p class="sub">اقرا العدّاد بالبار ('+(r+1)+'/3)</p><div style="position:relative;width:220px;height:120px;margin:8px auto;border-radius:220px 220px 0 0;background:#0b0f2c;box-shadow:0 0 0 3px var(--line);overflow:hidden"><i style="position:absolute;left:50%;bottom:0;width:4px;height:100px;margin-left:-2px;background:#ffb347;transform-origin:50% 100%;transform:rotate('+(-80+v*16)+'deg)"></i><span style="position:absolute;left:8px;bottom:2px;font-size:11px">0</span><span style="position:absolute;right:8px;bottom:2px;font-size:11px">10</span></div><div class="row">'+ops.map(o=>'<button class="btn ghost" data-v="'+o+'">'+o+' بار</button>').join('')+'</div>';
+ b.querySelectorAll('button').forEach(x=>x.onclick=()=>{if(+x.dataset.v==v){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);x.disabled=true}})};go()},
+pq2(b,win){QZ(b,win,[Q('1 بار يساوي تقريبًا:',['100 كيلوباسكال','10 كيلوباسكال','1,000 كيلوباسكال'],0),Q('الباسكال وحدة قياس:',['الضغط','الحرارة','السرعة'],0),Q('كل ما نزلت عمق أكتر في الغلاف الجوي الضغط:',['يزيد','يقل','ثابت'],0)])},
+t4(b,win){b.innerHTML='<p class="sub">دوس «سخّن» لرفع الحرارة، والجو بيبرّدها. خلّي المؤشر في الأخضر 6 ثواني</p><div class="gauge" style="height:150px;width:60px;margin:8px auto"><i style="left:0;right:0;top:35%;bottom:35%"></i><b id="nd" style="left:-5px;right:-5px;top:0;width:auto;height:6px;margin:0"></b></div><button class="btn" id="up">سخّن ↑</button><div class="bar"><i id="pr"></i></div>';
+ let y=50,vy=0,ok=0,id,last=performance.now();$('up').style.touchAction='none';$('up').onpointerdown=e=>{e.preventDefault();vy-=40;bp(500,.04)};
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;vy+=70*dt;y+=vy*dt;if(y>100){y=100;vy=0}if(y<0){y=0;vy=0}$('nd').style.top=y+'%';if(y>=35&&y<=65)ok+=dt;else ok=Math.max(0,ok-dt);$('pr').style.width=Math.min(100,ok/6*100)+'%';if(ok>=6){win();return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+t5(b,win){let r=0;const go=()=>{const vals=[...Array(16)].map(()=>Math.random()),mx=vals.indexOf(Math.max(...vals));b.innerHTML='<p class="sub">الكاميرا الحرارية: دوس على أسخن مربع ('+(r+1)+'/3)</p><div class="grid" style="grid-template-columns:repeat(4,1fr)" id="gr"></div>';
+ vals.forEach((v,i)=>{const t=document.createElement('button');t.className='tl';t.style.height='46px';t.style.background='hsl('+(240-v*240)+',80%,'+(35+v*20)+'%)';t.onclick=()=>{if(i==mx){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);t.disabled=true;t.style.opacity='.4'}};$('gr').append(t)})};go()},
+tq(b,win){QZ(b,win,[Q('0 °م تساوي كام كلفن؟',['273','100','0'],0),Q('أبرد درجة ممكنة اسمها:',['الصفر المطلق','نقطة التجمد','نقطة الغليان'],0),Q('الماء بيغلي على الأرض عند:',['100 °م','50 °م','0 °م'],0)])},
+s4(b,win){const O=[26,34,42,52,64],sz=[...O].sort(()=>Math.random()-.5);let i=0;b.innerHTML='<p class="sub">فرز الحبيبات: دوس عليهم من الأصغر للأكبر</p><div class="row" id="gr" style="align-items:center;min-height:80px"></div>';
+ sz.forEach(z=>{const e=document.createElement('button');e.style.cssText='border:0;border-radius:50%;cursor:pointer;width:'+z+'px;height:'+z+'px;background:'+PL[S.pl].g[z%3];e.onclick=()=>{if(e.disabled)return;if(z==O[i]){e.disabled=true;e.style.opacity='.3';bp(500+i*100);i++;if(i>=5)win()}else{bp(200,.15);i=0;[...$('gr').children].forEach(x=>{x.disabled=false;x.style.opacity=1})}};$('gr').append(e)})},
+s5(b,win){let r=0;const go=()=>{const base=Math.random()*360|0,odd=Math.random()*20|0;b.innerHTML='<p class="sub">كاشف الحديد: دوس على الحبة المختلفة ('+(r+1)+'/3)</p><div class="grid" style="grid-template-columns:repeat(5,1fr)" id="gr"></div>';
+ for(let i=0;i<20;i++){const t=document.createElement('button');t.className='tl';t.style.height='40px';t.style.background='hsl('+base+',45%,'+(i==odd?50-Math.max(6,12-r*3):50)+'%)';t.onclick=()=>{if(i==odd){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);t.disabled=true}};$('gr').append(t)}};go()},
+s6(b,win){let n=0,t=6;b.innerHTML='<p class="sub">دوس بسرعة على «اضرب» 25 مرة في 6 ثواني عشان تكسر الصخرة</p><div class="big" id="rk" style="font-size:44px">🪨</div><button class="btn" id="hit">اضرب!</button><div class="bar"><i id="pr"></i></div><div class="sub" id="tm">6</div>';
+ const iv=setInterval(()=>{t--;$('tm').textContent=t;if(t<=0){clearInterval(iv);if(n<25){b.insertAdjacentHTML('beforeend','<button class="btn" id="rt">حاول تاني</button>');$('rt').onclick=()=>MG.s6(b,win)}}},1000);mgStop=()=>clearInterval(iv);
+ $('hit').style.touchAction='manipulation';$('hit').onpointerdown=e=>{e.preventDefault();if(t<=0)return;n++;bp(300+n*20,.04);$('pr').style.width=Math.min(100,n*4)+'%';if(n>=25){clearInterval(iv);$('rk').textContent='💥';win()}}},
+sq(b,win){QZ(b,win,[Q('الصخر البركاني الشائع اسمه:',['بازلت','رخام','حجر جيري'],0),Q('اللون الأحمر للمريخ سببه:',['أكسيد الحديد (صدأ)','الكبريت','الجليد'],0),Q('الريجوليث هو:',['غبار وصخور مفتتة','محيط','سحاب'],0)])},
+a4(b,win){let r=0,ans,tt;const D=[['↑','شمال'],['↓','جنوب'],['←','غرب'],['→','شرق']];mgStop=()=>clearTimeout(tt);const go=()=>{ans=Math.random()*4|0;b.innerHTML='<p class="sub">اتفرج على اتجاه الرياح وافتكره ('+(r+1)+'/4)</p><div class="big" id="wd" style="font-size:54px">'+D[ans][0]+'</div><div class="row" id="ch" style="visibility:hidden">'+D.map((d,i)=>'<button class="btn ghost" data-i="'+i+'">'+d[1]+'</button>').join('')+'</div>';
+ tt=setTimeout(()=>{$('wd').textContent='؟';$('ch').style.visibility='visible';b.querySelectorAll('#ch button').forEach(x=>x.onclick=()=>{if(+x.dataset.i==ans){bp(880);r++;if(r>=4)return win();go()}else{bp(200,.15);x.disabled=true}})},1100)};go()},
+a5(b,win){let r=0,tt;mgStop=()=>clearTimeout(tt);const go=()=>{const n=3+Math.random()*8|0,ops=[n];while(ops.length<3){const o=Math.max(1,n+(Math.random()*7|0)-3);if(!ops.includes(o))ops.push(o)}ops.sort(()=>Math.random()-.5);
+ b.innerHTML='<p class="sub">عدّاد الجزيئات: عدّ النقط قبل ما تختفي ('+(r+1)+'/3)</p><div class="arena" id="ar"></div><div class="row" id="ch" style="visibility:hidden">'+ops.map(o=>'<button class="btn ghost" data-n="'+o+'">'+o+'</button>').join('')+'</div>';
+ const ar=$('ar');[...Array(24).keys()].sort(()=>Math.random()-.5).slice(0,n).forEach(c=>{const d=document.createElement('i');d.style.cssText='position:absolute;width:14px;height:14px;border-radius:50%;background:#4de3c1;left:'+((c%6)*16+4)+'%;top:'+((c/6|0)*24+6)+'%';ar.append(d)});
+ tt=setTimeout(()=>{ar.innerHTML='<div class="big" style="padding-top:70px">كام نقطة؟</div>';$('ch').style.visibility='visible';b.querySelectorAll('#ch button').forEach(x=>x.onclick=()=>{if(+x.dataset.n==n){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);x.disabled=true}})},1500+n*120)};go()},
+a6(b,win){const tg=15+Math.random()*70|0;b.innerHTML='<p class="sub">اضبط المستشعر: حرّك المنزلق لحد ما الإشارة تزيد عن 92%، وبعدين «ثبّت»</p><div class="big" id="sg">0%</div><div class="bar"><i id="pr"></i></div><input type="range" id="sl" min="0" max="100" value="0" style="width:100%;box-shadow:none;padding:0"><button class="btn" id="ok">ثبّت</button>';
+ const sl=$('sl'),str=()=>Math.max(0,100-Math.abs(+sl.value-tg)*3);sl.oninput=()=>{const v=Math.round(str());$('sg').textContent=v+'%';$('pr').style.width=v+'%'};
+ $('ok').onclick=()=>{if(str()>92){bp(880);win()}else bp(200,.15)}},
+aq2(b,win){QZ(b,win,[Q('رمز ثاني أكسيد الكربون:',['CO₂','O₂','N₂'],0),Q('الغاز اللي بنتنفسه:',['الأكسجين','الهيليوم','الميثان'],0),Q('الاحتباس الحراري سببه غازات زي:',['CO₂','الأرجون','الهيليوم'],0)])},
+g3(b,win){let r=0;const go=()=>{const m=2+Math.random()*8|0,a=m-1-(Math.random()*2|0),c=m+1+(Math.random()*2|0),bb=3*m-a-c,ops=[m];while(ops.length<3){const o=m+(Math.random()*5|0)-2;if(o>0&&!ops.includes(o))ops.push(o)}ops.sort(()=>Math.random()-.5);
+ b.innerHTML='<p class="sub">تحليل البيانات: متوسط القياسات <b>'+[a,bb,c].join(' ، ')+'</b> هو؟ ('+(r+1)+'/3)</p><div class="row">'+ops.map(o=>'<button class="btn ghost" data-v="'+o+'">'+o+'</button>').join('')+'</div>';
+ b.querySelectorAll('button').forEach(x=>x.onclick=()=>{if(+x.dataset.v==m){bp(880);r++;if(r>=3)return win();go()}else{bp(200,.15);x.disabled=true}})};go()},
+wq(b,win){const g=GR[S.pl],ops=[+(10*g).toFixed(1)];while(ops.length<3){const o=+(10*g*(Math.random()<.5?.5+Math.random()*.4:1.2+Math.random()*1.5)).toFixed(1);if(!ops.includes(o)&&o>0)ops.push(o)}
+ QZ(b,win,[Q('عينة وزنها 10 كجم على الأرض، وزنها على '+PL[S.pl].n+' (الجاذبية '+g+'g)؟',ops.map(o=>o+' كجم'),0),Q('الجاذبية بتأثر على:',['وزن الأجسام وارتفاع القفز','لون الكوكب','حجم النجوم'],0),Q('بين الكواكب الوزن بيتغير لكن الكتلة:',['ثابتة','بتزيد','بتقل'],0)])},
+wp(b,win){b.innerHTML='<p class="sub">بندول القياس: دوس «سجّل» لما البندول يعدّي من النص (3 مرات)</p><div class="arena" id="ar" style="height:150px"><div id="pd" style="position:absolute;left:50%;top:0;width:0;height:0;transform-origin:0 0"><i style="position:absolute;left:-1px;top:0;width:3px;height:100px;background:#fff"></i><i style="position:absolute;left:-13px;top:96px;width:26px;height:26px;border-radius:50%;background:#ffb347"></i></div></div><button class="btn" id="sn">سجّل</button><div class="sub" id="ps">0/3</div>';
+ let ok=0,id,th=0;const t0=performance.now(),per=Math.min(4,Math.max(1.4,1.8/Math.pow(GR[S.pl],.4)));
+ const lp=t=>{th=40*Math.sin((t-t0)/1000*2*Math.PI/per);$('pd').style.transform='rotate('+th+'deg)';id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id);
+ $('sn').onclick=()=>{if(Math.abs(th)<9){ok++;bp(880);$('ps').textContent=ok+'/3';if(ok>=3){mgStop();win()}}else{bp(200,.15);$('ps').textContent=ok+'/3 · استنى يعدّي من النص'}}},
+wo(b,win){const GX=Object.assign({earth:1},GR);let it,ord;do{const o=Object.keys(GX).filter(k=>k!=S.pl&&k!='earth').sort(()=>Math.random()-.5).slice(0,2);it=[S.pl,'earth',...o].sort(()=>Math.random()-.5);ord=[...it].sort((x,y)=>GX[x]-GX[y])}while(ord.some((k,i)=>i&&GX[k]==GX[ord[i-1]]));let i=0,tt;
+ b.innerHTML='<p class="sub">رتّب الأماكن من الأقل جاذبية للأعلى: دوس عليهم بالترتيب</p><div class="row" id="tr"></div>';mgStop=()=>clearTimeout(tt);
+ it.forEach(k=>{const x=document.createElement('button');x.className='btn ghost';x.textContent=nmK(k);x.onclick=()=>{if(x.disabled)return;if(k==ord[i]){x.disabled=true;x.innerHTML=nmK(k)+'<br><small>'+GX[k]+'g</small>';bp(500+i*150);i++;if(i>=ord.length)tt=setTimeout(win,900)}else{bp(200,.15);x.classList.remove('shake');void x.offsetWidth;x.classList.add('shake')}};$('tr').append(x)})},
+r1(b,win){let n=0,list=[],id,last=performance.now(),acc=0,tm=22,lost=0;b.innerHTML='<p class="sub">درع الإشعاع: دوس على الجسيمات قبل ما توصل للطاقم (10 جسيمات، مسموح 3 تفوتك). <b id="tm">22</b>ث</p><div class="arena" id="ar"></div><div class="sub" id="as">0/10 · فاتك 0</div>';const ar=$('ar');
+ const upd=()=>$('as').textContent=n+'/10 · فاتك '+lost;
+ const sp=()=>{const e=document.createElement('button');e.className='bb r';e.style.width=e.style.height='48px';e.textContent='☢';const o={e,x:Math.random()*Math.max(10,ar.clientWidth-48),y:-50,v:60+Math.random()*50};e.onpointerdown=ev=>{ev.preventDefault();n++;bp(880);e.remove();o.dead=1;upd();if(n>=10){cancelAnimationFrame(id);win()}};ar.append(e);list.push(o)};
+ const lp=t=>{const dt=Math.min(.05,(t-last)/1000);last=t;acc+=dt;tm-=dt;if(acc>.8){acc=0;sp()}
+  list.forEach(o=>{o.y+=o.v*dt;o.e.style.transform='translate('+o.x+'px,'+o.y+'px)';if(o.y>ar.clientHeight&&!o.dead){o.dead=1;o.e.remove();lost++;bp(200,.1);upd()}});list=list.filter(o=>!o.dead);$('tm').textContent=Math.max(0,Math.ceil(tm));
+  if(lost>3||tm<=0){b.insertAdjacentHTML('beforeend','<button class="btn" id="rt">حاول تاني</button>');$('rt').onclick=()=>MG.r1(b,win);return}id=requestAnimationFrame(lp)};id=requestAnimationFrame(lp);mgStop=()=>cancelAnimationFrame(id)},
+r2(b,win){const A=['→','↓','←','↑'];const st=[...Array(9)].map(()=>1+Math.random()*3|0);b.innerHTML='<p class="sub">اضبط البوصلات كلها على ناحية واحدة (→) بالدوس على كل بوصلة</p><div class="grid" style="grid-template-columns:repeat(3,1fr);max-width:210px;margin:auto" id="gr"></div>';
+ const draw=()=>{$('gr').innerHTML='';st.forEach((v,i)=>{const t=document.createElement('button');t.className='tl';t.style.cssText='height:56px;font-size:28px;background:#1d2150';t.textContent=A[v];t.onclick=()=>{st[i]=(st[i]+1)%4;bp(400+st[i]*80,.05);if(st.every(x=>x==0))return win();draw()};$('gr').append(t)})};draw()},
+rq(b,win){QZ(b,win,[Q('المجال المغناطيسي بيحمي الكوكب من:',['الجسيمات المشحونة','الجاذبية','الرياح'],0),Q('الغلاف الجوي السميك بيقلل:',['الإشعاع عند السطح','وزنك','الجاذبية'],0),Q('الشفق القطبي سببه:',['جسيمات الشمس مع المجال المغناطيسي','القمر','الغبار'],0)])}
+};
+function openSt(k){busy=true;const d=PL[S.pl][k],pn=$('pn'),L=LAB[k]=LAB[k]||{n:0};pn.className='on';
+ const close=()=>{mgStop();pn.className='';busy=false;near=null;HINT=''};
+ const showRes=()=>{let h='<div class="big">'+d.v+'</div>';if(d.rows)h+=d.rows.map(r=>'<div class="rw"><span>'+r[0]+'</span><div class="bar"><i style="width:'+Math.max(3,r[1])+'%"></i></div><span>'+r[1]+'%</span></div>').join('');$('rs').innerHTML=h+'<p class="sub" style="line-height:1.7">'+d.n+'</p>'};
+ const menu=()=>{mgStop();HINT='';const pool=[...MGP[k]].sort(()=>Math.random()-.5),pick=pool.filter(x=>!USED.includes(x)).concat(pool.filter(x=>USED.includes(x))).slice(0,3);
+  pn.innerHTML='<h3>'+LABN[k][0]+' '+LABN[k][1]+'</h3><p class="sub">'+PL[S.pl].n+' · تجارب: '+L.n+'/3 · '+(done[k]?'تم تسجيل القياس ✔':'اختار تجربة للحصول على القياس')+'</p><div id="rs"></div><div class="row" id="ex"></div><button class="btn ghost" id="cl">رجوع للاستكشاف</button>';
+  if(done[k])showRes();
+  if(L.n<3)pick.forEach(g=>{const e=document.createElement('button');e.className='card';e.style.width='118px';e.innerHTML='<span style="font-size:26px">'+MGN[g][0]+'</span><b>'+MGN[g][1]+'</b>';e.onclick=()=>run(g);$('ex').append(e)});else $('ex').innerHTML='<p class="sub">خلّصت كل تجارب المختبر! 🎉</p>';
+  const sp=SPEC[S.pl];if(L.n<3&&sp){const e=document.createElement('button');e.className='card';e.style.cssText='width:118px;box-shadow:0 0 0 3px #b58cff,4px 4px 0 3px #000';e.innerHTML='<span style="font-size:26px">'+sp[2]+'</span><b>'+sp[1]+'</b><small style="color:#b58cff">خاصة بـ'+PL[S.pl].n+'</small>';e.onclick=()=>run(sp[0],sp[1],sp[2]);$('ex').append(e)}
+  $('cl').onclick=close};
+ const run=(g,tt,ic)=>{USED.push(g);HINT=HT[g]||'خد وقتك وركّز، ولو غلطت جرّب تاني.';pn.innerHTML='<h3>'+(ic||MGN[g][0])+' '+(tt||MGN[g][1])+'</h3><div id="mg"></div><div class="row"><button class="btn ghost" id="bk">رجوع للمختبر</button></div>';$('bk').onclick=menu;
+  let fin=0;MG[g]($('mg'),()=>{if(fin)return;fin=1;mgStop();L.n++;const first=!done[k];addXP(first?20:10,first?'قياس '+LABS[k]:'تجربة إضافية');
+   if(first){done[k]=1;chips();const left=Object.keys(ST).length-Object.keys(done).length;say(left?'تم تسجيل القياس! فاضل '+left+' مختبرات.':'كل المختبرات اكتملت!');if(GS)GS.chk();ach('l'+k,'أول قياس في '+LABS[k])}
+   if(L.n==3)ach('x'+k,'خبير '+LABS[k]);bp(1000,.15);menu()},d)};
+ menu()}
+function finish(){$('pn').className='';busy=false;clearInterval(tipT);GS=null;AMB.set(null);MUS.set('title');$('hud').classList.remove('on');PROG[S.pl]=Math.max(PROG[S.pl]||0,XP);try{localStorage.setItem('ac_prog',JSON.stringify(PROG))}catch(_){}
+ $('endt').textContent='برافو يا '+S.name+'! خلصت استكشاف '+PL[S.pl].n;$('endp').textContent='نقاطك '+XP+' · الرتبة: '+rank()+' · '+Object.keys(done).length+'/'+Object.keys(ST).length+' مختبرات · '+SM.n+'/5 عينات';go('end');saveGameProgress('end')}
+$('again').onclick=()=>{AMB.set(null);ALLDONE=0;clearInterval(tipT);$('act').style.display='none';$('pn').className='';if(G){G.destroy(true);G=null}$('gm').classList.remove('on');$('hud').classList.remove('on');done={};document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));go(2)};
+/* ---------- NASA DONKI mission layer: 10-day timed survival extension ---------- */
+const ACNASA=(()=>{
+ const API='https://ccmc.gsfc.nasa.gov/DONKI-API/get/';
+ const stored=[
+  {kind:'FLR',type:'flare',id:'2025-01-04T00:34:00-FLR-001',date:'2025-01-04',title:'Solar flare M1.5',detail:'A burst of X-rays. Light arrives in about 8 minutes; charged particles can arrive later.',strength:'M1.5'},
+  {kind:'CME',type:'cme',id:'2025-01-04T05:48:00-CME-001',date:'2025-01-04',title:'Coronal mass ejection',detail:'A cloud of charged plasma. Its arrival depends on speed and direction.',strength:'DONKI CME'},
+  {kind:'SEP',type:'sep',id:'2025-01-04T21:46:00-SEP-001',date:'2025-01-04',title:'Solar energetic particle event',detail:'Fast protons and electrons can raise astronaut radiation exposure.',strength:'GOES / SOHO'},
+  {kind:'FLR',type:'flare',id:'2025-01-04T14:24:00-FLR-001',date:'2025-01-04',title:'Solar flare linked event',detail:'Strong flares can disturb radio communication and spacecraft systems.',strength:'DONKI linked'}
+ ];
+ let events=stored.slice(),source='stored',loadedAt='2025-01-04',idx=0,tick=null,lang=localStorage.getItem('ac_lang')||'ar';
+ const M={day:1,total:10,res:{energy:100,oxygen:100,water:100,protection:72},event:null,cooldownUntil:0,lastTick:0,pendingAdvance:false,science:{samples:0,analyses:0,observations:0,objectives:0}};
+ const T={ar:{day:'اليوم',of:'من',live:'بيانات NASA DONKI مباشرة',stored:'بيانات مخزنة – ليست مباشرة',choose:'اختار خطة اليوم. كل مهمة لها تكلفة.',wait:'فترة الراحة بين التحديات',waitNote:'المحطة تعمل تلقائيًا. الأكسجين يستهلك باستمرار حسب معدل راحة إنسان بالغ: حوالي 0.25 لتر/دقيقة.',shield:'تشغيل الحماية',oxygen:'إنتاج أكسجين',comms:'فحص الاتصال',science:'المهام العلمية',sample:'جمع عينة صخر/تربة',analyze:'تحليل تركيب الصخور',observe:'تسجيل ملاحظة علمية',explore:'إكمال هدف الاستكشاف',continue:'استمرار المهمة',source:'المصدر',critical:'تحذير طوارئ: مورد البقاء حرج',mission:'مهمة علمية',complete:'اكتملت المهمة',replay:'إعادة التجربة بأحداث مختلفة',energy:'طاقة',oxygenR:'أكسجين',water:'ماء',protection:'حماية',sampleDone:'تم جمع العينة. استُهلكت طاقة للحفر والحفظ.',analyzeDone:'تم تحليل الصخر واكتشاف تركيبه. التحليل يحتاج طاقة.',observeDone:'تم تسجيل الملاحظة في سجل المهمة.',exploreDone:'تم تحديث هدف الاستكشاف في الخريطة.',easy:'سهل',sampleHint:'اجمع حجرًا أو قليلًا من التراب وضعه في العلبة.',analyzeHint:'استخدم الجهاز لمعرفة ما يتكوّن منه الصخر.',observeHint:'شاهد الحدث وسجّل ما تراه بكلمات بسيطة.',exploreHint:'ابحث عن المكان الآمن وسجّل طريقك.'},en:{day:'Day',of:'of',live:'Live NASA DONKI data',stored:'Stored Data – Not Live',choose:'Choose today’s plan. Every activity has a cost.',wait:'Rest interval between challenges',waitNote:'The habitat is working automatically. Oxygen is consumed continuously at about 0.25 liters per minute for a resting adult.',shield:'Use protection',oxygen:'Make oxygen',comms:'Radio check',science:'Science tasks',sample:'Collect rock/soil sample',analyze:'Analyze rock composition',observe:'Record science observation',explore:'Complete exploration objective',continue:'Continue mission',source:'Source',critical:'EMERGENCY ALERT: survival resource critical',mission:'Science mission',complete:'Mission complete',replay:'Replay with different events',energy:'Energy',oxygenR:'Oxygen',water:'Water',protection:'Protection',sampleDone:'Sample collected. Drilling and storage used energy.',analyzeDone:'Rock composition analyzed. Analysis required energy.',observeDone:'Observation saved to the mission log.',exploreDone:'Exploration objective updated on the map.',easy:'easy',sampleHint:'Pick up a small rock or soil sample and place it in the box.',analyzeHint:'Use the tool to learn what the rock is made of.',observeHint:'Watch the event and write one simple observation.',exploreHint:'Find the safe place and record your route.'}};
+ const tr=k=>T[lang][k]||T.en[k]||k,esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const dateOnly=x=>String(x||'').slice(0,10)||'unknown date';
+ function normalize(kind,row){const instruments=(row.instruments||[]).map(x=>x.displayName).filter(Boolean),links=(row.linkedEvents||[]).map(x=>x.activityID).filter(Boolean);if(kind==='FLR'){const cls=row.classType||'C';const grade=/X/.test(cls)?3:/M/.test(cls)?2:1;return {kind,type:'flare',id:row.flrID,date:dateOnly(row.beginTime),title:'Solar flare '+cls,detail:'A bright flash from the Sun. Light arrives very fast, so the radio can change soon.',strength:cls,grade,instruments,sourceLocation:row.sourceLocation||'unknown',activeRegionNum:row.activeRegionNum||'unknown',peakTime:row.peakTime||'',links}}if(kind==='CME'){let a=(row.cmeAnalyses||[]).find(x=>x.isMostAccurate)||row.cmeAnalyses?.[0]||{},speed=Number(a.speed)||0;return {kind,type:'cme',id:row.activityID,date:dateOnly(row.startTime),title:'Solar cloud (CME)',detail:'A cloud of charged gas moving away from the Sun. Faster clouds need more protection.',strength:speed?Math.round(speed)+' km/s':'CME',grade:speed>900?3:speed>500?2:1,instruments,sourceLocation:row.sourceLocation||'unknown',activeRegionNum:row.activeRegionNum||'unknown',speed,arrival:a.enlilList?.[0]?.estimatedShockArrivalTime||'',links}}const linked=links.length;return {kind,type:'sep',id:row.sepID,date:dateOnly(row.eventTime),title:'Fast solar particles (SEP)',detail:'Tiny fast particles from the Sun. They can raise radiation around a spacecraft.',strength:'SEP',grade:linked>2?3:linked?2:1,instruments,sourceLocation:'solar particle event',activeRegionNum:'unknown',links}}
+ async function load(){const end=new Date(),start=new Date(end.getTime()-2592e6),fmt=d=>d.toISOString().slice(0,10),q='?startDate='+fmt(start)+'&endDate='+fmt(end);try{const rs=await Promise.all(['FLR','CME','SEP'].map(k=>fetch(API+k+q,{mode:'cors'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json()})));const got=[];rs.forEach((a,i)=>(Array.isArray(a)?a:[]).slice(0,10).forEach(x=>got.push(normalize(['FLR','CME','SEP'][i],x))));if(!got.length)throw Error('empty');events=got;source='live';loadedAt=new Date().toISOString().slice(0,10)}catch(_){events=stored.slice();source='stored';loadedAt='2025-01-04'}return events}
+ const sourceLabel=()=>source==='live'?'<span class="live">'+tr('live')+'</span>':'<span class="stored">'+tr('stored')+'</span>';
+ function next(){return M.event=events[idx++%events.length]}
+ function pct(v){return Math.max(0,Math.min(100,Math.round(v)))}
+ function bars(){return ['energy','oxygenR','water','protection'].map((k,i)=>{let v=i===0?M.res.energy:i===1?M.res.oxygen:i===2?M.res.water:M.res.protection;return '<div class="mstat"><span>'+tr(k)+'</span><div class="bar"><i style="width:'+pct(v)+'%"></i></div><b>'+pct(v)+'</b></div>'}).join('')}
+ function alert(on,msg){const e=$('spaceAlert');if(on){e.textContent='⚠ '+msg;e.classList.add('on')}else e.classList.remove('on')}
+ function oxygenTick(){if(!M.lastTick)M.lastTick=Date.now();const now=Date.now(),mins=(now-M.lastTick)/60000;M.lastTick=now;if(mins<=0||mins>10)return;M.res.oxygen-=mins*(100/600*.25);M.res.water-=mins*(100/2400*.05);if(M.res.oxygen<20||M.res.water<15)alert(true,tr('critical')+' · '+tr('oxygenR')+': '+pct(M.res.oxygen)+'% · '+tr('water')+': '+pct(M.res.water)+'%');if(M.res.oxygen<=0||M.res.water<=0)fail();}
+ function startClock(){clearInterval(tick);M.lastTick=Date.now();tick=setInterval(()=>{oxygenTick();if($('pn').classList.contains('on')&&M.cooldownUntil)renderDay()},1000)}
+ function timer(){return Math.max(0,M.cooldownUntil-Date.now())}
+ function finishModal(title,body,buttons){const p=$('pn');p.className='on';p.innerHTML='<div id="missionPanel" class="'+(lang==='en'?'missionLtr':'missionRtl')+'"><h3>'+title+'</h3>'+body+bars()+'<div class="row">'+buttons+'</div></div>'}
+ function science(){const e=M.event||{};const task=e.type==='flare'?'observe':e.type==='cme'?'explore':'sample';return '<div class="mevent"><b>'+tr('science')+'</b><p class="mnote">'+(task==='observe'?tr('observeHint'):task==='explore'?tr('exploreHint'):tr('sampleHint'))+'</p><div class="mchoices"><button data-sci="'+task+'">'+tr(task==='observe'?'observe':task==='explore'?'explore':'sample')+'<br><small>−6 '+tr('energy')+' · '+tr('easy')+'</small></button><button data-sci="analyze">'+tr('analyze')+'<br><small>−8 '+tr('energy')+' · '+tr('easy')+'</small></button></div></div>'}
+ function renderDay(){oxygenTick();const p=$('pn');busy=true;p.className='on';if(timer()>0){const e=M.event||next(),mins=Math.floor(timer()/60000),secs=Math.floor(timer()/1000)%60;p.innerHTML='<div id="missionPanel" class="'+(lang==='en'?'missionLtr':'missionRtl')+'"><h3>'+tr('wait')+' · '+tr('day')+' '+M.day+' '+tr('of')+' '+M.total+'</h3><div class="mtimer">'+String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0')+'</div><p class="mnote">'+tr('waitNote')+'</p>'+bars()+'<p class="mnote">'+tr('source')+': NASA DONKI '+e.kind+' · '+e.date+'</p></div>';return}if(M.pendingAdvance){M.pendingAdvance=false;if(M.day<M.total){M.day++;M.event=next()}else{busy=false;$('pn').className='';say(tr('complete'));return}}const e=M.event||next();p.innerHTML='<div id="missionPanel" class="'+(lang==='en'?'missionLtr':'missionRtl')+'"><h3>'+tr('day')+' '+M.day+' '+tr('of')+' '+M.total+' · '+sourceLabel()+'</h3><p class="mnote">'+tr('choose')+'</p>'+bars()+'<div class="mevent"><b>'+esc(e.title)+'</b><br><span class="mnote">'+esc(e.detail)+'</span><br><span class="mnote">NASA DONKI '+e.kind+' · '+esc(e.date)+' · '+esc(e.strength)+'<br>Sensor: '+esc((e.instruments||[]).join(', ')||'not listed')+' · Region: '+esc(e.sourceLocation||'not listed')+' · Links: '+((e.links||[]).length)+'</span></div><div class="mchoices"><button data-plan="shield">'+tr('shield')+'<br><small>−8 '+tr('energy')+' · +12 '+tr('protection')+'</small></button><button data-plan="oxygen">'+tr('oxygen')+'<br><small>−14 '+tr('energy')+' · +16 '+tr('oxygenR')+'</small></button><button data-plan="comms">'+tr('comms')+'<br><small>−5 '+tr('energy')+' · −6 '+tr('protection')+'</small></button></div>'+science()+'<p class="mnote">'+tr('waitNote')+'</p></div>';p.querySelectorAll('[data-plan]').forEach(b=>b.onclick=()=>choose(b.dataset.plan));p.querySelectorAll('[data-sci]').forEach(b=>b.onclick=()=>scienceTask(b.dataset.sci))}
+ function canSpend(e,w=0){return M.res.energy>=e&&M.res.water>=w}
+ function choose(plan){oxygenTick();if(plan==='shield'&&canSpend(8)){M.res.energy-=8;M.res.protection=Math.min(100,M.res.protection+12)}else if(plan==='oxygen'&&canSpend(14,4)){M.res.energy-=14;M.res.oxygen=Math.min(100,M.res.oxygen+16);M.res.water-=4}else if(plan==='comms'&&canSpend(5)){M.res.energy-=5;M.res.protection-=6}else{alert(true,tr('critical'));return}afterAction(tr('complete'))}
+ function scienceTask(type){const costs={sample:[10,3],analyze:[12,0],observe:[4,0],explore:[7,0]},c=costs[type];if(!canSpend(c[0],c[1])){alert(true,tr('critical'));return}M.res.energy-=c[0];M.res.water-=c[1];M.science[{sample:'samples',analyze:'analyses',observe:'observations',explore:'objectives'}[type]]++;say(tr(type+'Done'));afterAction(tr('mission'))}
+ function afterAction(msg){if(!check()){fail();return}M.cooldownUntil=Date.now()+300000;M.pendingAdvance=true;renderDay()}
+ function check(){return M.res.energy>0&&M.res.oxygen>0&&M.res.water>0&&M.res.protection>0}
+ function fail(){M.cooldownUntil=0;M.pendingAdvance=false;finishModal(tr('critical'),'<p>'+tr('waitNote')+'</p><p class="mnote">Choose a safer plan or replay with a different event sequence.</p>','<button class="btn" id="replayMission">'+tr('replay')+'</button>');$('replayMission').onclick=()=>{M.day=1;M.cooldownUntil=0;M.pendingAdvance=false;M.res={energy:100,oxygen:100,water:100,protection:72};M.science={samples:0,analyses:0,observations:0,objectives:0};idx=(idx+1)%events.length;next();renderDay()}}
+ function sources(){const p=$('pn');p.className='on';p.innerHTML='<div id="missionPanel" class="'+(lang==='en'?'missionLtr':'missionRtl')+'"><h3>NASA data sources</h3><p>'+sourceLabel()+'<br>Dataset date: '+esc(loadedAt)+'</p><p class="mnote">NASA DONKI provides FLR, CME, and SEP space-weather records for missions to the Moon and Mars. APOD is not used.</p><div class="msource">Live endpoint: ccmc.gsfc.nasa.gov/DONKI-API/get/{FLR|CME|SEP}<br>Stored fallback IDs: DONKI records from 2025-01-04.<br>Mission facts: Moon and Mars datasets in this file.</div><button class="btn ghost" id="closeNASA">'+(lang==='en'?'Back':'رجوع')+'</button></div>';$('closeNASA').onclick=renderDay}
+ function setLang(){const missionOpen=$('pn').classList.contains('on')&&!!$('missionPanel');lang=lang==='ar'?'en':'ar';localStorage.setItem('ac_lang',lang);$('langBtn').textContent=lang==='ar'?'English':'عربي';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';translateShell();syncMenu();if($('set').classList.contains('on'))setUI();if(missionOpen)renderDay()}
+ function translateShell(){const en=lang==='en',v={fs:en?'Fullscreen':'ملء الشاشة',continueGame:en?'Continue Game':'كمّل اللعبة',newGame:en?'New Game':'لعبة جديدة',bset:en?'Settings':'الإعدادات',bq:en?'Quit':'خروج',setx:en?'Back':'رجوع',qb:en?'Back':'رجوع',n1:en?'Next':'التالي',n2:en?'Choose a planet':'اختار الكوكب',launch:en?'Launch':'إطلاق',again:en?'New trip':'رحلة جديدة',mcx:en?'Hide':'إخفاء',mcShow:en?'Control center':'مركز التحكم',rov:en?'Rover':'مسبار',rad:en?'Scan':'مسح',jmp:en?'Jump':'قفزة',skip:en?'Skip':'تخطي'};Object.keys(v).forEach(k=>{if($(k))$(k).textContent=v[k]});if($('s0'))$('s0').querySelector('.tag2').innerHTML=en?'Explore • Learn • <b>Discover</b>':'استكشف • اتعلّم • <b>اكتشف</b>';if($('set'))$('set').querySelector('h2').textContent=en?'Settings':'الإعدادات';if($('quit')){$('quit').querySelector('h2').textContent=en?'See you soon, Commander!':'نشوفك قريب يا قائد!';$('quit').querySelector('.sub').textContent=en?'Thanks for playing Astro Commander. Space will be here when you return.':'شكرًا إنك لعبت Astro Commander. الفضاء مستنيك.'}if($('s1')){$('s1').querySelector('h1').innerHTML='ASTRO<br>COMMANDER';$('s1').querySelector('.sub').textContent=en?'Choose and name your astronaut':'اختار رائد الفضاء وسمّيه';$('nm').placeholder=en?'Astronaut name':'اسم رائد الفضاء';$('nm').setAttribute('aria-label',$('nm').placeholder)}if($('s2'))$('s2').querySelector('h2').textContent=en?'You are on Earth. Moon or Mars?':'إنت على الأرض. تروح القمر ولا المريخ؟';if($('s3'))$('s3').querySelector('h2').textContent=en?'Choose your rocket':'اختار صاروخك';if($('end'))$('end').querySelector('h1').innerHTML=en?'MISSION<br>COMPLETE':'المهمة<br>اكتملت';if($('mc'))$('mc').querySelector('i').textContent=en?'Control center':'مركز التحكم';document.querySelectorAll('#mcb button[data-q]').forEach((b,i)=>b.textContent=en?['Where?','Hint','Fact'][i]:['فين؟','تلميح','معلومة'][i]);document.querySelectorAll('[data-go]').forEach(b=>b.textContent=en?'Back':'رجوع');const names=en?['Mission Lead','Flight Engineer','Test Pilot','Planet Scientist','Space Medic','Artemis Explorer','Apollo Explorer','Mercury Pilot']:CH.map(x=>x.r),desc=en?['Orange launch suit','Spacewalk suit','Blue flight suit','EMU suit with camera','Launch suit with medical kit','Lunar AxEMU suit','Classic Apollo suit','Silver Mercury suit']:CH.map(x=>x.d);document.querySelectorAll('#chs .card').forEach((b,i)=>{b.querySelector('b').textContent=names[i];b.querySelector('small').textContent=desc[i]});const rnames=en?['Falcon','Artemis SLS','Starship','Space Shuttle','Saturn V','Soyuz','New Glenn']:RK.map(x=>x.n),rdesc=en?['Light and quick; flies again','NASA’s powerful Moon rocket','Huge rocket built for Mars','NASA’s reusable spaceplane','The rocket that carried Apollo to the Moon','A rocket with a long safety record','A large reusable booster']:RK.map(x=>x.d);document.querySelectorAll('#rks .card').forEach((b,i)=>{b.querySelector('b').textContent=rnames[i];b.querySelector('small').textContent=rdesc[i]});const planetNames={moon:['Moon','القمر'],mercury:['Mercury','عطارد'],venus:['Venus','الزهرة'],mars:['Mars','المريخ'],jupiter:['Jupiter','المشتري'],saturn:['Saturn','زحل'],uranus:['Uranus','أورانوس'],neptune:['Neptune','نبتون'],pluto:['Pluto','بلوتو'],io:['Io','آيو'],europa:['Europa','أوروبا'],ganymede:['Ganymede','جانيميد'],titan:['Titan','تيتان'],enceladus:['Enceladus','إنسيلادوس'],triton:['Triton','تريتون']};document.querySelectorAll('#pls .card').forEach((b,i)=>{const k=ORD[i],pn=planetNames[k]||[PL[k].n,PL[k].n];b.querySelector('b').textContent=pn[en?0:1];b.querySelector('small').textContent=en?PL[k].kind+' · '+PL[k].dist:PL[k].kind+' · '+PL[k].dist});if($('s2')&&S.name)$('who').textContent=en?'Astronaut '+S.name:'الرائد '+S.name+' · '+CH[S.ch].r;syncMenu()}
+ function button(){if(!$('missionBtn')){const b=document.createElement('button');b.id='missionBtn';b.textContent='Mission · NASA';b.onclick=renderDay;$('chips').prepend(b)}if(!$('sourcesBtn')){const b=document.createElement('button');b.id='sourcesBtn';b.textContent='Sources';b.onclick=sources;$('chips').prepend(b)}$('langBtn').onclick=setLang;$('langBtn').textContent=lang==='ar'?'English':'عربي';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr'}
+ function start(saved){button();translateShell();if(saved&&saved.M){Object.assign(M,saved.M);idx=saved.idx||0}else{M.day=1;M.cooldownUntil=0;M.pendingAdvance=false;M.res={energy:100,oxygen:100,water:100,protection:72};M.science={samples:0,analyses:0,observations:0,objectives:0};M.event=next()}startClock();load().then(()=>{if($('pn').classList.contains('on')){if(!M.event)M.event=next();renderDay()}});setTimeout(()=>{if(!M.event)M.event=next();if(!$('pn').classList.contains('on'))renderDay()},900)}
+ return {load,start,renderDay,sources,next,sourceLabel,state:M,setLang,initLanguage(){button();translateShell()},saveState(){return {M:JSON.parse(JSON.stringify(M)),idx,lang}},reset(){M.day=1;M.total=10;M.res={energy:100,oxygen:100,water:100,protection:72};M.event=null;M.cooldownUntil=0;M.lastTick=0;M.pendingAdvance=false;M.science={samples:0,analyses:0,observations:0,objectives:0};idx=0;clearInterval(tick)}};
+})();
+const _acExploreCreate=Explore.prototype.create;Explore.prototype.create=function(){_acExploreCreate.apply(this,arguments);ACNASA.start(RESTORE_GAME?.nasa);RESTORE_GAME=null;setTimeout(()=>saveGameProgress('play'),600)};
+const _acRoll=Explore.prototype.rollEvent;Explore.prototype.rollEvent=function(){if(ACNASA.state&&ACNASA.state.day<=ACNASA.state.total&&ACNASA.state.event&&Math.random()<.65){this.evT=rnd(45,85);this.solarNASA=ACNASA.state.event;this.forecast('solar');return}_acRoll.apply(this,arguments)};
+const _acForecast=Explore.prototype.forecast;Explore.prototype.forecast=function(type){_acForecast.apply(this,arguments);if(type==='solar'&&this.solarNASA){const e=this.solarNASA;ACNASA.alert(true,'NASA DONKI ALERT · '+e.title+' · '+e.date);say('NASA DONKI: '+e.title+' · '+e.date+'. '+e.detail)}};
+const _acEndEvent=Explore.prototype.endEvent;Explore.prototype.endEvent=function(type,win){_acEndEvent.apply(this,arguments);if(type==='solar'&&ACNASA.state){if(win)ACNASA.state.res.protection=Math.min(100,ACNASA.state.res.protection+4);else ACNASA.state.res.protection=Math.max(0,ACNASA.state.res.protection-12);chips()}};
+window.openNASASources=()=>ACNASA.sources();
+ACNASA.initLanguage();syncMenu();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
