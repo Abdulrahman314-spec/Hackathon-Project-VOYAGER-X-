@@ -1,9 +1,9 @@
-const CACHE_NAME = 'astro-commander-v2';
+const CACHE_NAME = 'astro-commander-v3';
 const APP_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './assets/astro-commander-mark.svg',
+  './assets/astro-commander-logo.png',
   './assets/favicon-32.png',
   './assets/apple-touch-icon.png',
   './assets/icon-192.png',

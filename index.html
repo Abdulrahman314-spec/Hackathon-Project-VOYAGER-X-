@@ -5,7 +5,7 @@
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#10143b"><meta name="apple-mobile-web-app-title" content="Astro Commander"><meta name="application-name" content="Astro Commander">
-<link rel="icon" type="image/svg+xml" href="assets/astro-commander-mark.svg"><link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"><meta property="og:image" content="assets/astro-commander-logo.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest">
 <title>Astro Commander</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -82,8 +82,8 @@ input{-webkit-user-select:none!important;user-select:none!important}
 .spc{position:relative;height:26px;background:#05070f;box-shadow:0 0 0 2px var(--line);margin:6px 0}.spc i{position:absolute;top:0;bottom:0;width:3px;background:#4de3c1}
 .tgt{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:#b58cff;box-shadow:0 0 0 3px #fff}.xh{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;box-shadow:0 0 0 2px var(--teal);pointer-events:none}
 #s0{direction:ltr;justify-content:flex-start;gap:8px}
-.logo{margin:3vh 0 0;text-align:center;font:400 clamp(24px,7.4vw,74px)/1.12 'Press Start 2P',monospace;transform:rotate(-3deg)}
-.logo-mark{display:block;width:clamp(64px,14vw,116px);height:clamp(64px,14vw,116px);margin:0 auto 8px;image-rendering:pixelated;filter:drop-shadow(0 8px 0 #090c2a)}
+.logo{margin:2vh 0 0;text-align:center;font-size:0;line-height:0}
+.logo-img{display:block;width:clamp(240px,52vw,560px);max-height:44vh;height:auto;object-fit:contain;margin:0 auto;image-rendering:pixelated;filter:drop-shadow(0 8px 0 #090c2a);transform:rotate(0)}
 .logo span{display:block}
 .logo .a{color:#fff;text-shadow:3px 0 #1c1c7a,-3px 0 #1c1c7a,0 3px #1c1c7a,0 -3px #1c1c7a,3px 3px #1c1c7a,-3px -3px #1c1c7a,3px -3px #1c1c7a,-3px 3px #1c1c7a,0 8px #0d0d40}
 .logo .b{color:#5fe3ff;text-shadow:3px 0 #12306b,-3px 0 #12306b,0 3px #12306b,0 -3px #12306b,3px 3px #12306b,-3px -3px #12306b,3px -3px #12306b,-3px 3px #12306b,0 8px #08183a}
@@ -136,28 +136,42 @@ input{-webkit-user-select:none!important;user-select:none!important}
 @media (min-width:1200px){#pn{width:600px}#missionPanel{font-size:15px}.mchoices button{min-height:62px}.tag{font-size:15px}}
 @media (orientation:landscape) and (max-height:560px){#pn{max-height:84dvh;padding:10px}#missionPanel h3{font-size:18px}.mchoices button{min-height:44px}.mnote{font-size:11px}#mc{bottom:8px}}
 
-/* ---------- Tutorial (first-time training) ---------- */
+/* ---------- Tutorial (Mission Control briefing, ages 12-17): solid, high-contrast, frosted-blur panels ---------- */
 #tut{position:fixed;inset:0;z-index:33;display:none;pointer-events:none;align-items:flex-start;justify-content:center;padding:calc(54px + env(safe-area-inset-top,0px)) 12px 12px}
 @media(max-width:640px){#tut{padding-top:calc(96px + env(safe-area-inset-top,0px))}}
 #tut.on{display:flex}
 #tut.low{align-items:flex-end;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
-#tut.modal{pointer-events:auto;align-items:center;background:#050718bd}
-.tut-box{pointer-events:auto;width:min(440px,100%);background:var(--panel);box-shadow:0 0 0 3px var(--amb),5px 5px 0 3px #000;padding:12px 14px;text-align:start;position:relative;overflow-x:hidden;overflow-y:auto;max-height:calc(100dvh - 24px);-webkit-overflow-scrolling:touch}
-#tut.modal .tut-box{width:min(500px,100%)}
-.tut-box.ok{box-shadow:0 0 0 3px var(--teal),5px 5px 0 3px #000}
-.tut-p{height:6px;background:#0b0f2c;margin:-12px -14px 10px}.tut-p i{display:block;height:100%;background:var(--teal);transition:width .4s}
-.tut-h{display:flex;align-items:center;gap:8px;font-size:17px}.tut-h .ti{font-size:24px}.tut-h small{margin-inline-start:auto;color:var(--mut)}
-.tut-d{margin:6px 0 8px;font-size:14px;line-height:1.7}
-.tut-rows{display:grid;gap:6px;margin:6px 0 10px}.tut-rows>div{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;font-size:13px;line-height:1.55;background:#0b0f2c;padding:6px 8px}.tut-rows b{color:var(--amb)}
-.tut-b{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tut-b .btn{padding:8px 18px;font-size:15px;min-height:40px}
-.tut-l{background:none;border:0;color:var(--mut);font:700 12px Cairo,sans-serif;cursor:pointer;padding:8px 4px;min-height:40px;text-decoration:underline}.tut-l:hover,.tut-l:focus-visible{color:var(--tx)}
-.tut-ok{display:none;color:var(--teal);font-weight:900;font-size:18px}
+#tut.modal{pointer-events:auto;align-items:center;background:rgba(3,5,20,.9);-webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1)}
+.tut-box{pointer-events:auto;width:min(480px,100%);color:#fff;background:linear-gradient(180deg,rgba(22,29,76,.985),rgba(10,14,42,.985));-webkit-backdrop-filter:blur(14px) saturate(1.25);backdrop-filter:blur(14px) saturate(1.25);box-shadow:0 0 0 3px var(--amb),5px 5px 0 3px #000,0 18px 44px rgba(0,0,0,.7);padding:14px 16px;text-align:start;position:relative;overflow-x:hidden;overflow-y:auto;max-height:calc(100dvh - 24px);-webkit-overflow-scrolling:touch}
+#tut.modal .tut-box{width:min(540px,100%)}
+.tut-box.ok{box-shadow:0 0 0 3px var(--teal),5px 5px 0 3px #000,0 18px 44px rgba(0,0,0,.7)}
+.tut-p{height:7px;background:#05071c;margin:-14px -16px 11px}.tut-p i{display:block;height:100%;background:var(--teal);transition:width .4s}
+.tut-h{display:flex;align-items:center;gap:10px;font-size:18px;line-height:1.3}.tut-h .ti{font-size:26px}
+.tut-av{width:44px;height:44px;flex:none;image-rendering:pixelated;background:#05071c;box-shadow:0 0 0 2px var(--teal)}
+.tut-who{display:flex;flex-direction:column;min-width:0}.tut-who small{font-size:11px;letter-spacing:.4px;color:var(--teal);font-weight:900}.tut-who b{font-size:18px;color:#fff}
+.tut-n{margin-inline-start:auto;color:#cfd6ff;font-size:13px}
+.tut-d{margin:8px 0 10px;font-size:15px;line-height:1.75;color:#fff;font-weight:700;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+.tut-rows{display:grid;gap:7px;margin:6px 0 12px}.tut-rows>div{display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:start;font-size:14px;line-height:1.6;background:#060924;padding:8px 10px;color:#f1f4ff;box-shadow:inset 0 0 0 1px #26316f}.tut-rows b{color:var(--amb)}
+.tut-why{margin:0 0 10px;padding:8px 10px;font-size:13.5px;line-height:1.65;color:#fff;background:#0f2a3a;box-shadow:inset 0 0 0 1px #2c7a8a}
+.tut-q{display:grid;gap:8px;margin:4px 0 8px}.tut-q button{font:800 14px/1.45 Cairo,sans-serif;text-align:start;color:#fff;background:#1a2260;border:0;padding:10px 12px;min-height:44px;cursor:pointer;box-shadow:0 0 0 2px #3b49a8}
+.tut-q button:hover:not(:disabled),.tut-q button:focus-visible{background:#26318a;outline:2px solid #fff}
+.tut-q button.good{background:#0f5b44;box-shadow:0 0 0 3px var(--teal);opacity:1!important;color:#fff}.tut-q button.bad{background:#5a1a2b;box-shadow:0 0 0 2px var(--rose);color:#ffd7df;opacity:.85}.tut-q button:disabled{cursor:default}
+.tut-fb{margin:0 0 8px;font-size:14px;line-height:1.65;font-weight:800;min-height:0}.tut-fb.good{color:var(--teal)}.tut-fb.bad{color:#ffb3c2}
+.tut-b{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tut-b .btn{padding:9px 20px;font-size:15px;min-height:42px}
+.tut-bi{flex-direction:column;align-items:stretch}.tut-bi .btn{width:100%}.tut-bi .btn.ghost{background:#1a2260;color:#fff;box-shadow:0 0 0 2px #3b49a8,4px 4px 0 2px #000}.tut-bi .tut-l{align-self:center}
+.tut-l{background:none;border:0;color:#cfd6ff;font:800 12.5px Cairo,sans-serif;cursor:pointer;padding:8px 6px;min-height:40px;text-decoration:underline}.tut-l:hover,.tut-l:focus-visible{color:#fff}
+.tut-ok{display:none;width:100%;color:var(--teal);font-weight:900;font-size:16px}
 .tut-hl{outline:4px solid var(--amb)!important;outline-offset:3px;animation:tutp .7s infinite alternate}@keyframes tutp{to{outline-color:#fff;outline-offset:8px}}
-#tutArrow{position:fixed;z-index:12;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;display:none;align-items:center;justify-content:center;font-size:34px;line-height:1;color:var(--amb);text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;pointer-events:none;direction:ltr}#tutArrow.on{display:flex}
-.tuthint{display:none;max-width:min(440px,92vw);margin:0;padding:9px 13px;background:var(--panel);box-shadow:0 0 0 2px var(--amb);font-size:14px;line-height:1.6;color:var(--tx)}
+#tutArrow{position:fixed;z-index:12;left:0;top:0;width:48px;height:48px;margin:-24px 0 0 -24px;display:none;align-items:center;justify-content:center;font-size:38px;line-height:1;color:var(--amb);text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;pointer-events:none;direction:ltr}#tutArrow.on{display:flex}
+.tuthint{display:none;max-width:min(460px,92vw);margin:0;padding:10px 14px;background:rgba(14,19,56,.985);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 0 0 2px var(--amb);font-size:14.5px;line-height:1.7;color:#fff;font-weight:700}
 #tutBtn{background:#0a0e2acc;color:var(--amb);border:0;font:700 12px Cairo,sans-serif;padding:6px 9px;cursor:pointer;box-shadow:0 0 0 2px var(--line)}
-@media(max-height:500px){.tut-box{padding:8px 12px}.tut-p{margin:-8px -12px 6px}.tut-d{font-size:12.5px;line-height:1.55;margin:4px 0 6px}.tut-h{font-size:15px}#tut.low{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}}
+@media(max-height:500px){.tut-box{padding:8px 12px}.tut-p{margin:-8px -12px 6px}.tut-d{font-size:13px;line-height:1.55;margin:4px 0 6px}.tut-h{font-size:15px}.tut-av{width:34px;height:34px}.tut-rows>div{font-size:12.5px;padding:5px 8px}#tut.low{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}}
 @media(prefers-reduced-motion:reduce){.tut-hl{animation:none}.tut-p i{transition:none}}
+/* ---------- Storm shelter panel ---------- */
+#shelterPanel{font-size:14px;line-height:1.65;text-align:start;display:flex;flex-direction:column;gap:9px}#shelterPanel h3{margin:0;color:var(--teal);font-size:19px}
+#shelterPanel .shst{margin:0;font-weight:900;font-size:15px}#shelterPanel .shfact{margin:0;padding:8px 10px;background:#0b0f2c;box-shadow:inset 0 0 0 1px var(--line);color:#dfe6ff;font-size:13px}
+#shelterPanel .bar{height:10px}#shelterPanel .mstat{display:grid;grid-template-columns:76px 1fr 38px;gap:7px;align-items:center;margin:2px 0}
+#shelterPanel .row{justify-content:center}
 </style>
 </head>
 <body>
@@ -166,7 +180,7 @@ input{-webkit-user-select:none!important;user-select:none!important}
 <div id="gm"></div>
 
 <section class="scr on" id="s0">
-  <h1 class="logo"><img class="logo-mark" src="assets/astro-commander-mark.svg" alt=""><span class="a">ASTRO</span><span class="b">COMMANDER</span></h1>
+  <h1 class="logo"><img class="logo-img" src="assets/astro-commander-logo.png" alt="Astro Commander" width="960" height="632" decoding="async"></h1>
   <p class="tag2">Explore • Learn • <b>Discover</b></p>
   <div class="tbs"><button class="tb p" id="continueGame"><canvas id="i1" width="24" height="24"></canvas>Continue Game</button><button class="tb b" id="newGame"><canvas id="i2" width="24" height="24"></canvas>New Game</button><button class="tb g" id="bset"><canvas id="i3" width="24" height="24"></canvas>Settings</button><button class="tb b" id="bq">Quit</button></div>
 </section>
@@ -219,6 +233,7 @@ input{-webkit-user-select:none!important;user-select:none!important}
 </script>
 <script>
 const $=id=>document.getElementById(id);
+const LT=(ar,en)=>(localStorage.getItem('ac_lang')||'ar')==='en'?en:ar;
 const CFG={snd:1,mus:1,q:matchMedia('(pointer:coarse)').matches?1:2,mc:1,mm:1};try{Object.assign(CFG,JSON.parse(localStorage.getItem('ac_cfg')||'{}'))}catch(_){}
 let ALLDONE=0,XP=0,LAB={},ACH={},USED=[],HINT='',GS=null,PROG={};try{PROG=JSON.parse(localStorage.getItem('ac_prog')||'{}')}catch(_){}
 const SAVE_KEY='ac_gameSave';let SAVED_GAME=null,RESTORE_GAME=null;try{SAVED_GAME=JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch(_){}
@@ -732,7 +747,7 @@ class Explore extends Phaser.Scene{
    pad(B.x,B.y+10,230)}else this.bh=this.hover(B.x,B.y+40,5);
   tex(this,'ld',landerCv(S.rk));this.rkI=this.add.image(B.x,B.y-350,'ld').setOrigin(.5,1).setScale(1.3).setDepth(3);this.land=1;this.fl=this.add.graphics().setDepth(2);
   this.add.text(B.x,B.y+30,gas?'منصة القاعدة':'قاعدة الهبوط',{fontFamily:'Cairo',fontSize:'14px',color:'#fff',backgroundColor:'#0008',padding:{x:6,y:2},rtl:true}).setOrigin(.5,0).setDepth(3);
-  this.tweens.add({targets:this.rkI,y:B.y-20,duration:3000,ease:'Cubic.easeOut',onComplete:()=>{this.land=0;this.fl.clear();sfx('thud');if(this.bh)this.bh.lk.push([this.rkI,B.y-20]);for(let i=0;i<10;i++){const d=this.add.circle(B.x+(Math.random()-.5)*80,B.y-16,10+Math.random()*10,0xffffff,.5).setDepth(6);this.tweens.add({targets:d,x:d.x+(i-5)*16,alpha:0,scale:2.5,duration:900,onComplete:()=>d.destroy()})}this.tweens.add({targets:[this.pl,this.sh],alpha:1,duration:500})}});
+  this.buildShelter(gas?null:pad);this.tweens.add({targets:this.rkI,y:B.y-20,duration:3000,ease:'Cubic.easeOut',onComplete:()=>{this.land=0;this.fl.clear();sfx('thud');if(this.bh)this.bh.lk.push([this.rkI,B.y-20]);for(let i=0;i<10;i++){const d=this.add.circle(B.x+(Math.random()-.5)*80,B.y-16,10+Math.random()*10,0xffffff,.5).setDepth(6);this.tweens.add({targets:d,x:d.x+(i-5)*16,alpha:0,scale:2.5,duration:900,onComplete:()=>d.destroy()})}this.tweens.add({targets:[this.pl,this.sh],alpha:1,duration:500})}});
   KS.forEach(k=>{const s=ST[k],X=P[k].x,Y=P[k].y;tex(this,'cp'+k,campCv(k,s.c));const hvr=gas?this.hover(X,Y+50,2.5):(pad(X,Y+52,170),null);
    const ci=this.add.image(X,Y,'cp'+k).setScale(1.6).setDepth(2),bl=this.add.rectangle(X,Y-70,6,6,hc(s.c)).setDepth(3);if(hvr)hvr.lk.push([ci,Y],[bl,Y-70]);this.tweens.add({targets:bl,alpha:.1,yoyo:true,repeat:-1,duration:500});
    if(!gas){const ring=this.add.graphics().setDepth(1);ring.lineStyle(3,hc(s.c),1);ring.strokeCircle(X,Y+36,76);this.tweens.add({targets:ring,alpha:.2,yoyo:true,repeat:-1,duration:800})}
@@ -773,7 +788,7 @@ class Explore extends Phaser.Scene{
  deploy(i){const SG=this.sg,pn=$('pn');busy=true;pn.className='on';pn.innerHTML='<h3>🎯 '+SG.t+': '+SG.it+'</h3><p class="sub">ثبّت الجهاز بنجاح عشان يشتغل</p><div id="mg"></div><button class="btn ghost" id="cl">إلغاء</button>';
   $('cl').onclick=()=>{mgStop();pn.className='';busy=false;near=null;HINT=''};HINT='ركّز ومتستعجلش.';let fin=0;
   MG[SG.g]($('mg'),()=>{if(fin)return;fin=1;mgStop();pn.className='';busy=false;near=null;HINT='';const o=this.sgs[i];o.done=1;this.sgDone(o)},{})}
- tryOpen(){if(!near||busy)return;if(near=='FG')this.plant();else if(near=='RV')this.ride(1);else if(near=='DM')this.ride(0);else if(near=='DP')this.deploy(this.dpi);else openSt(near)}
+ tryOpen(){if(!near||busy)return;if(near=='FG')this.plant();else if(near=='RV')this.ride(1);else if(near=='DM')this.ride(0);else if(near=='SH')this.enterShelter();else if(near=='DP')this.deploy(this.dpi);else openSt(near)}
  ride(on){if(!this.rv)return;if(on){this.mount=1;this.px=this.rv.x;this.py=this.rv.y+10;this.pl.setAlpha(0);this.sh.setAlpha(0);say('ركبت الروفر! سرعتك أعلى بكتير. وصّل لأي مختبر وادخل، أو انزل من الزرار.')}else{this.mount=0;this.rv.setPosition(this.px,this.py-10);this.pl.setAlpha(1);this.sh.setAlpha(.35);say('نزلت من الروفر.')}sfx('mount');near=null}
  ping(){if(this.rcd>0||this.land||busy)return;this.rcd=10;this.rad=8;sfx('radar');const c=this.add.circle(this.px,this.py-20,10,0x4de3c1,0).setStrokeStyle(3,0x4de3c1).setDepth(7);this.tweens.add({targets:c,scale:40,alpha:0,duration:1400,onComplete:()=>c.destroy()});this.sam.forEach(s=>{if(!s.got)this.tweens.add({targets:s.im,alpha:1,duration:300})});say('المسح كشف العينات. بتظهر دهبية على الخريطة الصغيرة لمدة 8 ثواني.')}
  jump(){if(this.jt>=0||this.land||busy||this.mount)return;this.jh=Math.min(80,22/Math.sqrt(GR[S.pl]));this.jd=.35+this.jh/120;this.jt=0;sfx('jump')}
@@ -785,9 +800,9 @@ class Explore extends Phaser.Scene{
  /* ===== الأحداث الكبيرة ===== */
  rollEvent(){const L=EVS[S.pl];this.evT=rnd(45,85);if(Math.random()>.7)return;this.forecast(L[Math.random()*L.length|0])}
  forecast(type){const D=EVD[type];this.evA={type,ph:'warn',t:rnd(11,16)};MUS.set('danger');AMB.set('storm');this.cameras.main.shake(2600,.004);
-  say('تحذير: '+D.warn+' احتمال الحدوث حوالي 70%. جهّز نفسك.');cut({ic:D.ic,title:'تحذير: '+D.t,sub:D.warn,col:D.tint,sec:3.2,sfx:'siren',sfx2:'heart'})}
+  say('تحذير: '+D.warn+' احتمال الحدوث حوالي 70%. اجري لملجأ العواصف 🏠 (البوصلة بتشاور عليه) أو جهّز نفسك للتحدي.');cut({ic:D.ic,title:'تحذير: '+D.t,sub:D.warn,col:D.tint,sec:3.2,sfx:'siren',sfx2:'heart'})}
  resolveEv(){const type=this.evA.type,D=EVD[type];$('evb').style.display='none';
-  if(Math.random()<.7){this.evA.ph='hit';this.cameras.main.flash(300,255,255,255);this.cameras.main.shake(2400,.012);this.fxOn(type);cut({ic:D.ic,title:D.t+'!',sub:D.hit,col:D.tint,sec:2.8,sfx:D.sfx,sfx2:'siren'},()=>this.evPanel(type))}
+  if(Math.random()<.7){if(this.inSh){this.shelterHit(type);return}this.evA.ph='hit';this.cameras.main.flash(300,255,255,255);this.cameras.main.shake(2400,.012);this.fxOn(type);cut({ic:D.ic,title:D.t+'!',sub:D.hit,col:D.tint,sec:2.8,sfx:D.sfx,sfx2:'siren'},()=>this.evPanel(type))}
   else{say('الحدث غيّر مساره وعدّى بعيد! نجوت المرة دي.');addXP(5,'تجنّبت '+D.t);this.evA=null;this.calm();toast('✅ العاصفة عدّت من غير ما تضرب')}}
  fxOn(type){const D=EVD[type],hx=x=>Phaser.Display.Color.HexStringToColor(x).color,t=this.add.rectangle(480,270,1500,900,hx(D.tint),.3).setScrollFactor(0).setDepth(23);this.fxo.push(t);this.tweens.add({targets:t,alpha:.12,yoyo:true,repeat:-1,duration:500});
   const wind=type=='dust'||type=='wind';for(let i=0;i<(CFG.q?40:14);i++){const r=this.add.rectangle(rnd(0,960),rnd(0,540),wind?rnd(30,80):3,wind?2:rnd(8,20),hx(D.tint),.5).setScrollFactor(0).setDepth(24);this.fxo.push(r);this.fxp.push({r,vx:wind?rnd(500,900):rnd(-20,20),vy:wind?rnd(-30,30):(type=='lava'||type=='solar'?rnd(150,300):rnd(100,200))})}}
@@ -800,7 +815,7 @@ class Explore extends Phaser.Scene{
  endEvent(type,win){const D=EVD[type];this.fxOff();this.cameras.main.shake(0);this.evA=null;this.evT=rnd(55,95);busy=false;near=null;HINT='';this.calm();
   if(win){addXP(30,'نجوت من '+D.t);ach('ev_'+type,'ناجٍ من '+D.t);sfx('fan');say('نجوت! أداء رائع يا '+S.name+'.');toast('🏆 نجوت من '+D.t)}
   else{XP=Math.max(0,XP-20);chips();sfx('fail');this.stun=2.5;this.cameras.main.shake(400,.01);toast('💥 البدلة اتضررت: -20 نقطة');say('الحدث أثّر عليك، بس كمّل. المرة الجاية أسرع.')}}
- tgt(){if(ALLDONE)return{t:{x:this.B.x,y:this.B.y+40},n:'القاعدة: ارفع العلم'};let b=1e9,t=null,n='';Object.keys(ST).filter(k=>!done[k]).forEach(k=>{const d=Math.hypot(this.P[k].x-this.px,this.P[k].y-this.py);if(d<b){b=d;t=this.P[k];n=LABS[k]}});if(!t)this.sgs.forEach(o=>{if(!o.done){const d=Math.hypot(o.im.x-this.px,o.im.y-this.py);if(d<b){b=d;t={x:o.im.x,y:o.im.y};n=this.sg.it}}});return{t,n}}
+ tgt(){if(this.shl&&this.shl.built&&((this.evA&&this.evA.ph=='warn')||(this.drill&&this.drill.ph=='run')))return{t:{x:this.shl.x,y:this.shl.y+20},n:LT('الملجأ 🏠','Shelter 🏠')};if(ALLDONE)return{t:{x:this.B.x,y:this.B.y+40},n:'القاعدة: ارفع العلم'};let b=1e9,t=null,n='';Object.keys(ST).filter(k=>!done[k]).forEach(k=>{const d=Math.hypot(this.P[k].x-this.px,this.P[k].y-this.py);if(d<b){b=d;t=this.P[k];n=LABS[k]}});if(!t)this.sgs.forEach(o=>{if(!o.done){const d=Math.hypot(o.im.x-this.px,o.im.y-this.py);if(d<b){b=d;t={x:o.im.x,y:o.im.y};n=this.sg.it}}});return{t,n}}
  cmp(){const o=this.tgt();if(!o.t)return;const dx=o.t.x-this.px,dy=o.t.y-this.py;$('ca').style.transform='rotate('+Math.atan2(dy,dx)+'rad)';$('ct').textContent=o.n+' · '+Math.round(Math.hypot(dx,dy)/10)+'م'}
  guide(){const o=this.tgt();if(!o.t)return'كل المطلوب خلص!';const dx=o.t.x-this.px,dy=o.t.y-this.py,v=Math.abs(dy)>Math.abs(dx)*.5?(dy<0?'شمال':'جنوب'):'',h=Math.abs(dx)>Math.abs(dy)*.5?(dx<0?'غرب':'شرق'):'';return'الهدف: '+o.n+' ناحية '+(v+(v&&h?' ':'')+h)+' على بُعد حوالي '+Math.round(Math.hypot(dx,dy)/10)+' متر.'}
  mm(){const c=this.mc,fx=120/this.W,fy=80/this.H;c.fillStyle='#0a0e2a';c.fillRect(0,0,120,80);c.fillStyle='#fff';c.fillRect(this.B.x*fx-2,this.B.y*fy-2,4,4);
@@ -829,12 +844,13 @@ class Explore extends Phaser.Scene{
   let n=null,best=85;KS.forEach(k=>{const d=Math.hypot(this.P[k].x-this.px,this.P[k].y+20-this.py);if(d<best){best=d;n=k}});
   if(!n)this.sgs.forEach((o,i)=>{if(this.sg.ty=='deploy'&&!o.done&&Math.hypot(o.x-this.px,o.y-this.py)<85){n='DP';this.dpi=i}});
   if(!n&&this.rv&&!this.mount&&Math.hypot(this.rv.x-this.px,this.rv.y-this.py)<90)n='RV';
+  if(!n&&this.shNear())n='SH';
   if(!n&&ALLDONE&&Math.hypot(this.B.x-this.px,this.B.y+40-this.py)<130)n='FG';
   if(!n&&this.mount)n='DM';
   if(!this.land){this.sam.forEach(c=>{if(!c.got&&Math.hypot(c.x-this.px,c.y-this.py)<34)this.take(c)});
    if(this.sg.ty=='collect')this.sgs.forEach(o=>{if(!o.done&&Math.hypot(o.im.x-this.px,o.im.y-this.py)<42){o.done=1;this.sgDone(o)}});
    if(this.wr&&!this.wr.done&&Math.hypot(this.wr.x-this.px,this.wr.y-this.py)<110){this.wr.done=1;sfx('ach');say('اكتشاف أثري! '+LORE[S.pl]);addXP(10,'اكتشاف أثري')}}
-  if(n!==near&&!busy){near=n;const a=$('act');if(n){a.style.display='block';a.textContent=n=='RV'?'اركب الروفر':n=='DM'?'انزل من الروفر':n=='FG'?'ارفع العلم':n=='DP'?'نشر: '+this.sg.it:'دخول: '+LABS[n]}else a.style.display='none'}
+  if(n!==near&&!busy){near=n;const a=$('act');if(n){a.style.display='block';a.textContent=n=='SH'?LT('ادخل الملجأ 🏠','Enter shelter 🏠'):n=='RV'?'اركب الروفر':n=='DM'?'انزل من الروفر':n=='FG'?'ارفع العلم':n=='DP'?'نشر: '+this.sg.it:'دخول: '+LABS[n]}else a.style.display='none'}
   if(this.rad>0){this.rad-=dt;if(this.rad<=0)this.sam.forEach(s=>{if(!s.got)s.im.setAlpha(.35)})}
   if(this.rcd>0){this.rcd=Math.max(0,this.rcd-dt);const tx=this.rcd>0?'مسح ('+Math.ceil(this.rcd)+')':'مسح';if($('rad').textContent!=tx)$('rad').textContent=tx}
   if(this.rvc>0){this.rvc=Math.max(0,this.rvc-dt);const tx=this.rvc>0?'مسبار ('+Math.ceil(this.rvc)+')':'مسبار';if($('rov').textContent!=tx)$('rov').textContent=tx}
@@ -842,7 +858,7 @@ class Explore extends Phaser.Scene{
   this.fxp.forEach(o=>{o.r.x+=o.vx*dt;o.r.y+=o.vy*dt;if(o.r.x>990)o.r.x=-30;if(o.r.x<-30)o.r.x=990;if(o.r.y>560)o.r.y=-20;if(o.r.y<-20)o.r.y=560});
   if(this.ov)this.ov.tilePositionX+=dt*10;
   if(!busy&&!this.land&&!this.evA&&this.stun<=0){this.evT-=dt;if(this.evT<=0)this.rollEvent()}
-  if(this.evA&&this.evA.ph=='warn'&&!busy){this.evA.t-=dt;const e=$('evb');e.style.display='block';e.textContent='⚠ '+EVD[this.evA.type].t+' خلال '+Math.max(0,Math.ceil(this.evA.t))+'ث';if(this.evA.t<=0)this.resolveEv()}
+  if(this.evA&&this.evA.ph=='warn'&&(!busy||this.inSh)){this.evA.t-=dt;const e=$('evb');e.style.display=this.inSh?'none':'block';e.textContent='⚠ '+EVD[this.evA.type].t+' خلال '+Math.max(0,Math.ceil(this.evA.t))+'ث · 🏠 '+LT('اجري للملجأ!','run to the shelter!');if(this.evA.t<=0)this.resolveEv()}
   if(CFG.mm&&(this.mt+=dt)>.12){this.mt=0;this.mm();this.cmp()}if(!this.saveAt||now-this.saveAt>1200){this.saveAt=now;saveGameProgress('play')}}
 }
 
@@ -997,6 +1013,126 @@ function openSt(k){busy=true;const d=PL[S.pl][k],pn=$('pn'),L=LAB[k]=LAB[k]||{n:
 function finish(){$('pn').className='';busy=false;clearInterval(tipT);GS=null;AMB.set(null);MUS.set('title');$('hud').classList.remove('on');PROG[S.pl]=Math.max(PROG[S.pl]||0,XP);try{localStorage.setItem('ac_prog',JSON.stringify(PROG))}catch(_){}
  $('endt').textContent='برافو يا '+S.name+'! خلصت استكشاف '+PL[S.pl].n;$('endp').textContent='نقاطك '+XP+' · الرتبة: '+rank()+' · '+Object.keys(done).length+'/'+Object.keys(ST).length+' مختبرات · '+SM.n+'/5 عينات';go('end');saveGameProgress('end')}
 $('again').onclick=()=>{AMB.set(null);ALLDONE=0;clearInterval(tipT);$('act').style.display='none';$('pn').className='';if(G){G.destroy(true);G=null}$('gm').classList.remove('on');$('hud').classList.remove('on');done={};document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));go(2)};
+/* ---------- Storm Shelter: a buildable base the player can hide in during storms ---------- */
+function shelterCv(){
+ const U=3,w=44,h=24,cv=mk(w*U,h*U),q=cv.getContext('2d'),k=(c,x,y,a=1,b=1)=>{q.fillStyle=c;q.fillRect(x*U,y*U,a*U,b*U)};
+ const cx=22,r=14.5,ins=(x,y)=>y>=0&&y<=17&&((x+.5-cx)/r)**2+((y+.5-17.5)/r)**2<=1;
+ /* regolith berm (soil piled on the dome: it is the radiation shield) */
+ for(let y=17;y<=22;y++){const o=y-17;k('#8a7f78',6-o,y,w-12+o*2,1)}
+ k('#a89d94',7,17,w-14,1);k('#5f5650',0,22,w,1);k('#6e645f',1,21,w-2,1);
+ [[9,19],[14,20],[30,19],[35,20],[25,21],[19,21]].forEach(p=>k('#6e645f',p[0],p[1],2,1));
+ [[11,18],[28,18],[33,19]].forEach(p=>k('#b8ada3',p[0],p[1],1,1));
+ /* dome */
+ for(let y=0;y<=17;y++)for(let x=0;x<w;x++){if(!ins(x,y))continue;const edge=!ins(x-1,y)||!ins(x+1,y)||!ins(x,y-1);const dx=(x+.5-cx)/r;
+  let c=dx<-.45?'#ffffff':dx<.1?'#e4e9f5':dx<.55?'#c3cade':'#9099b8';if(edge)c='#1b2140';else if((x%6==0&&y<16)||y==9)c=dx<.1?'#cdd4e8':'#8089aa';k(c,x,y)}
+ /* viewport glass */
+ k('#1b2140',14,7,6,3);k('#4a90e2',15,8,4,1);k('#9fd8ff',15,8,2,1);k('#2a5acb',15,9,4,1);
+ /* antenna + beacon */
+ k('#1b2140',cx,0,1,3);k('#ff6b8b',cx,0,1,1);k('#1b2140',cx+1,2,3,1);k('#c3cade',cx+1,1,3,1);
+ /* airlock door */
+ k('#1b2140',19,11,7,10);k('#0b1226',20,12,5,9);k('#4de3c1',20,12,5,1);k('#2f9f87',20,13,1,8);k('#2f9f87',24,13,1,8);
+ k('#ffd24a',21,14,3,1);
+ /* solar panel on a post */
+ k('#1b2140',41,17,1,5);k('#1b2140',38,11,6,6);k('#2a5acb',39,12,4,4);k('#6aa8ff',39,12,4,1);k('#1b2140',41,12,1,4);k('#1b2140',39,14,4,1);
+ /* radiation hazard sign */
+ k('#1b2140',3,16,1,5);k('#1b2140',0,10,7,6);k('#ffd24a',1,11,5,4);k('#1b2140',3,12,1,2);k('#1b2140',2,13,3,1);
+ return cv}
+const SHF={
+ solar:{ar:'الإشعاع الشمسي بيتوقف بالمواد الكثيفة. عشان كده مخططات القواعد القمرية بتغطّي المسكن بتربة القمر (الريجوليث) وبتعمل غرفة احتماء صغيرة.',en:'Solar radiation is stopped by dense material. That is why lunar habitat concepts pile regolith (moon soil) on top and add a small storm-shelter room.'},
+ dust:{ar:'عواصف المريخ الترابية ممكن تحجب الشمس أسابيع عن الألواح الشمسية، فالقواعد محتاجة بطاريات أو مصدر طاقة تاني. الرياح هناك ضعيفة لأن ضغط الجو أقل من 1% من الأرض.',en:'Martian dust storms can dim sunlight on solar panels for weeks, so outposts need batteries or another power source. The wind is weak because the air pressure is under 1% of Earth.'},
+ wind:{ar:'الرياح القوية بتتعب الهوائيات والألواح، فالمباني بتتصمم واطية ومتثبتة بالأرض.',en:'Strong wind is hard on antennas and panels, so outposts are built low and anchored to the ground.'},
+ lava:{ar:'آيو أكتر جرم نشاط بركاني في المجموعة الشمسية. أي قاعدة هناك لازم تتحمل الحرارة والرماد.',en:'Io is the most volcanically active body in the Solar System. Any base there must survive heat and ash.'},
+ quake:{ar:'الزلازل القمرية والمريخية حقيقية: مسبار InSight سجّل أكتر من 1300 زلزال على المريخ. القواعد بتتبني بأساس يمتص الاهتزاز.',en:'Moonquakes and marsquakes are real: NASA\'s InSight lander recorded more than 1,300 marsquakes. Bases need foundations that absorb shaking.'},
+ idle:{ar:'الملجأ هو أكتر مكان محمي في القاعدة. جواه بتستهلك طاقة وأكسجين، فاستخدمه وقت الخطر بس.',en:'The shelter is the best-protected spot at the base. Staying inside burns energy and oxygen, so use it when danger is near.'}
+};
+Object.assign(Explore.prototype,{
+ buildShelter(pad){
+  const B=this.B,gas=this.gas,x=B.x-(gas?340:250),y=B.y+(gas?0:12),hc=c=>Phaser.Display.Color.HexStringToColor(c).color;
+  tex(this,'shc',shelterCv());let hv=null;
+  if(gas)hv=this.hover(x,y+50,3);else if(pad)pad(x,y+52,200);
+  const gy=y+42,img=this.add.image(x,gy,'shc').setOrigin(.5,1).setScale(1.7).setDepth(2.5).setAlpha(0);
+  const glow=this.add.rectangle(x,gy-23,22,36,0x4de3c1,.25).setDepth(2.6).setAlpha(0);
+  const lb=this.add.text(x,gy-140,'',{fontFamily:'Cairo',fontSize:'15px',fontStyle:'bold',color:'#fff',backgroundColor:'#0009',padding:{x:6,y:2},rtl:true}).setOrigin(.5).setDepth(3);
+  const site=this.add.graphics().setDepth(1);site.lineStyle(3,hc('#ffd24a'),.9);site.strokeRect(x-112,gy-120,224,120);site.lineStyle(2,hc('#ffd24a'),.5);site.lineBetween(x-112,gy-120,x+112,gy);site.lineBetween(x+112,gy-120,x-112,gy);
+  if(hv)hv.lk.push([img,gy],[glow,gy-23],[lb,gy-140]);
+  this.shl={x,y:gy,img,glow,lb,site,built:false,hv};this.inSh=false;this.drill=null;
+  this.shLabel();
+  if(this.savedRestore)this.deployShelter(true);else this.time.delayedCall(4200,()=>this.deployShelter(false));
+ },
+ shLabel(){const s=this.shl;if(!s)return;const t=s.built?LT('🏠 ملجأ العواصف','🏠 Storm Shelter'):LT('🏗️ جاري بناء ملجأ العواصف…','🏗️ Building storm shelter…');if(s.lb.text!==t)s.lb.setText(t)},
+ deployShelter(instant){
+  const s=this.shl;if(!s||s.built)return;s.built=true;s.site.destroy();s.img.setAlpha(1);this.shLabel();
+  const fin=()=>{s.glow.setAlpha(.3);s.gt=this.tweens.add({targets:s.glow,alpha:{from:.15,to:.5},yoyo:true,repeat:-1,duration:900})};
+  if(instant){s.img.setScale(1.7);fin();return}
+  s.img.setScale(1.7,.06);sfx('thud');
+  this.tweens.add({targets:s.img,scaleY:1.7,duration:1300,ease:'Back.easeOut',onComplete:fin});
+  for(let i=0;i<12;i++){const d=this.add.circle(s.x+(Math.random()-.5)*190,s.y-4,8+Math.random()*10,0xffffff,.45).setDepth(6);this.tweens.add({targets:d,x:d.x+(i-6)*10,y:d.y-20,alpha:0,scale:2.4,duration:1100,onComplete:()=>d.destroy()})}
+  toast('🏗️ '+LT('اتبنى ملجأ العواصف جنب القاعدة! اجري له وقت الخطر.','Storm shelter built next to the base! Run to it when danger comes.'));
+  say(LT('الملجأ جاهز: لما يجيلك تحذير عاصفة، اقرب منه وادوس «ادخل الملجأ». جواه إنت في أمان، بس ده بيستهلك طاقة وأكسجين.','Shelter is ready. When a storm warning appears, get close and press Enter shelter. Inside you are safe, but it burns energy and oxygen.'));
+ },
+ shNear(){const s=this.shl;return !!s&&s.built&&!this.inSh&&Math.hypot(s.x-this.px,s.y+22-this.py)<115},
+ enterShelter(){
+  const s=this.shl;if(!s||!s.built||this.inSh||this.land||(this.evA&&this.evA.ph==='hit'))return;
+  if(this.mount)this.ride(0);
+  this.inSh=true;busy=true;near=null;this.stun=0;$('act').style.display='none';this.pl.setAlpha(0);this.sh.setAlpha(0);sfx('mount');
+  if(s.gt)s.gt.pause();s.glow.setAlpha(.8);
+  if(this.drill&&this.drill.ph==='run'){this.drill.ph='in';this.drill.t=7}
+  this.shUi=0;this.renderShelter(true);
+ },
+ leaveShelter(){
+  const s=this.shl;if(!this.inSh)return;
+  if((this.evA&&this.evA.ph==='sh')||(this.drill&&this.drill.ph==='in')){toast('🏠 '+LT('استنى العاصفة تعدّي الأول','Wait until the storm passes'));return}
+  this.inSh=false;const pn=$('pn');if(pn.querySelector('#shelterPanel')){pn.className='';pn.innerHTML=''}
+  busy=false;near=null;this.px=s.x;this.py=s.y+55;this.pl.setAlpha(1);if(!this.gas)this.sh.setAlpha(.35);sfx('mount');
+  if(s.gt)s.gt.resume();
+ },
+ shStatus(){
+  const e=this.evA,dr=this.drill,D=e&&EVD[e.type],en=LT(0,1);
+  if(dr&&dr.ph==='in')return{c:'#ffd24a',t:'🎓 '+LT('تدريب: عاصفة شمسية وهمية بتعدّي. إنت في أمان.','Drill: a simulated solar storm is passing. You are safe.'),p:1-dr.t/7,lock:1};
+  if(dr&&dr.ph==='done')return{c:'#4de3c1',t:'✅ '+LT('التدريب خلص. تقدر تخرج دلوقتي.','Drill complete. You can leave now.'),p:1,lock:0};
+  if(e&&e.ph==='sh')return{c:'#4de3c1',t:D.ic+' '+LT(D.t+': إنت محمي جوه الملجأ. استنى لحد ما تعدّي.',(({dust:'Dust storm',wind:'High winds',solar:'Solar storm',lava:'Eruption',quake:'Quake'})[e.type])+': you are protected inside. Wait for it to pass.'),p:1-e.t/e.tot,lock:1};
+  if(e&&e.ph==='warn')return{c:'#ff6b8b',t:'⚠ '+D.ic+' '+LT(D.t+' بعد '+Math.max(0,Math.ceil(e.t))+' ث. خليك جوه.',(({dust:'Dust storm',wind:'High winds',solar:'Solar storm',lava:'Eruption',quake:'Quake'})[e.type])+' in '+Math.max(0,Math.ceil(e.t))+' s. Stay inside.'),p:0,lock:0};
+  return{c:'#9aa5d8',t:'✅ '+LT('الوضع هادي. الملجأ مقفول ومحكم.','All clear. The shelter is sealed.'),p:0,lock:0}
+ },
+ renderShelter(force){
+  const pn=$('pn');if(!this.inSh)return;
+  let pnl=pn.querySelector('#shelterPanel');
+  if(!pnl||force){
+   pn.className='on';busy=true;const en=LT(0,1);
+   pn.innerHTML='<div id="shelterPanel" dir="'+(en?'ltr':'rtl')+'"><h3>🏠 '+LT('ملجأ العواصف','Storm Shelter')+'</h3><p id="shSt" class="shst"></p><div class="bar"><i id="shBar"></i></div><div id="shRes"></div><p id="shFact" class="shfact"></p><div class="row"><button class="btn" id="shLeave">'+LT('اخرج من الملجأ','Leave shelter')+'</button></div></div>';
+   $('shLeave').onclick=()=>this.leaveShelter();pnl=pn.querySelector('#shelterPanel');
+  }
+  const st=this.shStatus(),R=(typeof ACNASA!=='undefined'&&ACNASA.state&&ACNASA.state.res)||{energy:0,oxygen:0,water:0,protection:0};
+  const s=$('shSt');s.textContent=st.t;s.style.color=st.c;$('shBar').style.width=Math.round(st.p*100)+'%';$('shBar').style.background=st.c;
+  const L=[['energy',LT('طاقة','Energy')],['oxygen',LT('أكسجين','Oxygen')],['water',LT('ماء','Water')],['protection',LT('حماية','Protection')]];
+  $('shRes').innerHTML=L.map(a=>'<div class="mstat"><span>'+a[1]+'</span><div class="bar"><i style="width:'+Math.max(0,Math.min(100,Math.round(R[a[0]])))+'%"></i></div><b>'+Math.max(0,Math.min(100,Math.round(R[a[0]])))+'</b></div>').join('');
+  const key=this.evA&&SHF[this.evA.type]?this.evA.type:(this.drill?'solar':'idle'),f=SHF[key];$('shFact').textContent='💡 '+LT(f.ar,f.en);
+  const b=$('shLeave');b.disabled=!!st.lock;
+ },
+ shelterHit(type){
+  const D=EVD[type],e=this.evA;e.ph='sh';e.tot=e.t=Phaser.Math.Clamp(Math.round(D.sec*.45),8,12);
+  this.cameras.main.flash(250,255,255,255);this.cameras.main.shake(e.tot*1000,.003);this.fxOn(type);sfx(D.sfx);
+  say(LT('العاصفة ضربت بس إنت جوه الملجأ، في أمان!','The storm hit, but you are inside the shelter. You are safe!'));
+ },
+ shelterEnd(type){
+  const D=EVD[type];this.fxOff();this.cameras.main.shake(0);this.evA=null;this.evT=rnd(55,95);this.calm();
+  const N=typeof ACNASA!=='undefined'&&ACNASA.state;if(N){const r=N.res;r.energy=Math.max(0,r.energy-6);r.oxygen=Math.max(0,r.oxygen-2);if(type==='solar')r.protection=Math.min(100,r.protection+6)}
+  chips();addXP(12,LT('احتميت في الملجأ من '+D.t,'Sheltered from the storm'));ach('shelter',LT('ناجٍ في الملجأ','Shelter survivor'));sfx('fan');
+  toast('🏠 '+LT('العاصفة عدّت. الثمن: −6 طاقة و −2% أكسجين.','The storm passed. Cost: −6 energy and −2% oxygen.'));
+  say(LT('نجوت من '+D.t+' داخل الملجأ. أمان تام، لكن نقاطك أقل من لو واجهتها بالتحدي.','You survived inside the shelter. Fully safe, but you earned fewer points than by beating the challenge.'));
+ },
+ shTick(dt){
+  const s=this.shl;if(!s)return;
+  if(this.evA&&this.evA.ph==='sh'){this.evA.t-=dt;if(this.evA.t<=0)this.shelterEnd(this.evA.type)}
+  const dr=this.drill;if(dr&&dr.ph==='in'){dr.t-=dt;if(dr.t<=0){dr.ph='done';sfx('ach')}}
+  this.shUi=(this.shUi||0)+dt;
+  if(this.shUi>.25){this.shUi=0;this.shLabel();if(this.inSh){if(!busy)this.renderShelter(true);else if($('pn').querySelector('#shelterPanel'))this.renderShelter(false)}}
+ }
+});
+(()=>{const P=Explore.prototype,_u=P.update;P.update=function(t,dt){_u.call(this,t,dt);this.shTick(dt/1000)};
+ const _mm=P.mm;P.mm=function(){_mm.apply(this,arguments);const s=this.shl;if(!s||!s.built)return;const c=this.mc,fx=120/this.W,fy=80/this.H;c.fillStyle='#9fd8ff';c.fillRect(s.x*fx-3,s.y*fy-3,6,5);c.fillStyle='#0a0e2a';c.fillRect(s.x*fx-1,s.y*fy-1,2,3)};
+})();
+
 /* ---------- NASA DONKI mission layer: 10-day timed survival extension ---------- */
 const ACNASA=(()=>{
  const API='https://ccmc.gsfc.nasa.gov/DONKI-API/get/';
@@ -1058,40 +1194,48 @@ const TUT=(()=>{
  const joy=()=>{const d=$('dp');return !!d&&d.getBoundingClientRect().width>0};
  const cutOn=()=>$('cut').classList.contains('on');
  const T=o=>{if(o==null)return '';if(typeof o==='function')return T(o());if(typeof o==='string')return o;const l=L();return (joy()&&o[l+'M'])||o[l]||o.ar||''};
- let state='idle',idx=0,list=[],scene=null,flags={},hl=null,low=false,locked=0,selfBusy=false,forced=false,lastLang='',raf=0,p0=[0,0],tutSam=null,prevHide=false,lockStep=null;
+ let state='idle',idx=0,list=[],scene=null,flags={},hl=null,low=false,locked=0,selfBusy=false,forced=false,lastLang='',raf=0,p0=[0,0],tutSam=null,prevHide=false,quick=false,last=0,avatar='',tries=0,msgT=0;
  const el=document.createElement('div');el.id='tut';el.setAttribute('role','dialog');el.setAttribute('aria-live','polite');document.body.appendChild(el);
  const arrow=document.createElement('div');arrow.id='tutArrow';arrow.textContent='➤';arrow.setAttribute('aria-hidden','true');document.body.appendChild(arrow);
+ const PRAISE=[{ar:'تمام يا قائد، تنفيذ نضيف.',en:'Copy that. Clean execution.'},{ar:'ده شغل رواد محترفين.',en:'That is real astronaut work.'},{ar:'مركز التحكم مبسوط منك.',en:'Mission Control is impressed.'},{ar:'ممتاز! كمّل بنفس المستوى.',en:'Nice! Keep that level up.'},{ar:'بالظبط كده. خطوة وبعدها اللي بعدها.',en:'Exactly right. On to the next one.'}];
+ const NM=()=>S.name||'Commander';
+ const isDone=()=>getK()==='done';
 
- /* ---- خطوات التدريب ---- */
+ /* ---- training steps (written for ages 12-17: short, direct, with real NASA context) ---- */
  const STEPS=[
-  {id:'move',ic:'🕹️',tg:()=>joy()?'#dp':'',
-   t:{ar:'اتحرك',en:'Move'},
-   d:{ar:'امشي بالأسهم أو W A S D لحد ما تبعد شوية عن القاعدة.',arM:'حرّك العصا اللي تحت على الشمال وامشي بعيد شوية عن القاعدة.',en:'Use the arrow keys or W A S D to walk away from the base.',enM:'Drag the joystick at the bottom corner to walk away from the base.'},
-   enter:s=>{p0=[s.px,s.py]},ok:s=>Math.hypot(s.px-p0[0],s.py-p0[1])>180},
+  {id:'move',core:1,ic:'🕹️',tg:()=>joy()?'#dp':'',
+   t:{ar:'اتحرك',en:'Move out'},
+   d:{ar:'امشي بالأسهم أو W A S D لحد ما تبعد حوالي 20 متر عن المركبة.',arM:'حرّك العصا اللي تحت وامشي حوالي 20 متر بعيد عن المركبة.',en:'Use the arrow keys or W A S D and walk about 20 m away from the lander.',enM:'Drag the joystick (bottom corner) and walk about 20 m away from the lander.'},
+   why:{ar:'كل خطوة بتاخد وقت، والأكسجين شغال في الخلفية. الرواد الحقيقيين بيخططوا كل خروجة قبل ما يفتحوا غرفة الهواء.',en:'Every step costs time, and your oxygen clock never stops. Real crews plan each outing before they open the airlock.'},
+   enter:s=>{p0=[s.px,s.py]},ok:s=>Math.hypot(s.px-p0[0],s.py-p0[1])>200},
   {id:'jump',ic:'⬆️',tg:'#jmp',
    t:{ar:'اقفز',en:'Jump'},
-   d:()=>({ar:'دوس Space أو زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g، وكل ما الجاذبية أقل بتقفز أعلى.',arM:'دوس زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g، وكل ما الجاذبية أقل بتقفز أعلى.',en:'Press Space or the Jump button. Gravity here is '+GR[S.pl]+'g: the lower the gravity, the higher you jump.',enM:'Tap the Jump button. Gravity here is '+GR[S.pl]+'g: the lower the gravity, the higher you jump.'}),
+   d:()=>({ar:'دوس Space أو زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g (الأرض = 1g). كل ما الجاذبية أقل، قفزتك أعلى.',arM:'دوس زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g (الأرض = 1g). كل ما الجاذبية أقل، قفزتك أعلى.',en:'Press Space or the Jump button. Gravity here is '+GR[S.pl]+'g (Earth = 1g). The lower the gravity, the higher you jump.',enM:'Tap the Jump button. Gravity here is '+GR[S.pl]+'g (Earth = 1g). The lower the gravity, the higher you jump.'}),
+   why:{ar:'على القمر (0.17g) رواد أبولو كانوا بيتحركوا بنطّات طويلة زي الكنغر.',en:'On the Moon (0.17 g) Apollo astronauts often moved with long, bouncing, kangaroo-like hops.'},
    ok:()=>flags.jump},
   {id:'scan',ic:'📡',tg:'#rad',
    t:{ar:'المسح',en:'Scan'},
-   d:{ar:'دوس «مسح»: بيكشف العينات الدهبية القريبة لمدة 8 ثواني وبتظهر على الخريطة الصغيرة. بعدها محتاج 10 ثواني راحة.',en:'Press Scan: it reveals nearby golden samples for 8 seconds and shows them on the mini-map. Then it needs 10 seconds to recharge.'},
+   d:{ar:'دوس «مسح»: بيكشف العينات القريبة 8 ثواني وبتظهر على الخريطة الصغيرة. بعدها محتاج 10 ثواني عشان يشحن.',en:'Press Scan: it reveals nearby samples for 8 seconds and shows them on the mini-map. Then it needs 10 seconds to recharge.'},
+   why:{ar:'مفيش حاجة ببلاش: كل أداة ليها وقت راحة، زي الأجهزة الحقيقية اللي محتاجة طاقة ووقت.',en:'Nothing is free: every tool has a cooldown, like real instruments that need power and time.'},
    ok:()=>flags.ping},
   {id:'map',ic:'🗺️',tg:'#mm',info:1,avail:()=>!!CFG.mm,
    t:{ar:'الخريطة الصغيرة',en:'Mini-map'},
-   d:{ar:'النقطة البرتقالي هي إنت، والمربع الأبيض القاعدة، والمربعات الملونة المختبرات، والنقط الدهبية العينات (بعد المسح). والسهم اللي تحتها بيشاور على أقرب هدف.',en:'The orange dot is you, the white square is the base, coloured squares are labs, and gold dots are samples (after a scan). The arrow under the map points to the nearest goal.'}},
-  {id:'collect',ic:'🧪',avail:s=>s.sam.some(o=>!o.got),
+   d:{ar:'النقطة البرتقالي هي إنت، المربع الأبيض القاعدة، والمربع الأزرق الفاتح هو الملجأ 🏠، والمربعات الملونة المختبرات، والنقط الدهبية العينات (بعد المسح). السهم تحتها بيشاور على أقرب هدف.',en:'The orange dot is you, the white square is the base, the light-blue square is your shelter 🏠, coloured squares are labs and gold dots are samples (after a scan). The arrow under the map points to your nearest goal.'}},
+  {id:'collect',core:1,ic:'🧪',avail:s=>s.sam.some(o=>!o.got),
    t:{ar:'اجمع عينة',en:'Collect a sample'},
-   d:{ar:'امشي ناحية النقطة الدهبية ✨ (السهم بيدلّك) وهتتجمع لوحدها. العينات بتتحلل في المعمل وبتزوّد نقاطك.',en:'Walk to the golden sparkle ✨ (follow the arrow) and it is collected automatically. Samples are analysed in the lab and add to your score.'},
+   d:{ar:'اتبع السهم ➤ لحد الشرارة الدهبية ✨ وامشي عليها. العينات بتتحلل في المعمل وبتزوّد نقاطك.',en:'Follow the arrow ➤ to the golden spark ✨ and walk into it. Samples are analysed in the labs and add to your score.'},
+   why:{ar:'رواد أبولو رجّعوا حوالي 382 كجم من صخور القمر، وفي معامل الأرض لسه بيتدرسوا لحد النهارده.',en:'Apollo crews brought back about 382 kg of Moon rock, and labs on Earth still study it today.'},
    enter:s=>{const c=s.sam.find(o=>!o.got);if(!c)return;const a=Math.random()*6.283;const x=Phaser.Math.Clamp(s.px+Math.cos(a)*380,150,s.W-150),y=Phaser.Math.Clamp(s.py+Math.sin(a)*380,150,s.H-150);s.tweens.killTweensOf(c.im);c.x=x;c.y=y;c.im.setPosition(x,y).setAlpha(1);s.tweens.add({targets:c.im,y:y-6,yoyo:true,repeat:-1,duration:700});tutSam=c},
    arrow:()=>tutSam&&!tutSam.got?{x:tutSam.x,y:tutSam.y}:null,
    ok:()=>flags.take},
   {id:'probe',ic:'🛰️',tg:'#rov',avail:s=>s.sam.some(o=>!o.got),
    t:{ar:'المسبار',en:'Probe'},
-   d:{ar:'دوس «مسبار»: بيطلع لوحده يجيب أقرب عينة من غير ما تمشي. بعدها محتاج 25 ثانية راحة.',en:'Press Probe: it flies out by itself and fetches the nearest sample without you walking. It needs 25 seconds to recharge.'},
+   d:{ar:'دوس «مسبار»: درون صغير بيجيب أقرب عينة بدالك. بعدها محتاج 25 ثانية راحة.',en:'Press Probe: a small drone fetches the nearest sample for you. It needs 25 seconds to recharge.'},
+   why:{ar:'استخدام الروبوت بيوفّر أكسجينك، بس بيكلّفك وقت. دايمًا فيه مقايضة.',en:'Using a robot saves your oxygen but costs you time. There is always a trade-off.'},
    ok:()=>flags.probe},
-  {id:'lab',ic:'🔬',tg:'#act',avail:()=>Object.keys(ST).some(k=>!done[k]),
+  {id:'lab',core:1,ic:'🔬',tg:'#act',avail:()=>Object.keys(ST).some(k=>!done[k]),
    t:{ar:'ادخل مختبر',en:'Enter a lab'},
-   d:{ar:'اتجه للمختبر (الدايرة الملونة، والسهم بيدلّك). لما تقرب هيظهر زرار «دخول» دوس عليه. جوه بتعمل تجارب صغيرة وبتاخد بيانات ونقاط.',en:'Head to a lab (coloured ring, follow the arrow). When you are close, an Enter button appears: press it. Inside you do small experiments and earn data and points.'},
+   d:{ar:'اتجه للمختبر (الدايرة الملونة والسهم بيدلّك). لما تقرب هيظهر زرار «دخول»، دوس عليه. جوه بتعمل تجارب قصيرة وبتاخد نقاط.',en:'Head to a lab (the coloured ring; follow the arrow). When you are close, an Enter button appears: press it. Inside you run short experiments and earn points.'},
    arrow:s=>{let b=1e9,t=null;Object.keys(ST).forEach(k=>{if(done[k])return;const d=Math.hypot(s.P[k].x-s.px,s.P[k].y-s.py);if(d<b){b=d;t=s.P[k]}});return t},
    ok:()=>flags.lab},
   {id:'rover',ic:'🚙',tg:'#act',avail:s=>!!s.rv,
@@ -1101,52 +1245,93 @@ const TUT=(()=>{
    ok:()=>flags.ride1},
   {id:'dismount',ic:'🚶',tg:'#act',avail:s=>!!s.rv,skipIf:s=>!s.mount,
    t:{ar:'انزل من الروفر',en:'Get off the rover'},
-   d:{ar:'جرّب تمشي بيه شوية، وبعدين دوس «انزل من الروفر». (القفز مش شغال وإنت راكب.)',en:'Drive a little, then press Get off the rover. (Jumping does not work while riding.)'},
+   d:{ar:'جرّب تسوق شوية، وبعدين دوس «انزل من الروفر». (القفز مش شغال وإنت راكب.)',en:'Drive around for a bit, then press Get off the rover. (Jumping is disabled while riding.)'},
    ok:()=>flags.ride0},
   {id:'cc',ic:'🧑‍🚀',tg:'#mc',
    t:{ar:'مركز التحكم',en:'Control center'},
-   d:{ar:'ده مركز التحكم. دوس «وين أروح؟» وهيقولك الاتجاه والمسافة لأقرب هدف. «تلميح» بيساعدك، و«حقيقة» معلومة علمية.',en:'This is the control center. Press Where to go? for the direction and distance to the nearest goal. Hint helps you, and Fact gives a science fact.'},
+   d:{ar:'ده مركز التحكم. دوس «فين؟» عشان تعرف اتجاه ومسافة أقرب هدف، «تلميح» بيساعدك، و«معلومة» بتديك حقيقة علمية.',en:'This is the control center. Press Where? for the direction and distance to your nearest goal. Hint helps you out, and Fact gives you a science fact.'},
    enter:()=>{prevHide=mcHide;if(mcHide)mcSet(false)},leave:()=>{if(prevHide)mcSet(true)},
    ok:()=>flags.cc},
-  {id:'res',ic:'🎒',modal:1,info:1,
+  {id:'res',core:1,ic:'🎒',modal:1,info:1,
    t:{ar:'مواردك للبقاء',en:'Your survival resources'},
-   d:{ar:'الموارد دي بتتحكم في نجاح المهمة. لو أي مورد خلص، المهمة بتفشل:',en:'These resources decide whether the mission succeeds. If one runs out, the mission fails:'},
+   d:{ar:'أربع أرقام بتحدد نجاحك. لو أي واحد وصل صفر، المهمة بتفشل. وكل قرار بتاخده بيكلّف حاجة:',en:'Four numbers decide your mission. If any of them hits zero, the mission fails. And every decision costs something:'},
    rows:[
-    ['⚡',{ar:'<b>الطاقة</b> بتشغّل الحماية والعينات والتحاليل. وفّرها.',en:'<b>Energy</b> powers shields, samples and analysis. Save it.'}],
-    ['🫁',{ar:'<b>الأكسجين</b> بيقل مع الوقت حتى لو واقف. ولّد منه من «إنتاج أكسجين».',en:'<b>Oxygen</b> drops over time even when you stand still. Make more with Oxygen production.'}],
-    ['💧',{ar:'<b>الماء</b> بيقل ببطء، وبيتصرف منه شوية لما تنتج أكسجين أو تجمع عينة.',en:'<b>Water</b> drops slowly, and some is used when you make oxygen or collect a sample.'}],
-    ['🛡️',{ar:'<b>الحماية</b> من العواصف الشمسية والإشعاع. «تشغيل الحماية» بيرفعها.',en:'<b>Protection</b> against solar storms and radiation. Shield power raises it.'}],
+    ['⚡',{ar:'<b>الطاقة</b> بتشغّل الحماية والعينات والتحاليل. صرفها في حاجة يعني مش هتصرفها في حاجة تانية.',en:'<b>Energy</b> powers shields, samples and analysis. Spend it on one thing and you cannot spend it on another.'}],
+    ['🫁',{ar:'<b>الأكسجين</b> بيقل مع الوقت حتى لو واقف. ولّد منه من «إنتاج أكسجين» (بياخد طاقة وماء).',en:'<b>Oxygen</b> drops over time even when you stand still. Make more with Oxygen production (it costs energy and water).'}],
+    ['💧',{ar:'<b>الماء</b> بيقل ببطء وبيتصرف منه لما تنتج أكسجين أو تجمع عينة.',en:'<b>Water</b> drops slowly and gets used when you make oxygen or collect a sample.'}],
+    ['🛡️',{ar:'<b>الحماية</b> من الإشعاع والعواصف الشمسية. «تشغيل الحماية» بيرفعها بس بياخد طاقة.',en:'<b>Protection</b> against radiation and solar storms. Shield power raises it, but it burns energy.'}],
     ['⭐',{ar:'<b>النقاط</b> من المختبرات والعينات والمهام، وبترفع رتبتك من متدرب لأسطورة.',en:'<b>Points</b> come from labs, samples and missions, and raise your rank from Trainee to Legend.'}]]},
-  {id:'mission',ic:'🛰️',tg:'#missionBtn',avail:()=>!!$('missionBtn'),
+  {id:'shelter',core:1,ic:'🏠',modal:1,info:1,
+   t:{ar:'ملجأ العواصف',en:'Your storm shelter'},
+   d:{ar:'جنب المركبة اتبنى ملجأ مدفون جزء منه في التربة. ده أهم أمان عندك:',en:'A shelter, partly buried in soil, was built next to your lander. It is your best protection:'},
+   rows:[
+    ['⚠️',{ar:'لما يظهر تحذير عاصفة (شمسية، ترابية، رياح، زلزال…) يبقى قدامك حوالي 10–15 ثانية.',en:'When a storm warning appears (solar, dust, wind, quake…) you only have about 10–15 seconds.'}],
+    ['🧭',{ar:'اجري ناحية الملجأ (البوصلة هتشاور عليه) وادوس «ادخل الملجأ».',en:'Run to the shelter (your compass will point to it) and press Enter shelter.'}],
+    ['✅',{ar:'جوه، العاصفة مش بتأذيك: مفيش ضرر للبدلة ومفيش تحدي.',en:'Inside, the storm cannot hurt you: no suit damage, no challenge.'}],
+    ['⚖️',{ar:'بس مفيش حاجة ببلاش: الاختباء بيستهلك طاقة وأكسجين، وبتكسب نقاط أقل من لو كسبت تحدي العاصفة، ومينفعش تشتغل وإنت مستني.',en:'But nothing is free: hiding burns energy and oxygen, you earn fewer points than by beating the storm challenge, and you cannot do science while you wait.'}]]},
+  {id:'drill',core:1,ic:'🚨',
+   t:{ar:'تدريب الطوارئ: عاصفة شمسية!',en:'Emergency drill: solar storm!'},
+   d:{ar:'ده تدريب مش حقيقي. جاك إنذار وهمي: اجري للملجأ وادخله في أقل من 30 ثانية، استنى لحد ما العاصفة الوهمية تخلص، وبعدين اخرج.',arM:'ده تدريب مش حقيقي. جاك إنذار وهمي: اجري للملجأ (السهم بيدلّك) وادوس «ادخل الملجأ» في أقل من 30 ثانية، استنى لحد ما العاصفة الوهمية تخلص، وبعدين اخرج.',en:'This is only a drill. A fake alert just came in: run to the shelter and get inside within 30 seconds, wait for the simulated storm to pass, then walk back out.'},
+   why:{ar:'في الواقع الرواد بيتدربوا على إنذارات الإشعاع، عشان وقت الخطر الجسم يتصرف لوحده.',en:'In real life astronauts rehearse radiation alerts so they react automatically when it counts.'},
+   enter:s=>{tries=0;msgT=0;s.drill={ph:'run',t:30};try{s.cameras.main.shake(500,.004);sfx('siren')}catch(_){}},
+   leave:s=>{if(s)s.drill=null;const e=$('evb');if(e)e.style.display='none'},
+   arrow:s=>s.shl&&s.shl.built&&!s.inSh?{x:s.shl.x,y:s.shl.y+20}:null,
+   tick:(s,dt)=>{const d=s.drill;if(!d)return;const e=$('evb');
+    if(d.ph==='run'){d.t-=dt;if(!s.inSh&&!busy){e.style.display='block';e.textContent='🎓 '+(L()==='en'?'DRILL · storm in ':'تدريب · عاصفة خلال ')+Math.max(0,Math.ceil(d.t))+(L()==='en'?' s · run to the shelter 🏠':' ث · اجري للملجأ 🏠')}else e.style.display='none';
+     if(d.t<=0){tries++;if(tries>=2){d.ph='done';e.style.display='none';flags.shOut=1;toast(L()==='en'?'No worries, we will move on. Remember: react fast in a real storm!':'ولا يهمك، هنكمّل. افتكر: اتصرف بسرعة في العاصفة الحقيقية!')}else{d.t=30;toast(L()==='en'?'Too slow! In a real storm that costs you. Try again.':'اتأخرت! في عاصفة حقيقية ده هيكلّفك. جرّب تاني.')}}}
+    else e.style.display='none'},
+   ok:s=>!!s.drill&&s.drill.ph==='done'&&!!flags.shOut},
+  {id:'q1',core:0,ic:'🧠',modal:1,
+   t:{ar:'سؤال سريع',en:'Quick question'},
+   d:{ar:'وإنت بعيد عن القاعدة، ظهر تحذير عاصفة شمسية. إيه أذكى تصرف؟',en:'You are far from base when a solar storm warning appears. What is the smartest move?'},
+   quiz:{o:[
+    {t:{ar:'أكمّل أجمع عينات، النقط نقط',en:'Keep collecting samples: points are points'},fb:{ar:'لأ. الإشعاع مش هيهتم بنقاطك، ولو الحماية قليلة هتخسر أكتر.',en:'Not quite. Radiation does not care about your points, and low protection will cost you more.'}},
+    {t:{ar:'أرجع للملجأ أو أرفع الحماية من لوحة Mission',en:'Head to the shelter or boost protection in the Mission panel'},ok:1,fb:{ar:'صح! الرواد الحقيقيين بيتحركوا لأكتر مكان محمي أول ما يجيلهم تحذير.',en:'Correct! Real crews move to the best-shielded spot as soon as a warning comes.'}},
+    {t:{ar:'أقف مكاني وأتمنى الأحسن',en:'Stand still and hope for the best'},fb:{ar:'التمني مش خطة. دايمًا اتحرك لمكان آمن.',en:'Hope is not a plan. Always move to safety.'}}]},
+   ok:()=>flags.quiz,delay:3200},
+  {id:'mission',core:1,ic:'📊',tg:'#missionBtn',avail:()=>!!$('missionBtn'),
    t:{ar:'لوحة Mission · NASA',en:'Mission · NASA panel'},
-   d:{ar:'دوس «Mission · NASA» وشوف أرقام مواردك الحقيقية وخطة اليوم من بيانات NASA. اختار خطة (كل خطة لها تكلفة وبعدها راحة 5 دقايق)، وبعدين اقفل اللوحة بـ ✕.',en:'Press Mission · NASA to see your real resource levels and the daily plan from NASA data. Pick a plan (each has a cost, then a 5 minute rest), then close the panel with the X.'},
+   d:{ar:'دوس «Mission · NASA» وشوف أرقام مواردك وحدث الشمس الحقيقي من NASA. اختار خطة (كل واحدة ليها تكلفة وبعدها راحة 5 دقايق)، وبعدين اقفل اللوحة بـ ✕.',en:'Press Mission · NASA to see your resource levels and a real Sun event from NASA. Pick a plan (each has a cost, then a 5 minute rest), then close the panel with the X.'},
+   why:{ar:'الأحداث دي مش مخترعة: جاية من قاعدة بيانات NASA DONKI اللي بترصد الانفجارات الشمسية.',en:'These events are not made up: they come from NASA\'s DONKI database, which tracks solar eruptions.'},
    ok:()=>{if(ACNASA.isOpen())flags.mo=1;return !!flags.mo&&!ACNASA.isOpen()}},
-  {id:'goal',ic:'🚩',modal:1,info:1,last:1,
+  {id:'q2',core:0,ic:'🛰️',modal:1,
+   t:{ar:'سؤال سريع',en:'Quick question'},
+   d:{ar:'أحداث الشمس في لوحة Mission جاية منين؟',en:'Where do the Sun events in the Mission panel come from?'},
+   quiz:{o:[
+    {t:{ar:'أرقام عشوائية من اللعبة',en:'Random numbers made up by the game'},fb:{ar:'لأ، دي بيانات حقيقية.',en:'No, this is real data.'}},
+    {t:{ar:'من نشرة طقس في التلفزيون',en:'A TV weather forecast'},fb:{ar:'قريب، بس طقس الفضاء بيجي من مصدر تاني.',en:'Close, but space weather comes from somewhere else.'}},
+    {t:{ar:'من قاعدة بيانات NASA DONKI',en:'NASA\'s DONKI space-weather database'},ok:1,fb:{ar:'بالظبط! DONKI بتسجّل الانفجارات الشمسية (FLR) والسحب الشمسية (CME) والجسيمات السريعة (SEP). ولو مفيش نت، اللعبة بتستخدم نسخة محفوظة وبتكتب إنها «غير مباشرة».',en:'Exactly! DONKI logs solar flares (FLR), coronal mass ejections (CME) and solar energetic particles (SEP). With no internet the game uses a stored copy and labels it "not live".'}}]},
+   ok:()=>flags.quiz,delay:3600},
+  {id:'goal',core:1,ic:'🚩',modal:1,info:1,last:1,
    t:{ar:'مهمتك الأساسية',en:'Your main mission'},
-   d:{ar:'خلاص جاهز يا رائد! عشان تكسب الرحلة:',en:'You are ready, Commander! To win the trip:'},
+   d:{ar:'جاهز يا قائد. عشان تكسب الرحلة:',en:'You are ready, Commander. To win the trip:'},
    rows:s=>[
     ['🔬',{ar:'خلّص المختبرات الـ'+Object.keys(ST).length+': '+Object.keys(ST).map(k=>LABS[k]).join('، ')+'.',en:'Finish all '+Object.keys(ST).length+' labs.'}],
     ['🎯',{ar:'المهمة الخاصة: «'+s.sg.t+'» ('+s.sg.n+').',en:'Special mission: '+s.sg.t+' ('+s.sg.n+').'}],
     ['🧪',{ar:'اجمع 5 عينات.',en:'Collect 5 samples.'}],
     ['🚩',{ar:'ارجع للقاعدة وارفع العلم.',en:'Return to the base and plant the flag.'}],
-    ['⚠️',{ar:'خلّي بالك: ممكن تيجي عواصف وأحداث كبيرة، هتتحذّر قبلها وتواجهها بتحدي سريع.',en:'Watch out: big storms and events can strike. You get a warning first, then a quick challenge.'}]]}
+    ['🏠',{ar:'العواصف هتيجي: إما تواجهها بتحدي سريع (نقاط أكتر، وخطر أكبر)، أو تحتمي في الملجأ (أمان، بس بتدفع طاقة وأكسجين).',en:'Storms will come: face them with a quick challenge (more points, more risk) or hide in the shelter (safe, but it costs energy and oxygen).'}]]}
  ];
 
- /* ---- مساعدات ---- */
+ /* ---- helpers ---- */
  const cur=()=>list[idx];
  function clearHl(){if(hl){hl.classList.remove('tut-hl');hl=null}}
  function setHl(s){clearHl();low=false;const q=T(s.tg);if(!q)return;const e=document.querySelector(q);if(!e)return;const r=e.getBoundingClientRect();if(r.width>0){e.classList.add('tut-hl');hl=e;low=r.top+r.height/2<innerHeight*.4}}
  function lockBusy(){if(!busy){busy=true;selfBusy=true}}
  function freeBusy(){if(selfBusy){busy=false;near=null;selfBusy=false}}
  function ui(h){el.innerHTML='<div class="tut-box">'+h+'</div>'}
- const btnTx=k=>({next:{ar:'التالي ◀',en:'Next ▶'},skip:{ar:'تخطي الخطوة',en:'Skip step'},end:{ar:'إنهاء التدريب',en:'End tutorial'},start:{ar:'ابدأ التدريب 🚀',en:'Start training 🚀'},later:{ar:'تخطي',en:'Skip'},go:{ar:'ابدأ المغامرة 🚀',en:'Start the adventure 🚀'}}[k][L()]);
+ const btnTx=k=>({next:{ar:'التالي ◀',en:'Next ▶'},skip:{ar:'تخطي الخطوة',en:'Skip step'},end:{ar:'إنهاء التدريب',en:'End tutorial'},full:{ar:'التدريب الكامل (≈ 4 دقايق)',en:'Full training (≈ 4 min)'},quick:{ar:'إحاطة سريعة (≈ 2 دقيقة)',en:'Quick briefing (≈ 2 min)'},later:{ar:'تخطي',en:'Skip'},go:{ar:'ابدأ المهمة 🚀',en:'Start the mission 🚀'},why:{ar:'🤔 ليه ده مهم؟',en:'🤔 Why does it matter?'}}[k][L()]);
+ const head=(ic,title,n)=>'<div class="tut-h">'+(avatar?'<img class="tut-av" alt="" src="'+avatar+'">':'<span class="ti">'+ic+'</span>')+'<div class="tut-who"><small>🛰️ '+(L()==='en'?'MISSION CONTROL → ':'مركز التحكم ← ')+esc2(NM())+'</small><b>'+(avatar?ic+' ':'')+title+'</b></div>'+(n?'<small class="tut-n">'+n+'</small>':'')+'</div>';
+ const esc2=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  function render(){
   const s=cur();if(!s){el.className='';return}
   const rows=typeof s.rows==='function'?s.rows(scene):s.rows;
   const pct=Math.round(idx/list.length*100);
   el.className='on '+(s.modal?'modal':'bubble')+(low&&!s.modal?' low':'');
-  ui('<div class="tut-p"><i style="width:'+pct+'%"></i></div><div class="tut-h"><span class="ti">'+s.ic+'</span><b>'+T(s.t)+'</b><small>'+(idx+1)+'/'+list.length+'</small></div><p class="tut-d">'+T(s.d)+'</p>'+(rows?'<div class="tut-rows">'+rows.map(r=>'<div><span>'+r[0]+'</span><span>'+T(r[1])+'</span></div>').join('')+'</div>':'')+
-   '<div class="tut-b">'+(s.info?'<button class="btn" data-a="'+(s.last?'finish':'next')+'">'+btnTx(s.last?'go':'next')+'</button>':'<span class="tut-ok">✅</span>')+(s.last?'':'<button class="tut-l" data-a="skipstep">'+btnTx('skip')+'</button>')+'<button class="tut-l" data-a="end">'+btnTx('end')+'</button></div>');
+  const q=s.quiz?'<div class="tut-q">'+s.quiz.o.map((o,i)=>'<button type="button" data-a="q" data-i="'+i+'">'+T(o.t)+'</button>').join('')+'</div><p class="tut-fb" aria-live="assertive"></p>':'';
+  ui('<div class="tut-p"><i style="width:'+pct+'%"></i></div>'+head(s.ic,T(s.t),(idx+1)+'/'+list.length)+'<p class="tut-d">'+T(s.d)+'</p>'+(rows?'<div class="tut-rows">'+rows.map(r=>'<div><span>'+r[0]+'</span><span>'+T(r[1])+'</span></div>').join('')+'</div>':'')+q+
+   (s.why?'<p class="tut-why" hidden>💡 '+T(s.why)+'</p>':'')+
+   '<div class="tut-b">'+(s.info?'<button class="btn" data-a="'+(s.last?'finish':'next')+'">'+btnTx(s.last?'go':'next')+'</button>':'<span class="tut-ok"></span>')+(s.why?'<button class="tut-l" data-a="why">'+btnTx('why')+'</button>':'')+(s.last?'':'<button class="tut-l" data-a="skipstep">'+btnTx('skip')+'</button>')+'<button class="tut-l" data-a="end">'+btnTx('end')+'</button></div>');
   lastLang=L();
  }
  function enter(){
@@ -1156,7 +1341,7 @@ const TUT=(()=>{
   if(s.modal)lockBusy();
   setHl(s);render();
  }
- function step(j){const s=cur();if(s&&s.leave)s.leave(scene);clearHl();freeBusy();idx=j;if(idx>=list.length)return finish();enter()}
+ function step(j){const s=cur();if(s&&s.leave)try{s.leave(scene)}catch(_){}clearHl();freeBusy();idx=j;if(idx>=list.length)return finish();enter()}
  function hideAll(){clearHl();arrow.classList.remove('on');el.className='';el.innerHTML=''}
  function stop(markSkip){
   const s=cur();if(state==='run'&&s&&s.leave)try{s.leave(scene)}catch(_){}
@@ -1165,24 +1350,27 @@ const TUT=(()=>{
  }
  function finish(){
   const first=getK()!=='done';
+  const s=cur();if(s&&s.leave)try{s.leave(scene)}catch(_){}
   freeBusy();hideAll();state='idle';list=[];mark('done');
   if(first){addXP(25,L()==='en'?'Finished training':'أكملت التدريب');ach('tut',L()==='en'?'Training graduate':'خريج التدريب')}
-  sfx('ach');say(L()==='en'?'Training complete, '+S.name+'! Now finish the labs, collect samples and plant the flag. 🚀':'خلّصت التدريب يا '+S.name+'! دلوقتي كمّل المختبرات وجمّع العينات وارفع العلم. 🚀');
+  sfx('ach');say(L()==='en'?'Training complete, '+S.name+'! Finish the labs, collect samples and plant the flag. And remember: when a warning sounds, the shelter is your friend. 🚀':'خلّصت التدريب يا '+S.name+'! كمّل المختبرات وجمّع العينات وارفع العلم. وافتكر: لما الإنذار يضرب، الملجأ صاحبك. 🚀');
  }
- function begin(s){
-  scene=s;list=STEPS.filter(x=>!x.avail||x.avail(s));if(!list.length){stop(false);return}
-  idx=0;state='run';tutSam=null;enter();
+ function begin(s,q){
+  scene=s;quick=!!q;list=STEPS.filter(x=>(!x.avail||x.avail(s))&&(!quick||x.core||x.info&&x.last));if(!list.length){stop(false);return}
+  idx=0;state='run';tutSam=null;last=performance.now();enter();
   if(!raf)raf=requestAnimationFrame(loop);
  }
  function showIntro(){
   state='intro';lockBusy();low=false;
+  try{avatar=charCv(S.ch,3,'d',0).toDataURL()}catch(_){avatar=''}
   el.className='on modal';
   const en=L()==='en';
-  ui('<div class="tut-h"><span class="ti">🎓</span><b>'+(en?'Astronaut training':'تدريب الرائد')+'</b></div><p class="tut-d">'+(en?'Welcome, '+S.name+'! This is your first trip, so we will train together step by step: moving, tools and survival resources. It takes about two minutes and gives you a reward.':'أهلاً يا '+S.name+'! دي أول رحلة ليك، فهنتدرب سوا خطوة بخطوة: الحركة، الأدوات، وموارد البقاء. بياخد دقيقتين تقريبًا وفي الآخر جايزة ليك. 🏅')+'</p><div class="tut-b"><button class="btn" data-a="start">'+btnTx('start')+'</button><button class="tut-l" data-a="later">'+btnTx('later')+'</button></div>');
+  ui(head('🎓',en?'Mission Control briefing':'إحاطة مركز التحكم','')+'<p class="tut-d">'+(en?'Welcome, Commander '+esc2(NM())+'. You are about to run a real outpost: explore, collect samples, survive storms and use live NASA space-weather data. Pick how you want to train:':'أهلاً يا قائد '+esc2(NM())+'. إنت على وشك تدير قاعدة فضائية حقيقية: استكشاف، عينات، النجاة من العواصف، واستخدام بيانات طقس الفضاء الحقيقية من NASA. اختار طريقة التدريب:')+'</p><div class="tut-b tut-bi"><button class="btn" data-a="start">'+btnTx('full')+'</button><button class="btn ghost" data-a="quick">'+btnTx('quick')+'</button><button class="tut-l" data-a="later">'+btnTx('later')+'</button></div>');
  }
  function loop(){
   if(state==='idle'){raf=0;return}
   raf=requestAnimationFrame(loop);
+  const now=performance.now(),dt=Math.min(.1,(now-last)/1000);last=now;
   const s=GS;
   if(!s||!s.sam||s!==scene){stop(false);return}
   if(state==='wait'){if(!s.land&&s.pl&&s.pl.alpha>.95&&!busy&&!cutOn())showIntro();return}
@@ -1191,17 +1379,26 @@ const TUT=(()=>{
   if(L()!==lastLang)render();
   const show=st.modal||(!busy&&!cutOn());
   el.style.visibility=show?'visible':'hidden';
+  if(st.tick)st.tick(s,dt);
   const tg=!locked&&!busy&&st.arrow?st.arrow(s):null;
   if(tg){const dx=tg.x-s.px,dy=tg.y-s.py;if(Math.hypot(dx,dy)>140){const a=Math.atan2(dy,dx),r=Math.min(150,innerHeight*.28);arrow.style.transform='translate('+(innerWidth/2+Math.cos(a)*r)+'px,'+(innerHeight/2-30+Math.sin(a)*r)+'px) rotate('+a+'rad)';arrow.classList.add('on')}else arrow.classList.remove('on')}else arrow.classList.remove('on');
-  if(!locked&&st.ok&&st.ok(s)){locked=1;arrow.classList.remove('on');const b=el.querySelector('.tut-box'),o=el.querySelector('.tut-ok');if(b)b.classList.add('ok');if(o)o.style.display='inline';bp(1100,.1);const me=st;setTimeout(()=>{if(state==='run'&&cur()===me)step(idx+1)},700)}
+  if(!locked&&st.ok&&st.ok(s)){locked=1;arrow.classList.remove('on');const b=el.querySelector('.tut-box'),o=el.querySelector('.tut-ok');if(b)b.classList.add('ok');
+   if(o&&!st.quiz){const p=PRAISE[Math.random()*PRAISE.length|0];o.textContent='✅ '+T(p);o.style.display='block'}
+   if(st.quiz&&!isDone())addXP(5,L()==='en'?'Correct answer':'إجابة صح');
+   bp(1100,.1);const me=st;setTimeout(()=>{if(state==='run'&&cur()===me)step(idx+1)},me.delay||1100)}
  }
  el.addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;e.stopPropagation();const a=b.dataset.a;
-  if(a==='start'){freeBusy();begin(scene)}
-  else if(a==='later'){freeBusy();hideAll();state='idle';mark('skip')}
+  if(a==='start'){freeBusy();begin(scene,false)}
+  else if(a==='quick'){freeBusy();begin(scene,true)}
+  else if(a==='later'){freeBusy();hideAll();state='idle';if(getK()!=='done')mark('skip')}
   else if(a==='next'||a==='skipstep')step(idx+1);
   else if(a==='finish')finish();
   else if(a==='end')stop(true);
+  else if(a==='why'){const w=el.querySelector('.tut-why');if(w){w.hidden=!w.hidden;bp(700,.05)}}
+  else if(a==='q'){const st=cur();if(!st||!st.quiz||locked)return;const o=st.quiz.o[+b.dataset.i],f=el.querySelector('.tut-fb');
+   if(o.ok){flags.quiz=1;b.classList.add('good');el.querySelectorAll('.tut-q button').forEach(x=>x.disabled=true);if(f){f.className='tut-fb good';f.textContent='✅ '+T(o.fb)}}
+   else{b.classList.add('bad');b.disabled=true;bp(200,.15);if(f){f.className='tut-fb bad';f.textContent='❌ '+T(o.fb)}}}
  });
  el.addEventListener('pointerdown',e=>e.stopPropagation());
  $('mcb').addEventListener('click',e=>{if(e.target.dataset.q)evt('cc')});
@@ -1212,19 +1409,19 @@ const TUT=(()=>{
   if(!b){b=document.createElement('button');b.id='tutBtn';b.type='button';b.onclick=()=>api.start();c.prepend(b)}
   b.textContent=L()==='en'?'🎓 Tutorial':'🎓 تدريب';
  }
- const hintTx={1:{ar:'🎓 مرحبًا! أول مرة؟ اختار رائدك وسمّيه، وبعد الإطلاق هيبدأ تدريب تفاعلي يعلّمك كل حاجة خطوة بخطوة.',en:'🎓 Welcome! First time? Pick and name your astronaut. After launch, an interactive tutorial teaches you everything step by step.'},2:{ar:'💡 نصيحة للمبتدئين: القمر والمريخ فيهم روفر تجرّبه. اختار الكوكب اللي يعجبك.',en:'💡 Beginner tip: the Moon and Mars have a rover to try. Pick any planet you like.'},3:{ar:'🚀 اختار أي صاروخ ودوس «إطلاق». التدريب بيبدأ أول ما تهبط.',en:'🚀 Choose any rocket and press Launch. Training starts as soon as you land.'}};
+ const hintTx={1:{ar:'🎓 مرحبًا يا قائد! اختار رائدك وسمّيه. بعد الإطلاق هيبدأ تدريب تفاعلي مع مركز التحكم: حركة، عينات، عواصف، وبيانات NASA الحقيقية.',en:'🎓 Welcome, Commander! Pick and name your astronaut. After launch, an interactive Mission Control briefing covers movement, samples, storms and real NASA data.'},2:{ar:'💡 نصيحة: القمر والمريخ فيهم روفر، وعواصف شمسية وترابية تختبر ملجأك.',en:'💡 Tip: the Moon and Mars have a rover, plus solar and dust storms that will test your shelter.'},3:{ar:'🚀 اختار أي صاروخ ودوس «إطلاق». التدريب بيبدأ أول ما تهبط.',en:'🚀 Choose any rocket and press Launch. Training starts as soon as you land.'}};
  const api={
   active:()=>state!=='idle',
   seen,
   arm(s,resumed){
    if(!(forced||(!seen()&&!resumed))){return}
-   forced=false;scene=s;state='wait';lastLang=L();if(!raf)raf=requestAnimationFrame(loop);
+   forced=false;scene=s;state='wait';lastLang=L();last=performance.now();if(!raf)raf=requestAnimationFrame(loop);
   },
   start(){
    const s=GS;if(!s||!s.sam)return;
    if(state!=='idle')return;
-   if(s.land||busy||s.evA||cutOn()){toast(L()==='en'?'Not right now: finish what you are doing first.':'مش دلوقتي: خلّص اللي في إيدك الأول.');return}
-   begin(s);
+   if(s.land||busy||s.evA||s.inSh||cutOn()){toast(L()==='en'?'Not right now: finish what you are doing first.':'مش دلوقتي: خلّص اللي في إيدك الأول.');return}
+   scene=s;showIntro();if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}
   },
   evt,btn,
   pre(n){
@@ -1249,6 +1446,8 @@ const TUT=(()=>{
  const _take=P.take;P.take=function(){const r=_take.apply(this,arguments);TUT.evt('take');return r};
  const _ride=P.ride;P.ride=function(on){const r=_ride.apply(this,arguments);if(this.rv)TUT.evt(on?'ride1':'ride0');return r};
  const _roll=P.rollEvent;P.rollEvent=function(){if(TUT.active()){this.evT=20;return}return _roll.apply(this,arguments)};
+ const _enSh=P.enterShelter;P.enterShelter=function(){const b=this.inSh,r=_enSh.apply(this,arguments);if(!b&&this.inSh)TUT.evt('shIn');return r};
+ const _lvSh=P.leaveShelter;P.leaveShelter=function(){const b=this.inSh,r=_lvSh.apply(this,arguments);if(b&&!this.inSh)TUT.evt('shOut');return r};
 })();
 const _tutOpenSt=openSt;openSt=function(){TUT.evt('lab');return _tutOpenSt.apply(this,arguments)};
 const _tutChips=chips;chips=function(){_tutChips.apply(this,arguments);try{ACNASA.button()}catch(_){}TUT.btn()};
