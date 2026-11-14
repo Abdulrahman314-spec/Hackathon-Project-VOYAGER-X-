@@ -135,6 +135,29 @@ input{-webkit-user-select:none!important;user-select:none!important}
 @media (max-width:380px){#missionPanel .mchoices button{flex-basis:100%}.mstat{grid-template-columns:55px 1fr 28px}.mstat .bar{height:9px}#chips{max-width:72%}.chip{max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 @media (min-width:1200px){#pn{width:600px}#missionPanel{font-size:15px}.mchoices button{min-height:62px}.tag{font-size:15px}}
 @media (orientation:landscape) and (max-height:560px){#pn{max-height:84dvh;padding:10px}#missionPanel h3{font-size:18px}.mchoices button{min-height:44px}.mnote{font-size:11px}#mc{bottom:8px}}
+
+/* ---------- Tutorial (first-time training) ---------- */
+#tut{position:fixed;inset:0;z-index:33;display:none;pointer-events:none;align-items:flex-start;justify-content:center;padding:calc(54px + env(safe-area-inset-top,0px)) 12px 12px}
+@media(max-width:640px){#tut{padding-top:calc(96px + env(safe-area-inset-top,0px))}}
+#tut.on{display:flex}
+#tut.low{align-items:flex-end;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+#tut.modal{pointer-events:auto;align-items:center;background:#050718bd}
+.tut-box{pointer-events:auto;width:min(440px,100%);background:var(--panel);box-shadow:0 0 0 3px var(--amb),5px 5px 0 3px #000;padding:12px 14px;text-align:start;position:relative;overflow-x:hidden;overflow-y:auto;max-height:calc(100dvh - 24px);-webkit-overflow-scrolling:touch}
+#tut.modal .tut-box{width:min(500px,100%)}
+.tut-box.ok{box-shadow:0 0 0 3px var(--teal),5px 5px 0 3px #000}
+.tut-p{height:6px;background:#0b0f2c;margin:-12px -14px 10px}.tut-p i{display:block;height:100%;background:var(--teal);transition:width .4s}
+.tut-h{display:flex;align-items:center;gap:8px;font-size:17px}.tut-h .ti{font-size:24px}.tut-h small{margin-inline-start:auto;color:var(--mut)}
+.tut-d{margin:6px 0 8px;font-size:14px;line-height:1.7}
+.tut-rows{display:grid;gap:6px;margin:6px 0 10px}.tut-rows>div{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;font-size:13px;line-height:1.55;background:#0b0f2c;padding:6px 8px}.tut-rows b{color:var(--amb)}
+.tut-b{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tut-b .btn{padding:8px 18px;font-size:15px;min-height:40px}
+.tut-l{background:none;border:0;color:var(--mut);font:700 12px Cairo,sans-serif;cursor:pointer;padding:8px 4px;min-height:40px;text-decoration:underline}.tut-l:hover,.tut-l:focus-visible{color:var(--tx)}
+.tut-ok{display:none;color:var(--teal);font-weight:900;font-size:18px}
+.tut-hl{outline:4px solid var(--amb)!important;outline-offset:3px;animation:tutp .7s infinite alternate}@keyframes tutp{to{outline-color:#fff;outline-offset:8px}}
+#tutArrow{position:fixed;z-index:12;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;display:none;align-items:center;justify-content:center;font-size:34px;line-height:1;color:var(--amb);text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;pointer-events:none;direction:ltr}#tutArrow.on{display:flex}
+.tuthint{display:none;max-width:min(440px,92vw);margin:0;padding:9px 13px;background:var(--panel);box-shadow:0 0 0 2px var(--amb);font-size:14px;line-height:1.6;color:var(--tx)}
+#tutBtn{background:#0a0e2acc;color:var(--amb);border:0;font:700 12px Cairo,sans-serif;padding:6px 9px;cursor:pointer;box-shadow:0 0 0 2px var(--line)}
+@media(max-height:500px){.tut-box{padding:8px 12px}.tut-p{margin:-8px -12px 6px}.tut-d{font-size:12.5px;line-height:1.55;margin:4px 0 6px}.tut-h{font-size:15px}#tut.low{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}}
+@media(prefers-reduced-motion:reduce){.tut-hl{animation:none}.tut-p i{transition:none}}
 </style>
 </head>
 <body>
@@ -1016,7 +1039,7 @@ const ACNASA=(()=>{
  function translateShell(){const en=lang==='en',v={fs:en?'Fullscreen':'ملء الشاشة',continueGame:en?'Continue Game':'كمّل اللعبة',newGame:en?'New Game':'لعبة جديدة',bset:en?'Settings':'الإعدادات',bq:en?'Quit':'خروج',setx:en?'Back':'رجوع',qb:en?'Back':'رجوع',n1:en?'Next':'التالي',n2:en?'Choose a planet':'اختار الكوكب',launch:en?'Launch':'إطلاق',again:en?'New trip':'رحلة جديدة',mcx:en?'Hide':'إخفاء',mcShow:en?'Control center':'مركز التحكم',rov:en?'Rover':'مسبار',rad:en?'Scan':'مسح',jmp:en?'Jump':'قفزة',skip:en?'Skip':'تخطي'};Object.keys(v).forEach(k=>{if($(k))$(k).textContent=v[k]});if($('s0'))$('s0').querySelector('.tag2').innerHTML=en?'Explore • Learn • <b>Discover</b>':'استكشف • اتعلّم • <b>اكتشف</b>';if($('set'))$('set').querySelector('h2').textContent=en?'Settings':'الإعدادات';if($('quit')){$('quit').querySelector('h2').textContent=en?'See you soon, Commander!':'نشوفك قريب يا قائد!';$('quit').querySelector('.sub').textContent=en?'Thanks for playing Astro Commander. Space will be here when you return.':'شكرًا إنك لعبت Astro Commander. الفضاء مستنيك.'}if($('s1')){$('s1').querySelector('h1').innerHTML='ASTRO<br>COMMANDER';$('s1').querySelector('.sub').textContent=en?'Choose and name your astronaut':'اختار رائد الفضاء وسمّيه';$('nm').placeholder=en?'Astronaut name':'اسم رائد الفضاء';$('nm').setAttribute('aria-label',$('nm').placeholder)}if($('s2'))$('s2').querySelector('h2').textContent=en?'You are on Earth. Moon or Mars?':'إنت على الأرض. تروح القمر ولا المريخ؟';if($('s3'))$('s3').querySelector('h2').textContent=en?'Choose your rocket':'اختار صاروخك';if($('end'))$('end').querySelector('h1').innerHTML=en?'MISSION<br>COMPLETE':'المهمة<br>اكتملت';if($('mc'))$('mc').querySelector('i').textContent=en?'Control center':'مركز التحكم';document.querySelectorAll('#mcb button[data-q]').forEach((b,i)=>b.textContent=en?['Where?','Hint','Fact'][i]:['فين؟','تلميح','معلومة'][i]);document.querySelectorAll('[data-go]').forEach(b=>b.textContent=en?'Back':'رجوع');const names=en?['Mission Lead','Flight Engineer','Test Pilot','Planet Scientist','Space Medic','Artemis Explorer','Apollo Explorer','Mercury Pilot']:CH.map(x=>x.r),desc=en?['Orange launch suit','Spacewalk suit','Blue flight suit','EMU suit with camera','Launch suit with medical kit','Lunar AxEMU suit','Classic Apollo suit','Silver Mercury suit']:CH.map(x=>x.d);document.querySelectorAll('#chs .card').forEach((b,i)=>{b.querySelector('b').textContent=names[i];b.querySelector('small').textContent=desc[i]});const rnames=en?['Falcon','Artemis SLS','Starship','Space Shuttle','Saturn V','Soyuz','New Glenn']:RK.map(x=>x.n),rdesc=en?['Light and quick; flies again','NASA’s powerful Moon rocket','Huge rocket built for Mars','NASA’s reusable spaceplane','The rocket that carried Apollo to the Moon','A rocket with a long safety record','A large reusable booster']:RK.map(x=>x.d);document.querySelectorAll('#rks .card').forEach((b,i)=>{b.querySelector('b').textContent=rnames[i];b.querySelector('small').textContent=rdesc[i]});const planetNames={moon:['Moon','القمر'],mercury:['Mercury','عطارد'],venus:['Venus','الزهرة'],mars:['Mars','المريخ'],jupiter:['Jupiter','المشتري'],saturn:['Saturn','زحل'],uranus:['Uranus','أورانوس'],neptune:['Neptune','نبتون'],pluto:['Pluto','بلوتو'],io:['Io','آيو'],europa:['Europa','أوروبا'],ganymede:['Ganymede','جانيميد'],titan:['Titan','تيتان'],enceladus:['Enceladus','إنسيلادوس'],triton:['Triton','تريتون']};document.querySelectorAll('#pls .card').forEach((b,i)=>{const k=ORD[i],pn=planetNames[k]||[PL[k].n,PL[k].n];b.querySelector('b').textContent=pn[en?0:1];b.querySelector('small').textContent=en?PL[k].kind+' · '+PL[k].dist:PL[k].kind+' · '+PL[k].dist});if($('s2')&&S.name)$('who').textContent=en?'Astronaut '+S.name:'الرائد '+S.name+' · '+CH[S.ch].r;syncMenu()}
  function button(){if(!$('missionBtn')){const b=document.createElement('button');b.id='missionBtn';b.textContent='Mission · NASA';b.onclick=renderDay;$('chips').prepend(b)}if(!$('sourcesBtn')){const b=document.createElement('button');b.id='sourcesBtn';b.textContent='Sources';b.onclick=sources;$('chips').prepend(b)}$('langBtn').onclick=setLang;$('langBtn').textContent=lang==='ar'?'English':'عربي';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr'}
  function start(saved){button();translateShell();if(saved&&saved.M){Object.assign(M,saved.M);idx=saved.idx||0}else{M.day=1;M.cooldownUntil=0;M.pendingAdvance=false;M.res={energy:100,oxygen:100,water:100,protection:72};M.science={samples:0,analyses:0,observations:0,objectives:0};M.event=next()}startClock();load().then(()=>{if(!M.event)M.event=next();if(isOpen())renderDay()});setTimeout(()=>{if(!M.event)M.event=next()},900)}
- return {alert,closeMission,isOpen,load,start,renderDay,sources,next,sourceLabel,state:M,setLang,initLanguage(){button();translateShell()},saveState(){return {M:JSON.parse(JSON.stringify(M)),idx,lang}},reset(){M.day=1;M.total=10;M.res={energy:100,oxygen:100,water:100,protection:72};M.event=null;M.cooldownUntil=0;M.lastTick=0;M.pendingAdvance=false;M.science={samples:0,analyses:0,observations:0,objectives:0};idx=0;clearInterval(tick)}};
+ return {button,alert,closeMission,isOpen,load,start,renderDay,sources,next,sourceLabel,state:M,setLang,initLanguage(){button();translateShell()},saveState(){return {M:JSON.parse(JSON.stringify(M)),idx,lang}},reset(){M.day=1;M.total=10;M.res={energy:100,oxygen:100,water:100,protection:72};M.event=null;M.cooldownUntil=0;M.lastTick=0;M.pendingAdvance=false;M.science={samples:0,analyses:0,observations:0,objectives:0};idx=0;clearInterval(tick)}};
 })();
 const _acExploreCreate=Explore.prototype.create;Explore.prototype.create=function(){_acExploreCreate.apply(this,arguments);ACNASA.start(RESTORE_GAME?.nasa);RESTORE_GAME=null;setTimeout(()=>saveGameProgress('play'),600)};
 const _acRoll=Explore.prototype.rollEvent;Explore.prototype.rollEvent=function(){if(ACNASA.state&&ACNASA.state.day<=ACNASA.state.total&&ACNASA.state.event&&Math.random()<.65){this.evT=rnd(45,85);this.solarNASA=ACNASA.state.event;this.forecast('solar');return}_acRoll.apply(this,arguments)};
@@ -1025,6 +1048,215 @@ const _acEndEvent=Explore.prototype.endEvent;Explore.prototype.endEvent=function
 window.openNASASources=()=>ACNASA.sources();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ACNASA.isOpen())ACNASA.closeMission()});
 ACNASA.initLanguage();syncMenu();
+/* ---------- Tutorial: guided training for first-time players (additive) ---------- */
+const TUT=(()=>{
+ const KEY='ac_tut';
+ const L=()=>(localStorage.getItem('ac_lang')||'ar')==='en'?'en':'ar';
+ const seen=()=>{try{return !!localStorage.getItem(KEY)}catch(_){return false}};
+ const getK=()=>{try{return localStorage.getItem(KEY)}catch(_){return null}};
+ const mark=v=>{try{localStorage.setItem(KEY,v)}catch(_){}};
+ const joy=()=>{const d=$('dp');return !!d&&d.getBoundingClientRect().width>0};
+ const cutOn=()=>$('cut').classList.contains('on');
+ const T=o=>{if(o==null)return '';if(typeof o==='function')return T(o());if(typeof o==='string')return o;const l=L();return (joy()&&o[l+'M'])||o[l]||o.ar||''};
+ let state='idle',idx=0,list=[],scene=null,flags={},hl=null,low=false,locked=0,selfBusy=false,forced=false,lastLang='',raf=0,p0=[0,0],tutSam=null,prevHide=false,lockStep=null;
+ const el=document.createElement('div');el.id='tut';el.setAttribute('role','dialog');el.setAttribute('aria-live','polite');document.body.appendChild(el);
+ const arrow=document.createElement('div');arrow.id='tutArrow';arrow.textContent='➤';arrow.setAttribute('aria-hidden','true');document.body.appendChild(arrow);
+
+ /* ---- خطوات التدريب ---- */
+ const STEPS=[
+  {id:'move',ic:'🕹️',tg:()=>joy()?'#dp':'',
+   t:{ar:'اتحرك',en:'Move'},
+   d:{ar:'امشي بالأسهم أو W A S D لحد ما تبعد شوية عن القاعدة.',arM:'حرّك العصا اللي تحت على الشمال وامشي بعيد شوية عن القاعدة.',en:'Use the arrow keys or W A S D to walk away from the base.',enM:'Drag the joystick at the bottom corner to walk away from the base.'},
+   enter:s=>{p0=[s.px,s.py]},ok:s=>Math.hypot(s.px-p0[0],s.py-p0[1])>180},
+  {id:'jump',ic:'⬆️',tg:'#jmp',
+   t:{ar:'اقفز',en:'Jump'},
+   d:()=>({ar:'دوس Space أو زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g، وكل ما الجاذبية أقل بتقفز أعلى.',arM:'دوس زرار «قفزة». الجاذبية هنا '+GR[S.pl]+'g، وكل ما الجاذبية أقل بتقفز أعلى.',en:'Press Space or the Jump button. Gravity here is '+GR[S.pl]+'g: the lower the gravity, the higher you jump.',enM:'Tap the Jump button. Gravity here is '+GR[S.pl]+'g: the lower the gravity, the higher you jump.'}),
+   ok:()=>flags.jump},
+  {id:'scan',ic:'📡',tg:'#rad',
+   t:{ar:'المسح',en:'Scan'},
+   d:{ar:'دوس «مسح»: بيكشف العينات الدهبية القريبة لمدة 8 ثواني وبتظهر على الخريطة الصغيرة. بعدها محتاج 10 ثواني راحة.',en:'Press Scan: it reveals nearby golden samples for 8 seconds and shows them on the mini-map. Then it needs 10 seconds to recharge.'},
+   ok:()=>flags.ping},
+  {id:'map',ic:'🗺️',tg:'#mm',info:1,avail:()=>!!CFG.mm,
+   t:{ar:'الخريطة الصغيرة',en:'Mini-map'},
+   d:{ar:'النقطة البرتقالي هي إنت، والمربع الأبيض القاعدة، والمربعات الملونة المختبرات، والنقط الدهبية العينات (بعد المسح). والسهم اللي تحتها بيشاور على أقرب هدف.',en:'The orange dot is you, the white square is the base, coloured squares are labs, and gold dots are samples (after a scan). The arrow under the map points to the nearest goal.'}},
+  {id:'collect',ic:'🧪',avail:s=>s.sam.some(o=>!o.got),
+   t:{ar:'اجمع عينة',en:'Collect a sample'},
+   d:{ar:'امشي ناحية النقطة الدهبية ✨ (السهم بيدلّك) وهتتجمع لوحدها. العينات بتتحلل في المعمل وبتزوّد نقاطك.',en:'Walk to the golden sparkle ✨ (follow the arrow) and it is collected automatically. Samples are analysed in the lab and add to your score.'},
+   enter:s=>{const c=s.sam.find(o=>!o.got);if(!c)return;const a=Math.random()*6.283;const x=Phaser.Math.Clamp(s.px+Math.cos(a)*380,150,s.W-150),y=Phaser.Math.Clamp(s.py+Math.sin(a)*380,150,s.H-150);s.tweens.killTweensOf(c.im);c.x=x;c.y=y;c.im.setPosition(x,y).setAlpha(1);s.tweens.add({targets:c.im,y:y-6,yoyo:true,repeat:-1,duration:700});tutSam=c},
+   arrow:()=>tutSam&&!tutSam.got?{x:tutSam.x,y:tutSam.y}:null,
+   ok:()=>flags.take},
+  {id:'probe',ic:'🛰️',tg:'#rov',avail:s=>s.sam.some(o=>!o.got),
+   t:{ar:'المسبار',en:'Probe'},
+   d:{ar:'دوس «مسبار»: بيطلع لوحده يجيب أقرب عينة من غير ما تمشي. بعدها محتاج 25 ثانية راحة.',en:'Press Probe: it flies out by itself and fetches the nearest sample without you walking. It needs 25 seconds to recharge.'},
+   ok:()=>flags.probe},
+  {id:'lab',ic:'🔬',tg:'#act',avail:()=>Object.keys(ST).some(k=>!done[k]),
+   t:{ar:'ادخل مختبر',en:'Enter a lab'},
+   d:{ar:'اتجه للمختبر (الدايرة الملونة، والسهم بيدلّك). لما تقرب هيظهر زرار «دخول» دوس عليه. جوه بتعمل تجارب صغيرة وبتاخد بيانات ونقاط.',en:'Head to a lab (coloured ring, follow the arrow). When you are close, an Enter button appears: press it. Inside you do small experiments and earn data and points.'},
+   arrow:s=>{let b=1e9,t=null;Object.keys(ST).forEach(k=>{if(done[k])return;const d=Math.hypot(s.P[k].x-s.px,s.P[k].y-s.py);if(d<b){b=d;t=s.P[k]}});return t},
+   ok:()=>flags.lab},
+  {id:'rover',ic:'🚙',tg:'#act',avail:s=>!!s.rv,
+   t:{ar:'اركب الروفر',en:'Ride the rover'},
+   d:{ar:'الروفر أسرع بكتير من المشي. قرب منه (السهم بيدلّك) وادوس «اركب الروفر».',en:'The rover is much faster than walking. Get close (follow the arrow) and press Ride the rover.'},
+   arrow:s=>s.rv&&!s.mount?{x:s.rv.x,y:s.rv.y}:null,
+   ok:()=>flags.ride1},
+  {id:'dismount',ic:'🚶',tg:'#act',avail:s=>!!s.rv,skipIf:s=>!s.mount,
+   t:{ar:'انزل من الروفر',en:'Get off the rover'},
+   d:{ar:'جرّب تمشي بيه شوية، وبعدين دوس «انزل من الروفر». (القفز مش شغال وإنت راكب.)',en:'Drive a little, then press Get off the rover. (Jumping does not work while riding.)'},
+   ok:()=>flags.ride0},
+  {id:'cc',ic:'🧑‍🚀',tg:'#mc',
+   t:{ar:'مركز التحكم',en:'Control center'},
+   d:{ar:'ده مركز التحكم. دوس «وين أروح؟» وهيقولك الاتجاه والمسافة لأقرب هدف. «تلميح» بيساعدك، و«حقيقة» معلومة علمية.',en:'This is the control center. Press Where to go? for the direction and distance to the nearest goal. Hint helps you, and Fact gives a science fact.'},
+   enter:()=>{prevHide=mcHide;if(mcHide)mcSet(false)},leave:()=>{if(prevHide)mcSet(true)},
+   ok:()=>flags.cc},
+  {id:'res',ic:'🎒',modal:1,info:1,
+   t:{ar:'مواردك للبقاء',en:'Your survival resources'},
+   d:{ar:'الموارد دي بتتحكم في نجاح المهمة. لو أي مورد خلص، المهمة بتفشل:',en:'These resources decide whether the mission succeeds. If one runs out, the mission fails:'},
+   rows:[
+    ['⚡',{ar:'<b>الطاقة</b> بتشغّل الحماية والعينات والتحاليل. وفّرها.',en:'<b>Energy</b> powers shields, samples and analysis. Save it.'}],
+    ['🫁',{ar:'<b>الأكسجين</b> بيقل مع الوقت حتى لو واقف. ولّد منه من «إنتاج أكسجين».',en:'<b>Oxygen</b> drops over time even when you stand still. Make more with Oxygen production.'}],
+    ['💧',{ar:'<b>الماء</b> بيقل ببطء، وبيتصرف منه شوية لما تنتج أكسجين أو تجمع عينة.',en:'<b>Water</b> drops slowly, and some is used when you make oxygen or collect a sample.'}],
+    ['🛡️',{ar:'<b>الحماية</b> من العواصف الشمسية والإشعاع. «تشغيل الحماية» بيرفعها.',en:'<b>Protection</b> against solar storms and radiation. Shield power raises it.'}],
+    ['⭐',{ar:'<b>النقاط</b> من المختبرات والعينات والمهام، وبترفع رتبتك من متدرب لأسطورة.',en:'<b>Points</b> come from labs, samples and missions, and raise your rank from Trainee to Legend.'}]]},
+  {id:'mission',ic:'🛰️',tg:'#missionBtn',avail:()=>!!$('missionBtn'),
+   t:{ar:'لوحة Mission · NASA',en:'Mission · NASA panel'},
+   d:{ar:'دوس «Mission · NASA» وشوف أرقام مواردك الحقيقية وخطة اليوم من بيانات NASA. اختار خطة (كل خطة لها تكلفة وبعدها راحة 5 دقايق)، وبعدين اقفل اللوحة بـ ✕.',en:'Press Mission · NASA to see your real resource levels and the daily plan from NASA data. Pick a plan (each has a cost, then a 5 minute rest), then close the panel with the X.'},
+   ok:()=>{if(ACNASA.isOpen())flags.mo=1;return !!flags.mo&&!ACNASA.isOpen()}},
+  {id:'goal',ic:'🚩',modal:1,info:1,last:1,
+   t:{ar:'مهمتك الأساسية',en:'Your main mission'},
+   d:{ar:'خلاص جاهز يا رائد! عشان تكسب الرحلة:',en:'You are ready, Commander! To win the trip:'},
+   rows:s=>[
+    ['🔬',{ar:'خلّص المختبرات الـ'+Object.keys(ST).length+': '+Object.keys(ST).map(k=>LABS[k]).join('، ')+'.',en:'Finish all '+Object.keys(ST).length+' labs.'}],
+    ['🎯',{ar:'المهمة الخاصة: «'+s.sg.t+'» ('+s.sg.n+').',en:'Special mission: '+s.sg.t+' ('+s.sg.n+').'}],
+    ['🧪',{ar:'اجمع 5 عينات.',en:'Collect 5 samples.'}],
+    ['🚩',{ar:'ارجع للقاعدة وارفع العلم.',en:'Return to the base and plant the flag.'}],
+    ['⚠️',{ar:'خلّي بالك: ممكن تيجي عواصف وأحداث كبيرة، هتتحذّر قبلها وتواجهها بتحدي سريع.',en:'Watch out: big storms and events can strike. You get a warning first, then a quick challenge.'}]]}
+ ];
+
+ /* ---- مساعدات ---- */
+ const cur=()=>list[idx];
+ function clearHl(){if(hl){hl.classList.remove('tut-hl');hl=null}}
+ function setHl(s){clearHl();low=false;const q=T(s.tg);if(!q)return;const e=document.querySelector(q);if(!e)return;const r=e.getBoundingClientRect();if(r.width>0){e.classList.add('tut-hl');hl=e;low=r.top+r.height/2<innerHeight*.4}}
+ function lockBusy(){if(!busy){busy=true;selfBusy=true}}
+ function freeBusy(){if(selfBusy){busy=false;near=null;selfBusy=false}}
+ function ui(h){el.innerHTML='<div class="tut-box">'+h+'</div>'}
+ const btnTx=k=>({next:{ar:'التالي ◀',en:'Next ▶'},skip:{ar:'تخطي الخطوة',en:'Skip step'},end:{ar:'إنهاء التدريب',en:'End tutorial'},start:{ar:'ابدأ التدريب 🚀',en:'Start training 🚀'},later:{ar:'تخطي',en:'Skip'},go:{ar:'ابدأ المغامرة 🚀',en:'Start the adventure 🚀'}}[k][L()]);
+ function render(){
+  const s=cur();if(!s){el.className='';return}
+  const rows=typeof s.rows==='function'?s.rows(scene):s.rows;
+  const pct=Math.round(idx/list.length*100);
+  el.className='on '+(s.modal?'modal':'bubble')+(low&&!s.modal?' low':'');
+  ui('<div class="tut-p"><i style="width:'+pct+'%"></i></div><div class="tut-h"><span class="ti">'+s.ic+'</span><b>'+T(s.t)+'</b><small>'+(idx+1)+'/'+list.length+'</small></div><p class="tut-d">'+T(s.d)+'</p>'+(rows?'<div class="tut-rows">'+rows.map(r=>'<div><span>'+r[0]+'</span><span>'+T(r[1])+'</span></div>').join('')+'</div>':'')+
+   '<div class="tut-b">'+(s.info?'<button class="btn" data-a="'+(s.last?'finish':'next')+'">'+btnTx(s.last?'go':'next')+'</button>':'<span class="tut-ok">✅</span>')+(s.last?'':'<button class="tut-l" data-a="skipstep">'+btnTx('skip')+'</button>')+'<button class="tut-l" data-a="end">'+btnTx('end')+'</button></div>');
+  lastLang=L();
+ }
+ function enter(){
+  const s=cur();flags={};locked=0;
+  if(s.skipIf&&s.skipIf(scene)){idx++;if(idx>=list.length)return finish();return enter()}
+  if(s.enter)s.enter(scene);
+  if(s.modal)lockBusy();
+  setHl(s);render();
+ }
+ function step(j){const s=cur();if(s&&s.leave)s.leave(scene);clearHl();freeBusy();idx=j;if(idx>=list.length)return finish();enter()}
+ function hideAll(){clearHl();arrow.classList.remove('on');el.className='';el.innerHTML=''}
+ function stop(markSkip){
+  const s=cur();if(state==='run'&&s&&s.leave)try{s.leave(scene)}catch(_){}
+  freeBusy();hideAll();state='idle';list=[];tutSam=null;
+  if(markSkip&&getK()!=='done')mark('skip');
+ }
+ function finish(){
+  const first=getK()!=='done';
+  freeBusy();hideAll();state='idle';list=[];mark('done');
+  if(first){addXP(25,L()==='en'?'Finished training':'أكملت التدريب');ach('tut',L()==='en'?'Training graduate':'خريج التدريب')}
+  sfx('ach');say(L()==='en'?'Training complete, '+S.name+'! Now finish the labs, collect samples and plant the flag. 🚀':'خلّصت التدريب يا '+S.name+'! دلوقتي كمّل المختبرات وجمّع العينات وارفع العلم. 🚀');
+ }
+ function begin(s){
+  scene=s;list=STEPS.filter(x=>!x.avail||x.avail(s));if(!list.length){stop(false);return}
+  idx=0;state='run';tutSam=null;enter();
+  if(!raf)raf=requestAnimationFrame(loop);
+ }
+ function showIntro(){
+  state='intro';lockBusy();low=false;
+  el.className='on modal';
+  const en=L()==='en';
+  ui('<div class="tut-h"><span class="ti">🎓</span><b>'+(en?'Astronaut training':'تدريب الرائد')+'</b></div><p class="tut-d">'+(en?'Welcome, '+S.name+'! This is your first trip, so we will train together step by step: moving, tools and survival resources. It takes about two minutes and gives you a reward.':'أهلاً يا '+S.name+'! دي أول رحلة ليك، فهنتدرب سوا خطوة بخطوة: الحركة، الأدوات، وموارد البقاء. بياخد دقيقتين تقريبًا وفي الآخر جايزة ليك. 🏅')+'</p><div class="tut-b"><button class="btn" data-a="start">'+btnTx('start')+'</button><button class="tut-l" data-a="later">'+btnTx('later')+'</button></div>');
+ }
+ function loop(){
+  if(state==='idle'){raf=0;return}
+  raf=requestAnimationFrame(loop);
+  const s=GS;
+  if(!s||!s.sam||s!==scene){stop(false);return}
+  if(state==='wait'){if(!s.land&&s.pl&&s.pl.alpha>.95&&!busy&&!cutOn())showIntro();return}
+  if(state==='intro')return;
+  const st=cur();if(!st){stop(false);return}
+  if(L()!==lastLang)render();
+  const show=st.modal||(!busy&&!cutOn());
+  el.style.visibility=show?'visible':'hidden';
+  const tg=!locked&&!busy&&st.arrow?st.arrow(s):null;
+  if(tg){const dx=tg.x-s.px,dy=tg.y-s.py;if(Math.hypot(dx,dy)>140){const a=Math.atan2(dy,dx),r=Math.min(150,innerHeight*.28);arrow.style.transform='translate('+(innerWidth/2+Math.cos(a)*r)+'px,'+(innerHeight/2-30+Math.sin(a)*r)+'px) rotate('+a+'rad)';arrow.classList.add('on')}else arrow.classList.remove('on')}else arrow.classList.remove('on');
+  if(!locked&&st.ok&&st.ok(s)){locked=1;arrow.classList.remove('on');const b=el.querySelector('.tut-box'),o=el.querySelector('.tut-ok');if(b)b.classList.add('ok');if(o)o.style.display='inline';bp(1100,.1);const me=st;setTimeout(()=>{if(state==='run'&&cur()===me)step(idx+1)},700)}
+ }
+ el.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;e.stopPropagation();const a=b.dataset.a;
+  if(a==='start'){freeBusy();begin(scene)}
+  else if(a==='later'){freeBusy();hideAll();state='idle';mark('skip')}
+  else if(a==='next'||a==='skipstep')step(idx+1);
+  else if(a==='finish')finish();
+  else if(a==='end')stop(true);
+ });
+ el.addEventListener('pointerdown',e=>e.stopPropagation());
+ $('mcb').addEventListener('click',e=>{if(e.target.dataset.q)evt('cc')});
+
+ function evt(n){if(state==='run')flags[n]=1}
+ function btn(){
+  const c=$('chips');if(!c)return;let b=$('tutBtn');
+  if(!b){b=document.createElement('button');b.id='tutBtn';b.type='button';b.onclick=()=>api.start();c.prepend(b)}
+  b.textContent=L()==='en'?'🎓 Tutorial':'🎓 تدريب';
+ }
+ const hintTx={1:{ar:'🎓 مرحبًا! أول مرة؟ اختار رائدك وسمّيه، وبعد الإطلاق هيبدأ تدريب تفاعلي يعلّمك كل حاجة خطوة بخطوة.',en:'🎓 Welcome! First time? Pick and name your astronaut. After launch, an interactive tutorial teaches you everything step by step.'},2:{ar:'💡 نصيحة للمبتدئين: القمر والمريخ فيهم روفر تجرّبه. اختار الكوكب اللي يعجبك.',en:'💡 Beginner tip: the Moon and Mars have a rover to try. Pick any planet you like.'},3:{ar:'🚀 اختار أي صاروخ ودوس «إطلاق». التدريب بيبدأ أول ما تهبط.',en:'🚀 Choose any rocket and press Launch. Training starts as soon as you land.'}};
+ const api={
+  active:()=>state!=='idle',
+  seen,
+  arm(s,resumed){
+   if(!(forced||(!seen()&&!resumed))){return}
+   forced=false;scene=s;state='wait';lastLang=L();if(!raf)raf=requestAnimationFrame(loop);
+  },
+  start(){
+   const s=GS;if(!s||!s.sam)return;
+   if(state!=='idle')return;
+   if(s.land||busy||s.evA||cutOn()){toast(L()==='en'?'Not right now: finish what you are doing first.':'مش دلوقتي: خلّص اللي في إيدك الأول.');return}
+   begin(s);
+  },
+  evt,btn,
+  pre(n){
+   [1,2,3].forEach(k=>{const sec=$('s'+k);if(!sec)return;let p=$('tuth'+k);if(!p){p=document.createElement('p');p.id='tuth'+k;p.className='tuthint';sec.insertBefore(p,sec.children[1]||null)}p.textContent=T(hintTx[k]);p.style.display=(n==k&&!seen())?'block':'none'});
+  },
+  settings(){
+   const b=$('setb');if(!b)return;const en=L()==='en';
+   b.insertAdjacentHTML('beforeend','<div class="sr"><span>'+(en?'Tutorial':'التدريب')+'</span><div class="seg"><button id="tutRe">'+(en?'Replay':'إعادة التدريب')+'</button></div></div>');
+   $('tutRe').onclick=()=>{try{localStorage.removeItem(KEY)}catch(_){}forced=true;toast(en?'The tutorial will start on your next trip (or tap Tutorial in the game).':'التدريب هيبدأ في رحلتك الجاية (أو دوس «تدريب» جوه اللعبة).')};
+  }
+ };
+ return api;
+})();
+
+/* hooks: capture real player actions so the tutorial can verify them */
+(()=>{
+ const P=Explore.prototype;
+ const _create=P.create;P.create=function(){const resumed=!!RESTORE_GAME;_create.apply(this,arguments);TUT.arm(this,resumed)};
+ const _jump=P.jump;P.jump=function(){const b=this.jt>=0,r=_jump.apply(this,arguments);if(!b&&this.jt>=0)TUT.evt('jump');return r};
+ const _ping=P.ping;P.ping=function(){const b=this.rcd>0,r=_ping.apply(this,arguments);if(!b&&this.rcd>0)TUT.evt('ping');return r};
+ const _probe=P.probe;P.probe=function(){const b=this.rvc>0,r=_probe.apply(this,arguments);if(!b&&this.rvc>0)TUT.evt('probe');return r};
+ const _take=P.take;P.take=function(){const r=_take.apply(this,arguments);TUT.evt('take');return r};
+ const _ride=P.ride;P.ride=function(on){const r=_ride.apply(this,arguments);if(this.rv)TUT.evt(on?'ride1':'ride0');return r};
+ const _roll=P.rollEvent;P.rollEvent=function(){if(TUT.active()){this.evT=20;return}return _roll.apply(this,arguments)};
+})();
+const _tutOpenSt=openSt;openSt=function(){TUT.evt('lab');return _tutOpenSt.apply(this,arguments)};
+const _tutChips=chips;chips=function(){_tutChips.apply(this,arguments);try{ACNASA.button()}catch(_){}TUT.btn()};
+const _tutGo=go;go=function(){const r=_tutGo.apply(this,arguments);try{TUT.pre(arguments[0])}catch(_){}return r};
+const _tutSetUI=setUI;setUI=function(){_tutSetUI.apply(this,arguments);TUT.settings()};
+$('langBtn').addEventListener('click',()=>setTimeout(()=>{TUT.btn();TUT.pre(document.querySelector('.scr.on')?.id?.slice(1))},0));
+TUT.pre(0);
+
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body>

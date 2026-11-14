@@ -24,6 +24,10 @@ Progress is saved automatically in this browser on this device. **Continue Game*
 
 The language button switches between Arabic and English in the menu, setup/settings and NASA mission panel. Existing in-game science narration and minigame instructions remain primarily in Arabic.
 
+## Tutorial
+
+On a player's first trip (no saved game and no finished tutorial) an interactive training starts right after landing: move, jump, scan, mini-map, collect a sample, probe, enter a lab, rover, control center, survival resources and the Mission · NASA panel. Each step waits for the real action, can be skipped, and finishing it gives a one-time reward. Replay it any time with the **🎓 Tutorial** button in the game HUD or from Settings. State is stored in `localStorage` key `ac_tut`.
+
 ## Files
 
 - `index.html` — game and interface
